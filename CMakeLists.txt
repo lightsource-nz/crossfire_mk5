@@ -67,6 +67,7 @@ if(LIGHT_PLATFORM STREQUAL "TARGET")
         include(${LIGHT_PATH}/cmake/LightTheme.cmake)
         include(${LIGHT_PATH}/cmake/LightUi.cmake)
         include(${LIGHT_PATH}/cmake/LightSecure.cmake)
+        include(${LIGHT_PATH}/cmake/LightBootloader.cmake)
         #   this project signs with ITS key, not the framework's: the two ship separately and a
         # shared key would tie their releases together
         set(LIGHT_SIGNING_KEY "${CMAKE_CURRENT_LIST_DIR}/keys/dev.pem" CACHE FILEPATH

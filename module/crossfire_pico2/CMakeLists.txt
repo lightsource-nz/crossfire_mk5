@@ -38,16 +38,17 @@ light_add_ui(crossfire_pico2_ui
         CRATE light_app_crossfire_pico2 ENV LIGHT_UI_LUI
 )
 
+#   the application image, signed and stamped with this project's own version: what the
+# bootloader compares between the two slots, and what the ROM verifies before running it.
+# Before light_shell_configure, which declares the outputs this post-processing feeds
+light_seal_image(crossfire_pico2 VERSION ${CROSSFIRE_VERSION})
+
 light_shell_configure(crossfire_pico2)
 
-#   the device's flash map: an A/B pair for the application, so an update is written to the slot
-# that is not running and chosen on the next boot, and a data partition for the assets. Signed,
-# because the boot ROM accepts only a map it can verify -- see the framework's documents/11
-light_partition_table(crossfire_pico2_partitions
+#   this device's bootloader: the image at the start of flash, carrying crossfire's flash map --
+# an A/B pair for the application, so an update is written to the slot that is not running and
+# chosen on the next boot, and a data partition for the assets. The framework owns the code, this
+# project owns the map -- see the framework's documents/11-secure-boot-and-update.md
+light_add_bootloader(crossfire_bootloader
         LAYOUT ${CMAKE_CURRENT_LIST_DIR}/partitions.json
-        FOR crossfire_pico2
 )
-
-#   the application image, signed and stamped with this project's own version: what the ROM
-# verifies before it runs, and what it compares between the two slots
-light_seal_image(crossfire_pico2 VERSION ${CROSSFIRE_VERSION})
