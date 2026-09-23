@@ -1,0 +1,12 @@
+#   crossfire's PORTABLE workspace: the application itself, which names no hardware and is
+# tested on the host with a plain `cargo test`. The framework's crates are consumed by path
+# from the light_mk5 checkout beside this one; the hardware-bound crates that select a port
+# live in the firmware workspace, so nothing here ever pulls a port in.
+[workspace]
+resolver = "2"
+members = ["crates/light_app_crossfire"]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+license = "MIT"

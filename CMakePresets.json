@@ -1,0 +1,39 @@
+{
+    "version": 6,
+    "include": ["../light_mk5/cmake/light_presets/light_pico_presets.json"],
+    "configurePresets": [
+        {
+            "name": "conf-crossfire-pico2-debug",
+            "description": "crossfire on a Pico 2 with the Pico-OLED-1.3: the native USB port hosting USB-MIDI instruments, the OLED as the status display, the console on the UART through the debug probe. Flashed and debugged over SWD.",
+            "inherits": [
+                "conf-light-pico2",
+                "conf-light-debug"
+            ],
+            "binaryDir": "${sourceDir}/build-crossfire-pico2",
+            "generator": "Ninja",
+            "cacheVariables": {
+                "Rust_CARGO_TARGET": "thumbv8m.main-none-eabi"
+            }
+        },
+        {
+            "name": "conf-crossfire-pico-debug",
+            "description": "crossfire on the stock RP2040 Pico -- the product board: the native port hosting USB-MIDI instruments, the console on the UART. Flashed and debugged over SWD through a debugprobe.",
+            "inherits": [
+                "conf-light-pico",
+                "conf-light-debug"
+            ],
+            "binaryDir": "${sourceDir}/build-crossfire-pico",
+            "generator": "Ninja",
+            "cacheVariables": {
+                "Rust_CARGO_TARGET": "thumbv6m-none-eabi"
+            }
+        },
+        {
+            "name": "conf-crossfire-host",
+            "description": "The host tree: the application's tests, run with cargo through one ctest.",
+            "inherits": ["conf-light-host-debug"],
+            "binaryDir": "${sourceDir}/build-host",
+            "generator": "Ninja"
+        }
+    ]
+}

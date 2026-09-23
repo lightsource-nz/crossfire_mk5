@@ -1,0 +1,19 @@
+#   crossfire's FIRMWARE workspace: the per-board instantiation crates, each naming the chip it
+# is. Kept apart from the portable workspace so the host test needs no exclusions and no build
+# ever pulls two ports (two `critical-section` implementations) together. Nothing is built
+# workspace-wide: CMake/Corrosion builds one instantiation crate at a time.
+#
+#   The port and the framework crates are path dependencies into the light_mk5 checkout beside
+# this one. They belong to that repository's workspace; here they are ordinary path packages,
+# which is what lets this project carry its own version, its own keys and its own releases.
+[workspace]
+resolver = "2"
+members = [
+        "../module/crossfire_pico/rust",
+        "../module/crossfire_pico2/rust",
+]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+license = "MIT"

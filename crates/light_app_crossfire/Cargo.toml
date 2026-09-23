@@ -1,0 +1,21 @@
+[package]
+name = "light_app_crossfire"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "crossfire: USB-MIDI forwarding between every instrument on the host port, with an SH1107 status display -- the hardware-independent application, instantiated by a board module"
+
+[dependencies]
+light-core = { path = "../../../light_mk5/crates/light-core" }
+light-draw = { path = "../../../light_mk5/crates/light-draw" }
+light-display = { path = "../../../light_mk5/crates/light-display" }
+light-midi = { path = "../../../light_mk5/crates/light-midi" }
+light-font = { path = "../../../light_mk5/crates/light-font" }
+light-ui = { path = "../../../light_mk5/crates/light-ui" }
+
+#   the host tests need a critical-section implementation: on a device the port supplies it,
+# and in this crate's own test binary nothing does. Inside the framework's workspace this
+# arrived by feature unification from light-core's dev-dependencies; a separate project has to
+# ask for it, which is the honest place for it to be said anyway
+[dev-dependencies]
+critical-section = { version = "1.2", features = ["std"] }
