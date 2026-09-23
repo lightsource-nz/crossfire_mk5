@@ -52,6 +52,11 @@ pub extern "C" fn light_app_main(info: &ShellInfo) -> ! {
                 Err(e) => panic!("the embedded font does not parse: {e:?}"),
         };
         info!("crossfire (pico2): sys {} Hz; host stack on core 0, console on the UART", clocks.sys_hz);
+        //   which image the ROM chose, and what it made of the slot it was asked about: on a
+        // board with an A/B pair this is the only answer to "which image am I running?"
+        if let Some(b) = light_rp2::shell::boot_info() {
+                info!("boot: type {}, partition {:?}, probation {:#x}; diagnosing {:?} -> {:#010x}", b.boot_type, b.partition, b.tbyb_and_update, b.diagnostic_partition, b.diagnostic);
+        }
         // the host stack, on THIS core -- see the shell
         let host = UsbMidiHost::init();
         info!("USB host stack up: {} MIDI slots, hub aware", app::USB_SLOTS);
