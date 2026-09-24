@@ -20,6 +20,10 @@ light-display = { path = "../../../../light_mk5/crates/light-display" }
 light-font = { path = "../../../../light_mk5/crates/light-font" }
 #   this board's assets live in storage rather than in its image, so it reads the pack
 light-assets = { path = "../../../../light_mk5/crates/light-assets", default-features = false }
+#   this board can replace its own firmware: the staging session, and the slot it writes into
+light-update = { path = "../../../../light_mk5/crates/light-update" }
 #   the chip is THIS module's identity: the feature is pinned here, not switched by the
 # build system -- a crossfire_pico2 is an RP2350 or it is nothing
-light-rp2 = { path = "../../../../light_mk5/crates/light-rp2", features = ["usb-host", "rp2350"] }
+#   wifi, because this variant of the board carries the radio -- which also means the pin the
+# plain board's indicator sits on is the radio's chip select here, so there is no led in board.rs
+light-rp2 = { path = "../../../../light_mk5/crates/light-rp2", features = ["usb-host", "rp2350", "wifi"] }

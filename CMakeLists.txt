@@ -67,6 +67,7 @@ if(LIGHT_PLATFORM STREQUAL "TARGET")
         include(${LIGHT_PATH}/cmake/LightTheme.cmake)
         include(${LIGHT_PATH}/cmake/LightUi.cmake)
         include(${LIGHT_PATH}/cmake/LightAssets.cmake)
+        include(${LIGHT_PATH}/cmake/LightRadio.cmake)
         include(${LIGHT_PATH}/cmake/LightSecure.cmake)
         include(${LIGHT_PATH}/cmake/LightBootloader.cmake)
         #   this project signs with ITS key, not the framework's: the two ship separately and a

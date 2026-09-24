@@ -25,7 +25,7 @@ use light_ui::{Descent, Fonts, Lui, LuiChild, Style, Theme, Ui};
 pub const USB_SLOTS: usize = 4;
 
 #[derive(Clone, Copy, Debug)]
-enum AppEvent {
+pub enum AppEvent {
         /// The mounted set changed: the display's text is stale.
         Status,
         /// The RX/TX indicators changed. The fields ride along for `Debug` -- the display
@@ -37,9 +37,24 @@ enum AppEvent {
         Stats,
         /// The BOOTSEL button was pressed: move the display to the next page.
         NavToggle,
+        /// Replace this board's firmware with what a board-side module can reach. Published by the
+        /// console; acted on by whatever module the hardware supplied, or by nobody on a board
+        /// that cannot do it.
+        Update,
+        /// Keep the firmware that is running, where it was started on approval. Without this the
+        /// next reset goes back to what was there before -- which is the point of it.
+        Commit,
+        /// Bring up a radio the board may have.
+        ///
+        /// ASKED FOR RATHER THAN DONE AT STARTUP, because powering a radio and uploading a
+        /// quarter of a megabyte into it is the longest and least certain thing this firmware
+        /// does, and a board whose radio will not start is still a board that forwards its
+        /// instruments. On a board with no radio nothing answers, which is the right outcome.
+        Radio,
 }
 
-static EVENTS: EventBus<AppEvent, 8, 3> = EventBus::new();
+///   The bus, public because a board may add a module of its own to it -- see `serve`.
+pub static EVENTS: EventBus<AppEvent, 8, 4> = EventBus::new();
 static CONSOLE_BYTES: Mailbox<u8, 128> = Mailbox::new();
 
 /// A console byte from the transport the hardware module owns. Never blocks; a full
@@ -430,8 +445,25 @@ fn parse_stats(_w: &mut Words) -> Parsed<AppEvent> {
         Parsed::Event(AppEvent::Stats)
 }
 
+//   replacing this board's own firmware. The console only ASKS: what an update is made of is the
+// hardware's business, and a board that cannot do it has nobody subscribed to hear
+fn parse_update(_w: &mut Words) -> Parsed<AppEvent> {
+        Parsed::Event(AppEvent::Update)
+}
+
+fn parse_commit(_w: &mut Words) -> Parsed<AppEvent> {
+        Parsed::Event(AppEvent::Commit)
+}
+
+fn parse_radio(_w: &mut Words) -> Parsed<AppEvent> {
+        Parsed::Event(AppEvent::Radio)
+}
+
 static COMMANDS: &[Command<AppEvent>] = &[
         Command { name: "stats", usage: "stats", parse: parse_stats },
+        Command { name: "update", usage: "update", parse: parse_update },
+        Command { name: "commit", usage: "commit", parse: parse_commit },
+        Command { name: "radio", usage: "radio", parse: parse_radio },
 ];
 static CLI: Cli<AppEvent> = Cli::new(COMMANDS);
 
@@ -525,20 +557,29 @@ impl Module for NavMod {
 /// Run crossfire on the parts a hardware module built, forever. The module allocates the
 /// big pieces where its memory map wants them (statics, not this core's stack) and hands
 /// in mutable borrows; this seals them into the runtime.
-pub fn serve<H: Host, B: SpiDisplayBus, C: Clock, P: OutputPin>(
+///   `board` is the seam for what only the hardware can do, and it is a LIST because the boards
+/// genuinely differ rather than differing by one optional extra. One has an indicator on a pin of
+/// its own and nothing else. Another has no such pin at all -- its indicator is on the radio, so
+/// it belongs to the radio's module and not to a module of its own -- and can replace its own
+/// firmware besides. What they have in common is the four modules named above; everything else a
+/// board brings joins the same runtime and the same bus here, and a board that brings nothing
+/// passes an empty list.
+pub fn serve<H: Host, B: SpiDisplayBus, C: Clock>(
         usb: &mut UsbMod<H>,
         oled: &mut OledMod<B, C>,
-        led: &mut LedMod<P>,
         console: &mut ConsoleMod,
         nav: &mut NavMod,
+        board: &mut [&mut dyn Module],
         idle: impl FnMut(),
 ) -> ! {
-        let mut rt: Runtime<5> = Runtime::new();
+        let mut rt: Runtime<8> = Runtime::new();
         rt.add(usb).expect("capacity");
         rt.add(oled).expect("capacity");
-        rt.add(led).expect("capacity");
         rt.add(console).expect("capacity");
         rt.add(nav).expect("capacity");
+        for m in board.iter_mut() {
+                rt.add(*m).expect("capacity");
+        }
         rt.start().expect("start");
         info!("runtime started; plug an instrument in");
         let result = rt.run(idle);

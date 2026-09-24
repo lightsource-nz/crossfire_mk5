@@ -39,12 +39,19 @@ light_add_ui(crossfire_pico2_ui
         UI ${CMAKE_CURRENT_LIST_DIR}/../../crates/light_app_crossfire/design.json
 )
 
-#   the three of them as one pack, written to the partition that accepts the data family and read
-# from there at startup. The crate is built with the pack's DIGEST rather than its contents: the
-# image is signed, so the pack is trusted at one remove, and assets can be replaced on a device
-# without re-signing anything. The entry names are what the firmware asks for
+#   the radio's own firmware, cut out of the platform's vendor drop. The part holds nothing of its
+# own, so this is uploaded into it at every power-up -- a quarter of a megabyte which, linked into
+# the image the way the vendor intends, would sit in BOTH slots of the A/B pair and be re-signed
+# whenever anything else changed
+light_add_radio_firmware(crossfire_pico2_radio)
+
+#   all of them as one pack, written to the partition that accepts the data family and read from
+# there at startup. The crate is built with the pack's DIGEST rather than its contents: the image
+# is signed, so the pack is trusted at one remove, and assets can be replaced on a device without
+# re-signing anything. The entry names are what the firmware asks for
 light_add_asset_pack(crossfire_pico2_assets
         ENTRIES font=crossfire_pico2_font theme=crossfire_pico2_theme ui=crossfire_pico2_ui
+                radio=crossfire_pico2_radio_image radio_limits=crossfire_pico2_radio_limits
         CRATE light_app_crossfire_pico2 ENV LIGHT_ASSETS_SHA256
         FAMILY data
 )

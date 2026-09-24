@@ -16,6 +16,19 @@
             }
         },
         {
+            "name": "conf-crossfire-pico2w-debug",
+            "description": "The same crossfire as conf-crossfire-pico2-debug, on the variant of the board that carries a radio, built against the platform's own definition of that board rather than the plain one's. Its own tree, because the two differ in what the board is taken to have and a shared tree would quietly hold whichever was configured last.",
+            "inherits": [
+                "conf-light-pico2-w",
+                "conf-light-debug"
+            ],
+            "binaryDir": "${sourceDir}/build-crossfire-pico2w",
+            "generator": "Ninja",
+            "cacheVariables": {
+                "Rust_CARGO_TARGET": "thumbv8m.main-none-eabi"
+            }
+        },
+        {
             "name": "conf-crossfire-pico-debug",
             "description": "crossfire on the stock RP2040 Pico -- the product board: the native port hosting USB-MIDI instruments, the console on the UART. Flashed and debugged over SWD through a debugprobe.",
             "inherits": [

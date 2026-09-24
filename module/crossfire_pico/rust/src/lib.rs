@@ -67,7 +67,9 @@ pub extern "C" fn light_app_main(info: &ShellInfo) -> ! {
         let _ = (p.key0, p.key1);
 
         let mut idle = Breathe;
-        app::serve(usb_mod, oled_mod, &mut led_mod, &mut console_mod, &mut nav_mod, move || idle.idle())
+        //   all this board brings is its indicator: no second slot on this chip, so nothing
+        // answers an update request, and no radio
+        app::serve(usb_mod, oled_mod, &mut console_mod, &mut nav_mod, &mut [&mut led_mod], move || idle.idle())
 }
 
 #[cfg(target_os = "none")]
