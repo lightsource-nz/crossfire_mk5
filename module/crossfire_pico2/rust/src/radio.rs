@@ -11,11 +11,13 @@
 //! The indicator this board actually has hangs off the radio's own pins, so answering the
 //! application's indicator events means asking the radio, and that is this module's other job.
 
-use light_app_crossfire::{AppEvent, Credentials, EVENTS};
+use light_app_crossfire::{AppEvent, Credentials, FetchTarget, EVENTS};
 use light_core::events::Subscription;
 use light_core::{info, warn};
 use light_core::module::{Module, Poll};
-use light_rp2::wifi::{JoinError, Pins, Radio};
+use light_rp2::update::FlashSlot;
+use light_rp2::wifi::{Incoming, JoinError, Pins, Radio};
+use light_update::Update;
 
 /// The radio's wiring on this board.
 const PINS: Pins = light_rp2::wifi::ONBOARD;
@@ -107,6 +109,84 @@ impl RadioMod {
                 }
         }
 
+        /// Fetch an image over the network and stage it into the slot that is not running.
+        ///
+        ///   NOTHING IS HELD ANYWHERE IN BETWEEN. The image is a megabyte and this part has no
+        /// room for one, so each piece goes from the network into storage as it arrives and is
+        /// not kept. That is also why the size has to be known before the first byte: the slot
+        /// is erased to fit, and there is no second chance to ask.
+        fn fetch(&mut self, t: &FetchTarget) {
+                let Some(radio) = self.radio.as_mut() else {
+                        warn!("radio: there is no radio up to fetch with");
+                        return;
+                };
+                info!("radio: fetching {} from {}.{}.{}.{}:{}", t.path(), t.ip[0], t.ip[1], t.ip[2], t.ip[3], t.port);
+
+                let started = light_core::log::now_us();
+                let mut session: Option<Update<FlashSlot>> = None;
+                let mut failed: Option<&'static str> = None;
+                let mut sink = |incoming: Incoming| match incoming {
+                        Incoming::Length(n) => {
+                                let slot = match FlashSlot::inactive() {
+                                        Ok(s) => s,
+                                        Err(_) => {
+                                                failed = Some("this board has no second slot to stage into");
+                                                return false;
+                                        }
+                                };
+                                //   ON APPROVAL, as `update` does: an image that arrives whole
+                                // and then cannot do its job still has to expire on its own
+                                match Update::begin_on_approval(slot, n) {
+                                        Ok(u) => {
+                                                session = Some(u);
+                                                true
+                                        }
+                                        Err(_) => {
+                                                failed = Some("the slot will not take an image that size");
+                                                false
+                                        }
+                                }
+                        }
+                        Incoming::Body(b) => match session.as_mut() {
+                                Some(u) => u.write(b).is_ok(),
+                                None => false,
+                        },
+                };
+
+                let outcome = radio.fetch(t.ip, t.port, t.path(), &mut sink);
+                if let Some(why) = failed {
+                        warn!("radio: {why}");
+                        return;
+                }
+                let got = match outcome {
+                        Ok(n) => n,
+                        Err(e) => {
+                                warn!("radio: the fetch failed ({e:?}) -- the slot is left unbootable, which is what stops it being started by mistake");
+                                return;
+                        }
+                };
+
+                let Some(session) = session else {
+                        warn!("radio: nothing was staged");
+                        return;
+                };
+                let staged = match session.finish() {
+                        Ok(s) => s,
+                        Err(e) => {
+                                warn!("radio: what arrived is not usable ({e:?})");
+                                return;
+                        }
+                };
+                //   the number that decides whether any of this is fast enough to be worth
+                // having, said out loud rather than guessed at
+                let ms = (light_core::log::now_us() - started) / 1000;
+                let rate = if ms > 0 { got as u64 * 1000 / ms / 1024 } else { 0 };
+                info!("radio: {got} bytes fetched and staged in {ms} ms ({rate} KiB/s); starting it");
+
+                let e = staged.boot();
+                warn!("radio: the hardware would not start it ({e:?})");
+        }
+
         fn set_indicator(&mut self, on: bool) {
                 if let Some(radio) = self.radio.as_mut() {
                         radio.set_gpio(INDICATOR, on);
@@ -133,6 +213,10 @@ impl Module for RadioMod {
                                 }
                                 AppEvent::Address => {
                                         self.address();
+                                        busy = true;
+                                }
+                                AppEvent::Fetch(t) => {
+                                        self.fetch(&t);
                                         busy = true;
                                 }
                                 AppEvent::Mounted(on) => {

@@ -48,6 +48,9 @@ pub enum AppEvent {
         Join(Credentials),
         /// Ask the network that was joined for an address of this device's own.
         Address,
+        /// Fetch a firmware image over the network and stage it, the way `update` stages a copy
+        /// of what is already here.
+        Fetch(FetchTarget),
         /// Bring up a radio the board may have.
         ///
         /// ASKED FOR RATHER THAN DONE AT STARTUP, because powering a radio and uploading a
@@ -105,6 +108,34 @@ impl Credentials {
 impl core::fmt::Debug for Credentials {
         fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
                 write!(f, "Credentials({}, ...)", self.ssid())
+        }
+}
+
+/// Where an image is to be fetched from: an address, a port, and what to ask for.
+///
+/// AN ADDRESS AND NOT A NAME. Resolving a name means another service to depend on at exactly the
+/// moment a device is trying to repair itself, and one more thing that can be wrong when the
+/// update fails. An address given in the command is a smaller promise.
+#[derive(Clone, Copy, Debug)]
+pub struct FetchTarget {
+        pub ip: [u8; 4],
+        pub port: u16,
+        path: [u8; 96],
+        path_len: u8,
+}
+
+impl FetchTarget {
+        pub fn new(ip: [u8; 4], port: u16, path: &str) -> Option<Self> {
+                if path.is_empty() || path.len() > 96 {
+                        return None;
+                }
+                let mut t = Self { ip, port, path: [0; 96], path_len: path.len() as u8 };
+                t.path[..path.len()].copy_from_slice(path.as_bytes());
+                Some(t)
+        }
+
+        pub fn path(&self) -> &str {
+                core::str::from_utf8(&self.path[..self.path_len as usize]).unwrap_or("/")
         }
 }
 
@@ -518,6 +549,35 @@ fn parse_address(_w: &mut Words) -> Parsed<AppEvent> {
         Parsed::Event(AppEvent::Address)
 }
 
+//   `fetch 192.168.1.10:8000 /crossfire.bin`, the port optional
+fn parse_fetch(w: &mut Words) -> Parsed<AppEvent> {
+        let (Some(where_), Some(path)) = (w.next(), w.next()) else {
+                return Parsed::Usage;
+        };
+        let (host, port) = match where_.split_once(':') {
+                Some((h, p)) => match p.parse() {
+                        Ok(p) => (h, p),
+                        Err(_) => return Parsed::Usage,
+                },
+                None => (where_, 80),
+        };
+        let mut ip = [0u8; 4];
+        let mut parts = host.split('.');
+        for slot in ip.iter_mut() {
+                match parts.next().map(str::parse) {
+                        Some(Ok(v)) => *slot = v,
+                        _ => return Parsed::Usage,
+                }
+        }
+        if parts.next().is_some() {
+                return Parsed::Usage;
+        }
+        match FetchTarget::new(ip, port, path) {
+                Some(t) => Parsed::Event(AppEvent::Fetch(t)),
+                None => Parsed::Usage,
+        }
+}
+
 //   a name or a passphrase with a space in it goes in double quotes, which the console's own
 // tokenizer understands. Plenty of real network names have one, so this is the ordinary case
 // rather than the awkward one
@@ -540,6 +600,7 @@ static COMMANDS: &[Command<AppEvent>] = &[
         Command { name: "radio", usage: "radio", parse: parse_radio },
         Command { name: "join", usage: "join <network> [passphrase]   (quote either if it contains a space)", parse: parse_join },
         Command { name: "address", usage: "address", parse: parse_address },
+        Command { name: "fetch", usage: "fetch <address>[:port] <path>", parse: parse_fetch },
 ];
 static CLI: Cli<AppEvent> = Cli::new(COMMANDS);
 
