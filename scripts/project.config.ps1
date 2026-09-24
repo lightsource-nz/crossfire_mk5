@@ -13,8 +13,13 @@
                 'conf-crossfire-pico-debug'  = 'build-crossfire-pico'
         }
 
+        #   Bootloader names the target whose image carries this board's flash map -- the one
+        # thing the script layer cannot work out for itself. With it, writing the board means the
+        # bootloader, the application in the slot the map gives it and the assets in theirs, each
+        # at an address read back out of the built bootloader rather than restated here.
+        #   The RP2040 board has no such facility: its image is its whole flash.
         Targets = @{
-                'crossfire_pico2' = @{ Preset = 'conf-crossfire-pico2-debug'; Flash = 'swd' }
+                'crossfire_pico2' = @{ Preset = 'conf-crossfire-pico2-debug'; Flash = 'swd'; Bootloader = 'crossfire_bootloader' }
                 'crossfire_pico'  = @{ Preset = 'conf-crossfire-pico-debug'; Flash = 'swd' }
         }
 
