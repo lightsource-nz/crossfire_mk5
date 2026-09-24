@@ -77,10 +77,11 @@ impl RadioMod {
                 info!("radio: joining {}", c.ssid());
                 match radio.join(c.ssid(), c.pass()) {
                         Ok(()) => info!("radio: joined {}", c.ssid()),
-                        //   the radio says which of the two it was in its own line above this
-                        // one, so this does not guess between them
-                        Err(JoinError::Refused) => warn!("radio: the join was refused -- no network called {}, or the wrong passphrase for it", c.ssid()),
+                        Err(JoinError::NoSuchNetwork) => warn!("radio: no network called {} was found -- check the name, and that it is in range", c.ssid()),
+                        Err(JoinError::Rejected) => warn!("radio: {} was found but would not have us -- the passphrase, or the network is busy; worth trying again", c.ssid()),
+                        Err(JoinError::Refused(code)) => warn!("radio: {} refused the join, reason {code}", c.ssid()),
                         Err(JoinError::NoAnswer) => warn!("radio: no answer from {} -- check the name, and that it is in range", c.ssid()),
+                        Err(JoinError::AlreadyJoined) => warn!("radio: already joined a network; reset the board to join a different one"),
                 }
         }
 
