@@ -18,6 +18,7 @@ mod board;
 use board::*;
 use light_rp2::spi::Spi1Display;
 use light_rp2::usb_host::UsbMidiHost;
+use light_rp2::sha256::Sha256Hw;
 use light_rp2::shell::{bootsel, panic_report, ShellInfo, UART_BAUD, UART_RX, UART_TX};
 use light_rp2::uart::Uart;
 use light_rp2::{now_us, Breathe, Clocks, SysClock};
@@ -61,7 +62,7 @@ pub extern "C" fn light_app_main(info: &ShellInfo) -> ! {
                 Ok(region) => region,
                 Err(e) => panic!("this board has nowhere to keep assets ({e:?})"),
         };
-        let pack = match Pack::open(region, ASSET_DIGEST) {
+        let pack = match Pack::open(region, ASSET_DIGEST, Sha256Hw::new()) {
                 Ok(pack) => pack,
                 //   blank storage, which is a board whose assets were never written -- worth
                 // telling apart from a pack that is there and is the wrong one

@@ -18,19 +18,3 @@ version = "0.1.0"
 edition = "2024"
 license = "MIT"
 
-#   THE DIGEST STACK IS BUILT FOR SIZE even in a debug build. Hashing the asset pack is arithmetic
-# in a tight loop with no debugging value of its own, and unoptimised it costs several times more
-# image than the assets it is there to vouch for. Nothing else here is touched: the firmware stays
-# a debug build.
-[profile.dev.package.light-assets]
-opt-level = "z"
-[profile.dev.package.sha2]
-opt-level = "z"
-[profile.dev.package.digest]
-opt-level = "z"
-[profile.dev.package.block-buffer]
-opt-level = "z"
-[profile.dev.package.crypto-common]
-opt-level = "z"
-[profile.dev.package.generic-array]
-opt-level = "z"

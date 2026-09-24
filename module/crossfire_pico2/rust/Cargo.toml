@@ -19,7 +19,7 @@ light-draw = { path = "../../../../light_mk5/crates/light-draw" }
 light-display = { path = "../../../../light_mk5/crates/light-display" }
 light-font = { path = "../../../../light_mk5/crates/light-font" }
 #   this board's assets live in storage rather than in its image, so it reads the pack
-light-assets = { path = "../../../../light_mk5/crates/light-assets" }
+light-assets = { path = "../../../../light_mk5/crates/light-assets", default-features = false }
 #   the chip is THIS module's identity: the feature is pinned here, not switched by the
 # build system -- a crossfire_pico2 is an RP2350 or it is nothing
 light-rp2 = { path = "../../../../light_mk5/crates/light-rp2", features = ["usb-host", "rp2350"] }
