@@ -17,25 +17,36 @@ target_link_libraries(crossfire_pico2 PRIVATE
         light_app_crossfire_pico2
 )
 
+#   THE ASSETS GO IN THE DATA PARTITION, not in the image. Each of the three is compiled exactly
+# as before -- what changes is that none of them names a crate to embed it in, so the blobs are
+# gathered into one pack below instead.
+#
 #   the status font: 16 px on the Pico-OLED-1.3's real geometry (64x128 over 17.2x32.3 mm)
 # -- two lines of ten cells across the rotated 128-pixel row
 light_add_font(crossfire_pico2_font
         FONT ${CMAKE_CURRENT_LIST_DIR}/../../assets/fonts/TypeLightSans.ttf
         DISPLAY po13 WIDTH 64 HEIGHT 128 DIMENSION 17.2x32.3
         POINT_SIZE 12 PIXEL_SIZE 16
-        CRATE light_app_crossfire_pico2 ENV LIGHT_FONT_LGF
 )
 
 #   the look-and-feel and the interface as data, shared with the Pico crossfire: the framework
 # MONO default with this OLED's rounding, and the crossfire status page -- both live beside the
-# application crate, embedded by it through the two env vars
+# application crate
 light_add_theme(crossfire_pico2_theme MONO
         THEME ${CMAKE_CURRENT_LIST_DIR}/../../crates/light_app_crossfire/theme.json
-        CRATE light_app_crossfire_pico2 ENV LIGHT_THEME_LTH
 )
 light_add_ui(crossfire_pico2_ui
         UI ${CMAKE_CURRENT_LIST_DIR}/../../crates/light_app_crossfire/design.json
-        CRATE light_app_crossfire_pico2 ENV LIGHT_UI_LUI
+)
+
+#   the three of them as one pack, written to the partition that accepts the data family and read
+# from there at startup. The crate is built with the pack's DIGEST rather than its contents: the
+# image is signed, so the pack is trusted at one remove, and assets can be replaced on a device
+# without re-signing anything. The entry names are what the firmware asks for
+light_add_asset_pack(crossfire_pico2_assets
+        ENTRIES font=crossfire_pico2_font theme=crossfire_pico2_theme ui=crossfire_pico2_ui
+        CRATE light_app_crossfire_pico2 ENV LIGHT_ASSETS_SHA256
+        FAMILY data
 )
 
 #   the application image, signed and stamped with this project's own version: what the

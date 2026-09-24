@@ -8,6 +8,7 @@
 
 use light_app_crossfire as app;
 use app::{ConsoleMod, LedMod, NavMod, OledMod, UsbMod};
+use light_assets::{Pack, PackError};
 use light_core::{info, log, ConstStaticCell, Idle, StaticCell};
 use light_display::sh1107::Sh1107;
 use light_display::{Display, FrameLayer};
@@ -23,11 +24,13 @@ use light_rp2::{now_us, Breathe, Clocks, SysClock};
 
 /// 64x128 at 1 bpp: one kilobyte.
 static FRAME: ConstStaticCell<[u8; PixelFormat::Mono1.buffer_len(OLED_WIDTH, OLED_HEIGHT)]> = ConstStaticCell::new([0; PixelFormat::Mono1.buffer_len(OLED_WIDTH, OLED_HEIGHT)]);
-static FONT_BLOB: &[u8] = include_bytes!(env!("LIGHT_FONT_LGF"));
-/// The look-and-feel and the interface, as data: the framework MONO default with this board's
-/// rounding, and the crossfire status page -- both compiled to blobs the app embeds.
-static THEME_BLOB: &[u8] = include_bytes!(env!("LIGHT_THEME_LTH"));
-static UI_BLOB: &[u8] = include_bytes!(env!("LIGHT_UI_LUI"));
+/// THE ASSETS ARE NOT IN THIS IMAGE. The font, the look-and-feel and the interface are written to
+/// the region of storage the flash map sets aside for them and read from there at startup, so
+/// restyling or re-lettering crossfire is a pack rewritten rather than a firmware release. What
+/// the image carries instead is the digest of the pack it was built against: this image is signed,
+/// so a pack that hashes to this is as trustworthy as the image naming it, and one that does not
+/// is refused.
+static ASSET_DIGEST: &[u8; 32] = include_bytes!(env!("LIGHT_ASSETS_SHA256"));
 
 /// Core 1: the port's console loop on the UART alone -- the native USB port is the MIDI host,
 /// core 0's, so this build has no CDC console and light-rp2 carries no device stack.
@@ -47,11 +50,33 @@ pub extern "C" fn light_app_main(info: &ShellInfo) -> ! {
         static LAYER: ConstStaticCell<FrameLayer> = ConstStaticCell::new(FrameLayer::new(OLED_WIDTH, OLED_HEIGHT, PixelFormat::Mono1));
         let layer: &'static mut FrameLayer = LAYER.take();
         let display = Display::new(Sh1107::new(p.oled_bus), frame, OLED_WIDTH, OLED_HEIGHT, PixelFormat::Mono1, now_us);
-        let font = match Font::parse(FONT_BLOB) {
-                Ok(f) => f,
-                Err(e) => panic!("the embedded font does not parse: {e:?}"),
-        };
         info!("crossfire (pico2): sys {} Hz; host stack on core 0, console on the UART", clocks.sys_hz);
+
+        //   the assets, out of the storage set aside for them and checked against the digest this
+        // image was built with. There is deliberately no fallback: an interface with no font is
+        // not an interface, and a second copy carried in the image would undo the reason the
+        // assets were taken out of it. What a stop here means is that the pack was never written,
+        // or belongs to another build -- write it and the board comes up
+        let region = match light_rp2::assets::region() {
+                Ok(region) => region,
+                Err(e) => panic!("this board has nowhere to keep assets ({e:?})"),
+        };
+        let pack = match Pack::open(region, ASSET_DIGEST) {
+                Ok(pack) => pack,
+                //   blank storage, which is a board whose assets were never written -- worth
+                // telling apart from a pack that is there and is the wrong one
+                Err(PackError::BadMagic) => panic!("no asset pack has been written to this board"),
+                Err(e) => panic!("this board's asset pack is not the one the firmware was built with ({e:?})"),
+        };
+        let (font_blob, theme_blob, ui_blob) = match (pack.get("font"), pack.get("theme"), pack.get("ui")) {
+                (Ok(f), Ok(t), Ok(u)) => (f, t, u),
+                _ => panic!("the asset pack is missing one of font, theme or ui"),
+        };
+        let font = match Font::parse(font_blob) {
+                Ok(f) => f,
+                Err(e) => panic!("the packed font does not parse: {e:?}"),
+        };
+        info!("assets: {} entries from the data region, {} bytes", pack.len(), pack.as_bytes().len());
         //   which image the ROM chose, and what it made of the slot it was asked about: on a
         // board with an A/B pair this is the only answer to "which image am I running?"
         if let Some(b) = light_rp2::shell::boot_info() {
@@ -65,7 +90,7 @@ pub extern "C" fn light_app_main(info: &ShellInfo) -> ! {
         static USB_MOD: StaticCell<UsbMod<UsbMidiHost>> = StaticCell::new();
         let usb_mod = USB_MOD.init(UsbMod::new(host));
         static OLED_MOD: StaticCell<OledMod<Spi1Display, SysClock>> = StaticCell::new();
-        let oled_mod = OLED_MOD.init(OledMod::new(display, layer, font, THEME_BLOB, UI_BLOB, SysClock, OLED_DISPLAY_OFFSET));
+        let oled_mod = OLED_MOD.init(OledMod::new(display, layer, font, theme_blob, ui_blob, SysClock, OLED_DISPLAY_OFFSET));
         let mut led_mod = LedMod::new(p.led);
         let mut console_mod = ConsoleMod::new();
         let mut nav_mod = NavMod::new(bootsel);
