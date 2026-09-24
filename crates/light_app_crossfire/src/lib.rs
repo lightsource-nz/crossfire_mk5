@@ -44,6 +44,8 @@ pub enum AppEvent {
         /// Keep the firmware that is running, where it was started on approval. Without this the
         /// next reset goes back to what was there before -- which is the point of it.
         Commit,
+        /// Join a network, on a board that has a radio to join it with.
+        Join(Credentials),
         /// Bring up a radio the board may have.
         ///
         /// ASKED FOR RATHER THAN DONE AT STARTUP, because powering a radio and uploading a
@@ -51,6 +53,57 @@ pub enum AppEvent {
         /// does, and a board whose radio will not start is still a board that forwards its
         /// instruments. On a board with no radio nothing answers, which is the right outcome.
         Radio,
+}
+
+/// What it takes to join a network, sized to what the standard allows: a name of at most
+/// thirty-two bytes and a passphrase of at most sixty-three.
+///
+/// Carried BY VALUE on the event rather than kept somewhere both the console and the radio can
+/// reach, because modules here couple through the bus and nothing else. It is the largest thing
+/// the bus carries, which is the price of that.
+///
+/// Typed in rather than built in: a passphrase compiled into a signed image is a passphrase that
+/// cannot be changed without re-signing, that is the same on every unit, and that lives in the
+/// repository. Nothing here writes it to storage either, so it is forgotten at the next reset --
+/// which is the right default until a product decides otherwise.
+#[derive(Clone, Copy)]
+pub struct Credentials {
+        ssid: [u8; 32],
+        ssid_len: u8,
+        pass: [u8; 63],
+        pass_len: u8,
+}
+
+impl Credentials {
+        /// `None` if either is longer than a network can name, or the network is not named.
+        pub fn new(ssid: &str, pass: &str) -> Option<Self> {
+                if ssid.is_empty() || ssid.len() > 32 || pass.len() > 63 {
+                        return None;
+                }
+                let mut c = Self { ssid: [0; 32], ssid_len: ssid.len() as u8, pass: [0; 63], pass_len: pass.len() as u8 };
+                c.ssid[..ssid.len()].copy_from_slice(ssid.as_bytes());
+                c.pass[..pass.len()].copy_from_slice(pass.as_bytes());
+                Some(c)
+        }
+
+        pub fn ssid(&self) -> &str {
+                core::str::from_utf8(&self.ssid[..self.ssid_len as usize]).unwrap_or("")
+        }
+
+        /// Empty for a network that asks for nothing.
+        pub fn pass(&self) -> &str {
+                core::str::from_utf8(&self.pass[..self.pass_len as usize]).unwrap_or("")
+        }
+}
+
+//   WRITTEN BY HAND so that the passphrase is not in it. This rides on an event, events are
+// printed by whatever is debugging at the time, and a console that echoes a secret once has
+// leaked it -- the derived version would have done exactly that, quietly, the first time anyone
+// turned the log level up.
+impl core::fmt::Debug for Credentials {
+        fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+                write!(f, "Credentials({}, ...)", self.ssid())
+        }
 }
 
 ///   The bus, public because a board may add a module of its own to it -- see `serve`.
@@ -459,11 +512,27 @@ fn parse_radio(_w: &mut Words) -> Parsed<AppEvent> {
         Parsed::Event(AppEvent::Radio)
 }
 
+//   the passphrase is one word, because the line is split on spaces. A network whose passphrase
+// contains one cannot be joined from here, which is a limit of this console and worth saying out
+// loud rather than failing to connect for no visible reason
+fn parse_join(w: &mut Words) -> Parsed<AppEvent> {
+        let Some(ssid) = w.next() else {
+                return Parsed::Usage;
+        };
+        //   no passphrase means a network that asks for none
+        let pass = w.next().unwrap_or("");
+        match Credentials::new(ssid, pass) {
+                Some(c) => Parsed::Event(AppEvent::Join(c)),
+                None => Parsed::Usage,
+        }
+}
+
 static COMMANDS: &[Command<AppEvent>] = &[
         Command { name: "stats", usage: "stats", parse: parse_stats },
         Command { name: "update", usage: "update", parse: parse_update },
         Command { name: "commit", usage: "commit", parse: parse_commit },
         Command { name: "radio", usage: "radio", parse: parse_radio },
+        Command { name: "join", usage: "join <network> [passphrase]", parse: parse_join },
 ];
 static CLI: Cli<AppEvent> = Cli::new(COMMANDS);
 

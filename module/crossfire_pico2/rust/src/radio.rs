@@ -11,11 +11,11 @@
 //! The indicator this board actually has hangs off the radio's own pins, so answering the
 //! application's indicator events means asking the radio, and that is this module's other job.
 
-use light_app_crossfire::{AppEvent, EVENTS};
+use light_app_crossfire::{AppEvent, Credentials, EVENTS};
 use light_core::events::Subscription;
-use light_core::info;
+use light_core::{info, warn};
 use light_core::module::{Module, Poll};
-use light_rp2::wifi::{Pins, Radio};
+use light_rp2::wifi::{JoinError, Pins, Radio};
 
 /// The radio's wiring on this board.
 const PINS: Pins = light_rp2::wifi::ONBOARD;
@@ -62,6 +62,26 @@ impl RadioMod {
                 self.set_indicator(true);
         }
 
+        /// Join a network, bringing the radio up first if it is not already.
+        ///
+        /// Asking to join is asking for a radio, so there is nothing to be gained by refusing
+        /// until someone has said `radio` first.
+        fn join(&mut self, c: &Credentials) {
+                self.bring_up();
+                let Some(radio) = self.radio.as_mut() else {
+                        return;
+                };
+                //   the name, never the passphrase -- see Credentials
+                info!("radio: joining {}", c.ssid());
+                match radio.join(c.ssid(), c.pass()) {
+                        Ok(()) => info!("radio: joined {}", c.ssid()),
+                        //   the radio says which of the two it was in its own line above this
+                        // one, so this does not guess between them
+                        Err(JoinError::Refused) => warn!("radio: the join was refused -- no network called {}, or the wrong passphrase for it", c.ssid()),
+                        Err(JoinError::NoAnswer) => warn!("radio: no answer from {} -- check the name, and that it is in range", c.ssid()),
+                }
+        }
+
         fn set_indicator(&mut self, on: bool) {
                 if let Some(radio) = self.radio.as_mut() {
                         radio.set_gpio(INDICATOR, on);
@@ -80,6 +100,10 @@ impl Module for RadioMod {
                         match ev {
                                 AppEvent::Radio => {
                                         self.bring_up();
+                                        busy = true;
+                                }
+                                AppEvent::Join(c) => {
+                                        self.join(&c);
                                         busy = true;
                                 }
                                 AppEvent::Mounted(on) => {
