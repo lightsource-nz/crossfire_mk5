@@ -514,13 +514,13 @@ fn parse_radio(_w: &mut Words) -> Parsed<AppEvent> {
         Parsed::Event(AppEvent::Radio)
 }
 
-//   the passphrase is one word, because the line is split on spaces. A network whose passphrase
-// contains one cannot be joined from here, which is a limit of this console and worth saying out
-// loud rather than failing to connect for no visible reason
 fn parse_address(_w: &mut Words) -> Parsed<AppEvent> {
         Parsed::Event(AppEvent::Address)
 }
 
+//   a name or a passphrase with a space in it goes in double quotes, which the console's own
+// tokenizer understands. Plenty of real network names have one, so this is the ordinary case
+// rather than the awkward one
 fn parse_join(w: &mut Words) -> Parsed<AppEvent> {
         let Some(ssid) = w.next() else {
                 return Parsed::Usage;
@@ -538,7 +538,7 @@ static COMMANDS: &[Command<AppEvent>] = &[
         Command { name: "update", usage: "update", parse: parse_update },
         Command { name: "commit", usage: "commit", parse: parse_commit },
         Command { name: "radio", usage: "radio", parse: parse_radio },
-        Command { name: "join", usage: "join <network> [passphrase]", parse: parse_join },
+        Command { name: "join", usage: "join <network> [passphrase]   (quote either if it contains a space)", parse: parse_join },
         Command { name: "address", usage: "address", parse: parse_address },
 ];
 static CLI: Cli<AppEvent> = Cli::new(COMMANDS);
