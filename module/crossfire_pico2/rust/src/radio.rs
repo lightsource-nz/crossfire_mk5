@@ -50,7 +50,7 @@ impl RadioMod {
                         return;
                 }
                 info!("radio: starting on {} bytes of image and {} of limits", self.firmware.len(), self.limits.len());
-                let radio = Radio::new(PINS, self.sys_hz, DMA_CH, self.firmware, self.limits);
+                let mut radio = Radio::new(PINS, self.sys_hz, DMA_CH, self.firmware, self.limits);
                 let a = radio.address();
                 //   READ OUT OF THE RUNNING RADIO, not out of the image: an address here is the
                 // proof that the bus carried a quarter of a megabyte correctly and that what is
@@ -82,6 +82,31 @@ impl RadioMod {
                 }
         }
 
+        /// Ask the joined network for an address, and say what it gave.
+        fn address(&mut self) {
+                let Some(radio) = self.radio.as_mut() else {
+                        warn!("radio: there is no radio up to ask a network for an address");
+                        return;
+                };
+                match radio.configure() {
+                        Ok(c) => {
+                                let a = c.address.address().octets();
+                                info!("radio: address {}.{}.{}.{}/{}", a[0], a[1], a[2], a[3], c.address.prefix_len());
+                                match c.gateway {
+                                        Some(g) => {
+                                                let g = g.octets();
+                                                info!("radio: the way out is {}.{}.{}.{}", g[0], g[1], g[2], g[3]);
+                                        }
+                                        //   worth saying: an address without one reaches the
+                                        // local network and nothing beyond it, which is a fetch
+                                        // that fails later for a reason nobody would look for here
+                                        None => warn!("radio: no way out of this network was given -- only local addresses are reachable"),
+                                }
+                        }
+                        Err(e) => warn!("radio: no address ({e:?}) -- has this radio joined a network, and did that network offer one?"),
+                }
+        }
+
         fn set_indicator(&mut self, on: bool) {
                 if let Some(radio) = self.radio.as_mut() {
                         radio.set_gpio(INDICATOR, on);
@@ -104,6 +129,10 @@ impl Module for RadioMod {
                                 }
                                 AppEvent::Join(c) => {
                                         self.join(&c);
+                                        busy = true;
+                                }
+                                AppEvent::Address => {
+                                        self.address();
                                         busy = true;
                                 }
                                 AppEvent::Mounted(on) => {

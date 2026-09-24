@@ -46,6 +46,8 @@ pub enum AppEvent {
         Commit,
         /// Join a network, on a board that has a radio to join it with.
         Join(Credentials),
+        /// Ask the network that was joined for an address of this device's own.
+        Address,
         /// Bring up a radio the board may have.
         ///
         /// ASKED FOR RATHER THAN DONE AT STARTUP, because powering a radio and uploading a
@@ -515,6 +517,10 @@ fn parse_radio(_w: &mut Words) -> Parsed<AppEvent> {
 //   the passphrase is one word, because the line is split on spaces. A network whose passphrase
 // contains one cannot be joined from here, which is a limit of this console and worth saying out
 // loud rather than failing to connect for no visible reason
+fn parse_address(_w: &mut Words) -> Parsed<AppEvent> {
+        Parsed::Event(AppEvent::Address)
+}
+
 fn parse_join(w: &mut Words) -> Parsed<AppEvent> {
         let Some(ssid) = w.next() else {
                 return Parsed::Usage;
@@ -533,6 +539,7 @@ static COMMANDS: &[Command<AppEvent>] = &[
         Command { name: "commit", usage: "commit", parse: parse_commit },
         Command { name: "radio", usage: "radio", parse: parse_radio },
         Command { name: "join", usage: "join <network> [passphrase]", parse: parse_join },
+        Command { name: "address", usage: "address", parse: parse_address },
 ];
 static CLI: Cli<AppEvent> = Cli::new(COMMANDS);
 
