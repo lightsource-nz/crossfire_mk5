@@ -184,13 +184,12 @@ pub struct UsbMod<H: Host> {
         host: H,
         forwarder: Forwarder<USB_SLOTS>,
         events: Subscription,
-        packets: u32,
         status: Status,
 }
 
 impl<H: Host> UsbMod<H> {
         pub fn new(host: H) -> Self {
-                Self { host, forwarder: Forwarder::new(), events: EVENTS.subscribe().expect("subscriber slot"), packets: 0, status: Status::default() }
+                Self { host, forwarder: Forwarder::new(), events: EVENTS.subscribe().expect("subscriber slot"), status: Status::default() }
         }
 
         fn publish_status(&mut self) {
@@ -205,7 +204,7 @@ impl<H: Host> UsbMod<H> {
         }
 
         fn publish_stats(&self) {
-                let s = StatsSnapshot { received: self.forwarder.received, forwarded: self.packets };
+                let s = StatsSnapshot { received: self.forwarder.received, forwarded: self.forwarder.forwarded };
                 // latest only, like the status mailbox
                 let _ = STATS.pop();
                 let _ = STATS.push(s);
@@ -220,7 +219,14 @@ impl<H: Host> Module for UsbMod<H> {
                 CORE0_PASSES.fetch_add(1, light_core::atomic::Ordering::Relaxed);
                 while let Some(ev) = EVENTS.poll(&self.events) {
                         match ev {
-                                AppEvent::Stats => info!("usb: {} mounted, hub addr {}, {} packets forwarded, {} dropped (cable), {} events dropped", self.forwarder.usb_mounted_count(), self.forwarder.hub_addr(), self.packets, self.forwarder.dropped, self.host.dropped_events()),
+                                //   two lines, because one does not fit a log record and the tail
+                                // of a truncated one is silently gone -- and the tail here is the
+                                // losses, which is the half worth reading
+                                AppEvent::Stats => {
+                                        let (lost_in, lost_out) = self.host.dropped_packets();
+                                        info!("usb: {} mounted, hub addr {}, {} packets in and {} out", self.forwarder.usb_mounted_count(), self.forwarder.hub_addr(), self.forwarder.received, self.forwarder.forwarded);
+                                        info!("usb: lost {} arriving, {} departing, {} to a cable number, {} mount events", lost_in, lost_out, self.forwarder.dropped, self.host.dropped_events());
+                                }
                                 _ => {}
                         }
                 }
@@ -252,7 +258,6 @@ impl<H: Host> Module for UsbMod<H> {
                 let now_ms = (log::now_us() / 1000) as u32;
                 let activity = self.forwarder.service(&mut self.host, now_ms);
                 if activity.forwarded {
-                        self.packets += 1;
                         busy = true;
                 }
                 let (rx, tx, changed) = self.forwarder.indicators(now_ms);
@@ -314,6 +319,16 @@ pub struct OledMod<B: SpiDisplayBus, C: Clock> {
         /// When the stats page last redrew, for its once-a-second uptime tick.
         stats_ms: u32,
         dirty: bool,
+        /// The longest single repaint and the longest single push of one, in microseconds.
+        ///
+        ///   THE DISPLAY IS THE ONE THING HERE THAT CAN STALL THE FORWARDING PATH. Every other
+        ///   module's pass is measured in microseconds; a repaint is a whole widget tree drawn
+        /// in one, and while it runs no MIDI packet is collected. A stall of a few milliseconds
+        /// is several USB frames, which is longer than an instrument's packets can wait in the
+        /// controller. These two figures say which half of the work it is, and `stats` reports
+        /// them beside the packets lost arriving -- the pair that would confirm the connection.
+        worst_paint_us: u32,
+        worst_push_us: u32,
 }
 
 impl<B: SpiDisplayBus, C: Clock> OledMod<B, C> {
@@ -334,7 +349,7 @@ impl<B: SpiDisplayBus, C: Clock> OledMod<B, C> {
                         Ok(l) => l,
                         Err(e) => panic!("the embedded UI does not parse: {e:?}"),
                 };
-                Self { display, layer, font, ui, lui, clock, display_offset, events: EVENTS.subscribe().expect("subscriber slot"), status: Status::default(), stats: StatsSnapshot::default(), page: PAGE_STATUS, stats_ms: 0, dirty: true }
+                Self { display, layer, font, ui, lui, clock, display_offset, events: EVENTS.subscribe().expect("subscriber slot"), status: Status::default(), stats: StatsSnapshot::default(), page: PAGE_STATUS, stats_ms: 0, dirty: true, worst_paint_us: 0, worst_push_us: 0 }
         }
 
         /// Refresh whichever page is shown from the latest published data.
@@ -457,16 +472,22 @@ impl<B: SpiDisplayBus, C: Clock> Module for OledMod<B, C> {
                 Ok(())
         }
         fn poll(&mut self) -> Poll {
+                let began = log::now_us();
                 match self.layer.poll(&mut self.display) {
                         Ok(_) => {}
                         Err(UpdateError::Timeout) => warn!("oled chunk timed out; update abandoned"),
                         Err(UpdateError::Busy) => unreachable!(),
                 }
+                self.worst_push_us = self.worst_push_us.max((log::now_us() - began) as u32);
                 while let Some(ev) = EVENTS.poll(&self.events) {
                         match ev {
                                 AppEvent::NavToggle => self.show_next_page(),
                                 AppEvent::Status | AppEvent::Indicators { .. } => self.dirty = true,
-                                AppEvent::Stats => info!("oled: {} frames, {} skipped, {} chunk timeouts", self.layer.frames(), self.layer.skipped, self.display.timeouts),
+                                AppEvent::Stats => {
+                                        let f = self.ui.frame_cost();
+                                        info!("oled: {} frames, {} skipped, {} chunk timeouts", self.layer.frames(), self.layer.skipped, self.display.timeouts);
+                                        info!("oled: worst paint {} us, flush {} us, transition step {} us; whole poll {} us", f.paint_us, f.flush_us, f.step_us, self.worst_paint_us);
+                                }
                                 _ => {}
                         }
                 }
@@ -484,7 +505,9 @@ impl<B: SpiDisplayBus, C: Clock> Module for OledMod<B, C> {
                         self.dirty = false;
                 }
                 let style = Style::new(*self.ui.theme(), Fonts::uniform(&self.font));
-                self.ui.render(self.layer, &mut self.display, &style, log::now_us());
+                let began = log::now_us();
+                self.ui.render(self.layer, &mut self.display, &style, began);
+                self.worst_paint_us = self.worst_paint_us.max((log::now_us() - began) as u32);
                 if self.ui.is_dirty() || self.layer.busy(&self.display) { Poll::Busy } else { Poll::Idle }
         }
         fn unload(&mut self) {
