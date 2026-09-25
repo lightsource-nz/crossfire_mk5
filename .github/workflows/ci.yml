@@ -1,0 +1,55 @@
+# Builds and tests crossfire on every push and pull request.
+#
+# The mechanics are shared -- see light_mk5/.github/workflows/. This file states only what is
+# particular to crossfire: which boards it has, which trees they build in, and what each builds.
+#
+# The host job needs nothing beside the framework: the application's tests are a plain
+# `cargo test` over the portable workspace, and the portable crates reach the framework's by path
+# through the light_mk5 checkout. The firmware legs need the pico-sdk fork as well, which is the
+# reusable workflow's default.
+name: CI
+
+on:
+  push:
+    branches: [main, development]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  host:
+    name: host tests
+    uses: lightsource-nz/light_mk5/.github/workflows/project-test.yml@main
+    with:
+      project: crossfire_mk5
+
+  firmware:
+    name: ${{ matrix.name }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          #   the rig, and the only board with the A/B flash map: its tree builds the bootloader
+          # that carries crossfire's partitions.json beside the application it loads
+          - name: rp2350 (Pico 2, Pico-OLED-1.3)
+            preset: conf-crossfire-pico2-debug
+            targets: crossfire_pico2 crossfire_bootloader
+            tree: build-crossfire-pico2
+          #   the product board. No bootloader and no sealing: the RP2040's boot ROM verifies
+          # nothing, so the image goes to the start of flash as it always has
+          - name: rp2040 (Pico)
+            preset: conf-crossfire-pico-debug
+            targets: crossfire_pico
+            tree: build-crossfire-pico
+    uses: lightsource-nz/light_mk5/.github/workflows/project-build.yml@main
+    with:
+      project: crossfire_mk5
+      preset: ${{ matrix.preset }}
+      targets: ${{ matrix.targets }}
+      tree: ${{ matrix.tree }}
