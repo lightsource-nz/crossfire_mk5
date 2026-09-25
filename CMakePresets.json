@@ -16,6 +16,19 @@
             }
         },
         {
+            "name": "conf-crossfire-pico2-release",
+            "description": "The same board and wiring as conf-crossfire-pico2-debug, built the way it ships: full optimisation and link-time optimisation across every crate. Its own tree, because the two differ in more than a flag and a shared one would hold whichever was configured last. Worth being a target rather than a release-day step, since what the everyday build measures is not what the product does -- and on this board the difference falls hardest on the rasteriser, the longest thing the application core does in one pass.",
+            "inherits": [
+                "conf-light-pico2",
+                "conf-light-release"
+            ],
+            "binaryDir": "${sourceDir}/build-crossfire-pico2-release",
+            "generator": "Ninja",
+            "cacheVariables": {
+                "Rust_CARGO_TARGET": "thumbv8m.main-none-eabi"
+            }
+        },
+        {
             "name": "conf-crossfire-pico2w-debug",
             "description": "The same crossfire as conf-crossfire-pico2-debug, on the variant of the board that carries a radio, built against the platform's own definition of that board rather than the plain one's. Its own tree, because the two differ in what the board is taken to have and a shared tree would quietly hold whichever was configured last.",
             "inherits": [

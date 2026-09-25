@@ -10,6 +10,9 @@
         Trees = @{
                 'conf-crossfire-host'       = 'build-host'
                 'conf-crossfire-pico2-debug' = 'build-crossfire-pico2'
+                #   the same targets built the way they ship. Reached with `-Preset`, since the
+                # CMake target is the same either way -- what changes is the tree it is built in
+                'conf-crossfire-pico2-release' = 'build-crossfire-pico2-release'
                 'conf-crossfire-pico2w-debug' = 'build-crossfire-pico2w'
                 'conf-crossfire-pico-debug'  = 'build-crossfire-pico'
         }
@@ -29,6 +32,15 @@
         # project from drifting out of step with a fix made there
         Debug = @{
                 'conf-crossfire-pico2-debug' = @{
+                        Config = '../light_mk5/openocd-rp2350.cfg'
+                        Svd    = '../../pico-sdk/src/rp2350/hardware_regs/RP2350.svd'
+                        Chip   = 'RP235x'
+                }
+                #   the release tree is the same board and the same chip; what differs is how the
+                # code was compiled, which the debugger does not care about. It is written out
+                # rather than shared because this table is keyed by preset, and a release image
+                # is flashed and inspected exactly as often as a debug one
+                'conf-crossfire-pico2-release' = @{
                         Config = '../light_mk5/openocd-rp2350.cfg'
                         Svd    = '../../pico-sdk/src/rp2350/hardware_regs/RP2350.svd'
                         Chip   = 'RP235x'
