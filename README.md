@@ -18,6 +18,10 @@ scripts/console.ps1 -Port <COM>               # the console rides the probe's UA
 scripts/test.ps1                              # the application's host tests
 ```
 
+CI (`.github/workflows/ci.yml`) runs the same scripts through the framework's reusable workflows:
+the host tests, and a firmware build of each board -- the Pico 2 leg with its bootloader -- whose
+images are kept as artifacts.
+
 ## Images are signed
 
 Every build signs its image and the device's flash map with `keys/dev.pem`, which is public and
