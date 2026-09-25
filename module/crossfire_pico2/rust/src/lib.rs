@@ -66,6 +66,9 @@ pub extern "C" fn light_app_main(info: &ShellInfo) -> ! {
                 Ok(region) => region,
                 Err(e) => panic!("this board has nowhere to keep assets ({e:?})"),
         };
+        //   how long checking the pack takes is a real part of how long this board takes to come
+        // up, and the only way anyone would notice it growing is if it is said
+        let began = now_us();
         let pack = match Pack::open(region, ASSET_DIGEST, Sha256Hw::new()) {
                 Ok(pack) => pack,
                 //   blank storage, which is a board whose assets were never written -- worth
@@ -87,7 +90,7 @@ pub extern "C" fn light_app_main(info: &ShellInfo) -> ! {
                 Ok(f) => f,
                 Err(e) => panic!("the packed font does not parse: {e:?}"),
         };
-        info!("assets: {} entries from the data region, {} bytes", pack.len(), pack.as_bytes().len());
+        info!("assets: {} entries from the data region, {} bytes, checked in {} ms", pack.len(), pack.as_bytes().len(), (now_us() - began) / 1000);
         //   which image the ROM chose, and what it made of the slot it was asked about: on a
         // board with an A/B pair this is the only answer to "which image am I running?"
         if let Some(b) = light_rp2::shell::boot_info() {
