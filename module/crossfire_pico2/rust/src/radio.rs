@@ -33,13 +33,17 @@ pub struct RadioMod {
         sys_hz: u32,
         firmware: &'static [u8],
         limits: &'static [u8],
+        /// The module's own calibration and identity, which the driver wants beside the image.
+        nvram: &'static [u8],
+        /// The short-range radio's own patch, uploaded beside the other two.
+        bt_firmware: &'static [u8],
         events: Subscription,
 }
 
 impl RadioMod {
         /// Hold what the radio will need, without touching it.
-        pub fn new(sys_hz: u32, firmware: &'static [u8], limits: &'static [u8]) -> Self {
-                Self { radio: None, sys_hz, firmware, limits, events: EVENTS.subscribe().expect("subscriber slot") }
+        pub fn new(sys_hz: u32, firmware: &'static [u8], limits: &'static [u8], nvram: &'static [u8], bt_firmware: &'static [u8]) -> Self {
+                Self { radio: None, sys_hz, firmware, limits, nvram, bt_firmware, events: EVENTS.subscribe().expect("subscriber slot") }
         }
 
         /// Power the radio up with the firmware out of this board's asset pack.
@@ -51,13 +55,21 @@ impl RadioMod {
                         info!("radio: already up");
                         return;
                 }
-                info!("radio: starting on {} bytes of image and {} of limits", self.firmware.len(), self.limits.len());
-                let mut radio = Radio::new(PINS, self.sys_hz, DMA_CH, self.firmware, self.limits);
+                info!("radio: starting on {} bytes of image, {} of limits and {} of short-range patch", self.firmware.len(), self.limits.len(), self.bt_firmware.len());
+                let mut radio = Radio::new_with_bluetooth(PINS, self.sys_hz, DMA_CH, self.firmware, self.limits, self.nvram, self.bt_firmware);
                 let a = radio.address();
                 //   READ OUT OF THE RUNNING RADIO, not out of the image: an address here is the
                 // proof that the bus carried a quarter of a megabyte correctly and that what is
                 // on the other end of it is now running
                 info!("radio: up, address {:02x}:{:02x}:{:02x}:{:02x}:{:02x}:{:02x}", a[0], a[1], a[2], a[3], a[4], a[5]);
+                //   and the same proof for the other radio in the same part, which has had its own
+                // image and answers on its own protocol: a reset it accepted and a question it
+                // answered. Reported rather than insisted on -- the wireless side is what this
+                // board already depends on, and it should not be held back by the new one
+                match radio.bluetooth_address() {
+                        Some(b) => info!("radio: short-range up, address {:02x}:{:02x}:{:02x}:{:02x}:{:02x}:{:02x}", b[0], b[1], b[2], b[3], b[4], b[5]),
+                        None => warn!("radio: the short-range controller did not answer; wireless is unaffected"),
+                }
                 self.radio = Some(radio);
                 //   lit once the radio is up, which on this board is the only way to light
                 // anything at all -- and so is worth doing as a sign of life
@@ -78,10 +90,30 @@ impl RadioMod {
                 match radio.join(c.ssid(), c.pass()) {
                         Ok(()) => info!("radio: joined {}", c.ssid()),
                         Err(JoinError::NoSuchNetwork) => warn!("radio: no network called {} was found -- check the name, and that it is in range", c.ssid()),
-                        Err(JoinError::Rejected) => warn!("radio: {} was found but would not have us -- the passphrase, or the network is busy; worth trying again", c.ssid()),
+                        //   NOT "worth trying again", which it was until the retry was found to
+                        // stop the board: the part counts the attempt, not the outcome, so a second
+                        // join needs the radio taken down and back up -- which here means a reset
+                        //   TWO LINES, AND THE SECOND ONE EARNS ITS SPACE. This used to blame the
+                        // passphrase alone, which cost a long evening: the passphrase was right and
+                        // the network was a mixed WPA2/WPA3 one, which this radio does not join --
+                        // it offers the newer exchange, the access point refuses it, and from here
+                        // that is indistinguishable from a typo. Naming the other cause is the
+                        // difference between checking a setting and doubting what you typed.
+                        Err(JoinError::Rejected) => {
+                                warn!("radio: {} refused us; reset the board to try again", c.ssid());
+                                warn!("radio: check the passphrase -- and that the network is not WPA3 or mixed WPA2/WPA3");
+                        }
                         Err(JoinError::Refused(code)) => warn!("radio: {} refused the join, reason {code}", c.ssid()),
                         Err(JoinError::NoAnswer) => warn!("radio: no answer from {} -- check the name, and that it is in range", c.ssid()),
-                        Err(JoinError::AlreadyJoined) => warn!("radio: already joined a network; reset the board to join a different one"),
+                        //   a join has been tried once already, which may or may not have worked:
+                        // either way the part will refuse the commands a second one needs, and the
+                        // driver treats that refusal as fatal
+                        Err(JoinError::AlreadyJoined) => warn!("radio: a join has already been attempted on this power-up; reset the board to try another"),
+                        //   THESE TWO COST NOTHING, which is worth saying out loud in the message:
+                        // the radio was never asked, so the attempt is still there to be used and
+                        // the correction can be typed straight in
+                        Err(JoinError::BadName) => warn!("radio: a network name is 1 to 32 characters; nothing was sent"),
+                        Err(JoinError::BadPassphrase) => warn!("radio: a passphrase is 8 to 63 characters, not {}; nothing was sent", c.pass().len()),
                 }
         }
 
@@ -188,6 +220,38 @@ impl RadioMod {
                 warn!("radio: the hardware would not start it ({e:?})");
         }
 
+        /// List what the radio can see. Brings it up first, because asking an unpowered radio what
+        /// it can see is not a question.
+        ///
+        ///   NEEDS NO PASSPHRASE, which is the point: it separates "that network is not there" from
+        /// "this radio is not receiving", and those are the two explanations for a join that comes
+        /// back saying it found nothing.
+        fn scan(&mut self) {
+                self.bring_up();
+                let Some(radio) = self.radio.as_mut() else {
+                        return;
+                };
+                info!("radio: looking for networks");
+                let seen = radio.scan(|name, bssid, rssi, chanspec| {
+                        //   the signal and the channel as well as the name: a network that is there
+                        // but barely audible looks identical to one that is absent if only the name
+                        // is reported, and the channel says which band answered
+                        //   and the address of the radio last, which is what tells two entries of
+                        // the same name apart -- one network carried by two radios, not one network
+                        // listed twice
+                        let a = bssid;
+                        let name = if name.is_empty() { "(hidden)" } else { name };
+                        info!("radio:   {}, {} dBm, chanspec {:#06x}, {:02x}:{:02x}:{:02x}:{:02x}:{:02x}:{:02x}", name, rssi, chanspec, a[0], a[1], a[2], a[3], a[4], a[5]);
+                });
+                match seen {
+                        0 => warn!("radio: nothing at all was heard -- this radio is not receiving, whatever is in the room"),
+                        //   RADIOS, NOT NETWORKS, because they are not the same count and the
+                        // difference is visible right above: one name can be served by several
+                        // radios, and one radio can serve several names
+                        n => info!("radio: {} radios heard -- one network may be carried by several", n),
+                }
+        }
+
         fn set_indicator(&mut self, on: bool) {
                 if let Some(radio) = self.radio.as_mut() {
                         radio.set_gpio(INDICATOR, on);
@@ -214,6 +278,10 @@ impl Module for RadioMod {
                                 }
                                 AppEvent::Address => {
                                         self.address();
+                                        busy = true;
+                                }
+                                AppEvent::Scan => {
+                                        self.scan();
                                         busy = true;
                                 }
                                 AppEvent::Fetch(t) => {

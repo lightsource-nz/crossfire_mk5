@@ -26,4 +26,7 @@ light-update = { path = "../../../../light_mk5/crates/light-update" }
 # build system -- a crossfire_pico2 is an RP2350 or it is nothing
 #   wifi, because this variant of the board carries the radio -- which also means the pin the
 # plain board's indicator sits on is the radio's chip select here, so there is no led in board.rs
-light-rp2 = { path = "../../../../light_mk5/crates/light-rp2", features = ["usb-host", "rp2350", "wifi"] }
+#   bluetooth, because the same radio is wanted for a second thing: carrying instrument traffic
+# to a device with no cable on it. It is additive to wifi -- one part, uploaded once, with the
+# over-the-air update path it already had
+light-rp2 = { path = "../../../../light_mk5/crates/light-rp2", features = ["usb-host", "rp2350", "wifi", "bluetooth"] }

@@ -82,6 +82,10 @@ pub extern "C" fn light_app_main(info: &ShellInfo) -> ! {
         };
         //   the radio's firmware is an asset like the rest: this board's radio holds nothing of
         // its own, so a quarter of a megabyte is uploaded into it at every power-up
+        let (radio_bt, radio_nvram) = match (pack.get("radio_bt"), pack.get("radio_nvram")) {
+                (Ok(b), Ok(n)) => (b, n),
+                _ => panic!("the asset pack is missing the short-range patch or the radio's settings"),
+        };
         let (radio_blob, radio_limits) = match (pack.get("radio"), pack.get("radio_limits")) {
                 (Ok(f), Ok(l)) => (f, l),
                 _ => panic!("the asset pack has no radio firmware in it"),
@@ -118,7 +122,7 @@ pub extern "C" fn light_app_main(info: &ShellInfo) -> ! {
         //   the radio, which on this board also carries the indicator -- see radio.rs for why
         // that is not a pin of the board's
         static RADIO_MOD: StaticCell<RadioMod> = StaticCell::new();
-        let radio_mod = RADIO_MOD.init(RadioMod::new(clocks.sys_hz, radio_blob, radio_limits));
+        let radio_mod = RADIO_MOD.init(RadioMod::new(clocks.sys_hz, radio_blob, radio_limits, radio_nvram, radio_bt));
         app::serve(usb_mod, oled_mod, &mut console_mod, &mut nav_mod, &mut [update_mod, radio_mod], move || idle.idle())
 }
 

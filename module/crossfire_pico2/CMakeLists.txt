@@ -43,7 +43,11 @@ light_add_ui(crossfire_pico2_ui
 # own, so this is uploaded into it at every power-up -- a quarter of a megabyte which, linked into
 # the image the way the vendor intends, would sit in BOTH slots of the A/B pair and be re-signed
 # whenever anything else changed
-light_add_radio_firmware(crossfire_pico2_radio)
+#   BLUETOOTH, because this board wants its wireless for two things: replacing its own firmware
+# over the air, and carrying instrument traffic to a device with no cable on it. Asking for it
+# takes the vendor drop whose image carries both radios, and adds the separate patch the
+# short-range one needs -- seven kilobytes beside the other two hundred and twenty.
+light_add_radio_firmware(crossfire_pico2_radio BLUETOOTH)
 
 #   all of them as one pack, written to the partition that accepts the data family and read from
 # there at startup. The crate is built with the pack's DIGEST rather than its contents: the image
@@ -52,6 +56,7 @@ light_add_radio_firmware(crossfire_pico2_radio)
 light_add_asset_pack(crossfire_pico2_assets
         ENTRIES font=crossfire_pico2_font theme=crossfire_pico2_theme ui=crossfire_pico2_ui
                 radio=crossfire_pico2_radio_image radio_limits=crossfire_pico2_radio_limits
+                radio_bt=crossfire_pico2_radio_bluetooth radio_nvram=crossfire_pico2_radio_nvram
         CRATE light_app_crossfire_pico2 ENV LIGHT_ASSETS_SHA256
         FAMILY data
 )

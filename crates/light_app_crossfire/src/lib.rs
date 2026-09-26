@@ -48,6 +48,9 @@ pub enum AppEvent {
         Join(Credentials),
         /// Ask the network that was joined for an address of this device's own.
         Address,
+        /// List what the radio can see, which needs no passphrase and so is the one radio
+        /// diagnostic that can be run by anyone at any time.
+        Scan,
         /// Fetch a firmware image over the network and stage it, the way `update` stages a copy
         /// of what is already here.
         Fetch(FetchTarget),
@@ -572,6 +575,10 @@ fn parse_address(_w: &mut Words) -> Parsed<AppEvent> {
         Parsed::Event(AppEvent::Address)
 }
 
+fn parse_scan(_w: &mut Words) -> Parsed<AppEvent> {
+        Parsed::Event(AppEvent::Scan)
+}
+
 //   `fetch 192.168.1.10:8000 /crossfire.bin`, the port optional
 fn parse_fetch(w: &mut Words) -> Parsed<AppEvent> {
         let (Some(where_), Some(path)) = (w.next(), w.next()) else {
@@ -623,6 +630,7 @@ static COMMANDS: &[Command<AppEvent>] = &[
         Command { name: "radio", usage: "radio", parse: parse_radio },
         Command { name: "join", usage: "join <network> [passphrase]   (quote either if it contains a space)", parse: parse_join },
         Command { name: "address", usage: "address", parse: parse_address },
+        Command { name: "scan", usage: "scan", parse: parse_scan },
         Command { name: "fetch", usage: "fetch <address>[:port] <path>", parse: parse_fetch },
 ];
 static CLI: Cli<AppEvent> = Cli::new(COMMANDS);
