@@ -7,7 +7,7 @@
 #![no_std]
 
 use light_app_crossfire as app;
-use app::{ConsoleMod, LedMod, NavMod, OledMod, UsbMod};
+use app::{ConsoleMod, LedMod, NavMod, OledMod, Permanent, ProbationMod, UsbMod};
 use light_core::{info, log, ConstStaticCell, Idle, StaticCell};
 use light_display::sh1107::Sh1107;
 use light_display::{Display, FrameLayer};
@@ -64,10 +64,13 @@ pub extern "C" fn light_app_main(info: &ShellInfo) -> ! {
         let mut led_mod = LedMod::new(p.led);
         let mut console_mod = ConsoleMod::new();
         let mut nav_mod = NavMod::new(bootsel);
+        //   the RP2040's ROM runs whatever is at the start of flash and puts nothing on probation:
+        // every image is already kept, so there is nothing to check before keeping it
+        let mut probation_mod = ProbationMod::new(Permanent, || app::vitals(light_rp2::shell::core1_ticks()));
         let _ = (p.key0, p.key1);
 
         let mut idle = Breathe;
-        app::serve(usb_mod, oled_mod, &mut led_mod, &mut console_mod, &mut nav_mod, move || idle.idle())
+        app::serve(usb_mod, oled_mod, &mut led_mod, &mut console_mod, &mut nav_mod, &mut probation_mod, move || idle.idle())
 }
 
 #[cfg(target_os = "none")]

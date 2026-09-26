@@ -7,7 +7,8 @@
 #![no_std]
 
 use light_app_crossfire as app;
-use app::{ConsoleMod, LedMod, NavMod, OledMod, UsbMod};
+use app::{ConsoleMod, LedMod, NavMod, OledMod, ProbationMod, UsbMod};
+use light_core::hal::UpdateError;
 use light_core::{info, log, ConstStaticCell, Idle, StaticCell};
 use light_display::sh1107::Sh1107;
 use light_display::{Display, FrameLayer};
@@ -17,8 +18,9 @@ mod board;
 use board::*;
 use light_rp2::spi::Spi1Display;
 use light_rp2::usb_host::UsbMidiHost;
-use light_rp2::shell::{bootsel, panic_report, ShellInfo, UART_BAUD, UART_RX, UART_TX};
+use light_rp2::shell::{bootsel, panic_report, BootInfo, ShellInfo, UART_BAUD, UART_RX, UART_TX};
 use light_rp2::uart::Uart;
+use light_rp2::update::COMMIT_SCRATCH_WORDS;
 use light_rp2::{now_us, Breathe, Clocks, SysClock};
 
 /// 64x128 at 1 bpp: one kilobyte.
@@ -28,6 +30,62 @@ static FONT_BLOB: &[u8] = include_bytes!(env!("LIGHT_FONT_LGF"));
 /// rounding, and the crossfire status page -- both compiled to blobs the app embeds.
 static THEME_BLOB: &[u8] = include_bytes!(env!("LIGHT_THEME_LTH"));
 static UI_BLOB: &[u8] = include_bytes!(env!("LIGHT_UI_LUI"));
+
+/// The boot ROM's flag for an image started on approval that has not yet bought itself
+/// (`BOOT_TBYB_AND_UPDATE_FLAG_BUY_PENDING`): a candidate, discarded unless it commits.
+const BUY_PENDING: u8 = 0x01;
+
+/// Whether an image is on probation is the ROM's to say, and keeping it is the ROM's to do: this
+/// is the RP2350's answer to both, for the application's probation checks.
+struct RomProbation {
+        candidate: bool,
+}
+
+impl RomProbation {
+        fn new(boot: Option<BootInfo>) -> Self {
+                Self { candidate: boot.is_some_and(|b| b.tbyb_and_update & BUY_PENDING != 0) }
+        }
+}
+
+impl app::Probation for RomProbation {
+        fn candidate(&self) -> bool {
+                self.candidate
+        }
+
+        fn commit(&mut self) -> Result<(), UpdateError> {
+                //   the scratch the commit borrows: two sectors, word-aligned, in .bss because it is
+                // twice core 0's whole stack -- see COMMIT_SCRATCH_WORDS for why neither half is
+                // negotiable. Taken once; the application commits at most once
+                static SCRATCH: ConstStaticCell<[u32; COMMIT_SCRATCH_WORDS]> = ConstStaticCell::new([0; COMMIT_SCRATCH_WORDS]);
+                let Some(scratch) = SCRATCH.try_take() else {
+                        return Err(UpdateError::Refused);
+                };
+                //   THE COMMIT REWRITES THE FLASH THIS FIRMWARE RUNS FROM, and for its duration
+                // nothing may fetch from it. Core 1 runs the console out of flash, so it is parked in
+                // RAM through the SDK's lockout -- the mechanism the shell's BOOTSEL read already
+                // uses on this board -- and core 0's interrupts are held off, because every handler
+                // it has (the host stack's, the display's DMA, the timer's) is in flash too. The
+                // lockout comes FIRST: taken inside the critical section it could find core 1
+                // waiting on the same lock with its interrupts off, never answering.
+                //   A pause of tens of milliseconds, once, a few seconds after an update.
+                // SAFETY: the SDK's lockout pair, which core 1 answers (the shell made it a victim
+                // before launching it); balanced within this call
+                unsafe { multicore_lockout_start_blocking() };
+                let result = critical_section::with(|_| light_rp2::update::commit(scratch));
+                unsafe { multicore_lockout_end_blocking() };
+                result
+        }
+}
+
+unsafe extern "C" {
+        fn multicore_lockout_start_blocking();
+        fn multicore_lockout_end_blocking();
+}
+
+/// The application's signs of life, with this port's console-core pulse.
+fn vitals() -> app::Vitals {
+        app::vitals(light_rp2::shell::core1_ticks())
+}
 
 /// Core 1: the port's console loop on the UART alone -- the native USB port is the MIDI host,
 /// core 0's, so this build has no CDC console and light-rp2 carries no device stack.
@@ -54,7 +112,8 @@ pub extern "C" fn light_app_main(info: &ShellInfo) -> ! {
         info!("crossfire (pico2): sys {} Hz; host stack on core 0, console on the UART", clocks.sys_hz);
         //   which image the ROM chose, and what it made of the slot it was asked about: on a
         // board with an A/B pair this is the only answer to "which image am I running?"
-        if let Some(b) = light_rp2::shell::boot_info() {
+        let boot = light_rp2::shell::boot_info();
+        if let Some(b) = boot {
                 info!("boot: type {}, partition {:?}, probation {:#x}; diagnosing {:?} -> {:#010x}", b.boot_type, b.partition, b.tbyb_and_update, b.diagnostic_partition, b.diagnostic);
         }
         // the host stack, on THIS core -- see the shell
@@ -69,10 +128,13 @@ pub extern "C" fn light_app_main(info: &ShellInfo) -> ! {
         let mut led_mod = LedMod::new(p.led);
         let mut console_mod = ConsoleMod::new();
         let mut nav_mod = NavMod::new(bootsel);
+        //   an image started on approval keeps itself only once the application has shown it
+        // works; until then a reset, or the ROM's own probation watchdog, brings the old one back
+        let mut probation_mod = ProbationMod::new(RomProbation::new(boot), vitals);
         let _ = (p.key0, p.key1);
 
         let mut idle = Breathe;
-        app::serve(usb_mod, oled_mod, &mut led_mod, &mut console_mod, &mut nav_mod, move || idle.idle())
+        app::serve(usb_mod, oled_mod, &mut led_mod, &mut console_mod, &mut nav_mod, &mut probation_mod, move || idle.idle())
 }
 
 #[cfg(target_os = "none")]
