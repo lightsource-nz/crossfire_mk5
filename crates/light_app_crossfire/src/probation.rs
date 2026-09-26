@@ -180,8 +180,16 @@ impl<P: Probation> Module for ProbationMod<P> {
 
         fn deps(&self) -> &'static [&'static str] {
                 //   the modules whose health is judged: they load first, so the first reading is
-                // of an application that is already up
-                &["usb", "oled", "led", "console", "nav"]
+                // of an application that is already up.
+                //
+                //   ONLY THE ONES EVERY BOARD HAS -- which is to say, only the ones `serve` takes by
+                // name. A portable module must not depend on one a board merely MIGHT bring. Naming
+                // "led" here was enough to stop a board outright: where the indicator hangs off the
+                // radio there is no such module, the runtime fails at start on a missing dependency,
+                // and it fails UNREPORTABLY -- the panic goes into the log queue and the handler
+                // halts the core before the console has drained it, so the whole symptom is a board
+                // that says nothing whatsoever.
+                &["usb", "oled", "console", "nav"]
         }
 
         fn load(&mut self) -> Result<(), ()> {
