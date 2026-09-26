@@ -1,7 +1,13 @@
-//! Board wiring for crossfire on a Pico 2 with the Waveshare Pico-OLED-1.3 display board:
-//! the OLED (SH1107, 64x128 portrait glass, 1 bpp) on SPI1 as the status display, its two
-//! keys, and the Pico 2's own LED. The pin assignments are the Pico-OLED-1.3's as it plugs
-//! onto the Pico header.
+//! Board wiring for crossfire on a wireless Pico 2 with the Waveshare Pico-OLED-1.3 display
+//! board: the OLED (SH1107, 64x128 portrait glass, 1 bpp) on SPI1 as the status display, and its
+//! two keys. The pin assignments are the Pico-OLED-1.3's as it plugs onto the Pico header.
+//!
+//! THERE IS NO INDICATOR PIN HERE, and its absence is the point. On the wireless board the pin
+//! that carries the indicator on the plain one is the RADIO'S CHIP SELECT -- the same pin, a
+//! different job -- so a firmware that drives it as an indicator is quietly driving the radio's
+//! chip select, which is harmless exactly as long as the radio is held in reset and no longer.
+//! The indicator this board does have hangs off the radio's own pins, so it belongs to the
+//! radio's module.
 //!
 //! This lives with the HARDWARE MODULE, not in the port crate or the application:
 //! `light-rp2` knows the chip and nothing about what anyone soldered to it, and
@@ -9,11 +15,10 @@
 //! with another copy of this file.
 
 use light_core::atomic::{AtomicBool, Ordering};
-use light_rp2::gpio::{Input, Output};
+use light_rp2::gpio::Input;
 use light_rp2::spi::Spi1Display;
 use light_rp2::Clocks;
 
-pub const PIN_LED: usize = 25;
 /// The Pico-OLED-1.3's two keys, active low.
 pub const PIN_KEY0: usize = 15;
 pub const PIN_KEY1: usize = 17;
@@ -36,7 +41,6 @@ pub const OLED_SPI_HZ: u32 = 10_000_000;
 pub const OLED_DMA_CH: usize = 15;
 
 pub struct Peripherals {
-        pub led: Output,
         pub key0: Input,
         pub key1: Input,
         pub oled_bus: Spi1Display,
@@ -53,7 +57,6 @@ pub fn take(clocks: &Clocks) -> Option<Peripherals> {
         // the shell's USB and timer blocks are not in this set
         unsafe {
                 Some(Peripherals {
-                        led: Output::new(PIN_LED, false),
                         key0: Input::new_pull_up(PIN_KEY0),
                         key1: Input::new_pull_up(PIN_KEY1),
                         oled_bus: Spi1Display::new(

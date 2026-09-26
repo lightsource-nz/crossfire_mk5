@@ -17,25 +17,48 @@ target_link_libraries(crossfire_pico2 PRIVATE
         light_app_crossfire_pico2
 )
 
+#   THE ASSETS GO IN THE DATA PARTITION, not in the image. Each of the three is compiled exactly
+# as before -- what changes is that none of them names a crate to embed it in, so the blobs are
+# gathered into one pack below instead.
+#
 #   the status font: 16 px on the Pico-OLED-1.3's real geometry (64x128 over 17.2x32.3 mm)
 # -- two lines of ten cells across the rotated 128-pixel row
 light_add_font(crossfire_pico2_font
         FONT ${CMAKE_CURRENT_LIST_DIR}/../../assets/fonts/TypeLightSans.ttf
         DISPLAY po13 WIDTH 64 HEIGHT 128 DIMENSION 17.2x32.3
         POINT_SIZE 12 PIXEL_SIZE 16
-        CRATE light_app_crossfire_pico2 ENV LIGHT_FONT_LGF
 )
 
 #   the look-and-feel and the interface as data, shared with the Pico crossfire: the framework
 # MONO default with this OLED's rounding, and the crossfire status page -- both live beside the
-# application crate, embedded by it through the two env vars
+# application crate
 light_add_theme(crossfire_pico2_theme MONO
         THEME ${CMAKE_CURRENT_LIST_DIR}/../../crates/light_app_crossfire/theme.json
-        CRATE light_app_crossfire_pico2 ENV LIGHT_THEME_LTH
 )
 light_add_ui(crossfire_pico2_ui
         UI ${CMAKE_CURRENT_LIST_DIR}/../../crates/light_app_crossfire/design.json
-        CRATE light_app_crossfire_pico2 ENV LIGHT_UI_LUI
+)
+
+#   the radio's own firmware, cut out of the platform's vendor drop. The part holds nothing of its
+# own, so this is uploaded into it at every power-up -- a quarter of a megabyte which, linked into
+# the image the way the vendor intends, would sit in BOTH slots of the A/B pair and be re-signed
+# whenever anything else changed
+#   BLUETOOTH, because this board wants its wireless for two things: replacing its own firmware
+# over the air, and carrying instrument traffic to a device with no cable on it. Asking for it
+# takes the vendor drop whose image carries both radios, and adds the separate patch the
+# short-range one needs -- seven kilobytes beside the other two hundred and twenty.
+light_add_radio_firmware(crossfire_pico2_radio BLUETOOTH)
+
+#   all of them as one pack, written to the partition that accepts the data family and read from
+# there at startup. The crate is built with the pack's DIGEST rather than its contents: the image
+# is signed, so the pack is trusted at one remove, and assets can be replaced on a device without
+# re-signing anything. The entry names are what the firmware asks for
+light_add_asset_pack(crossfire_pico2_assets
+        ENTRIES font=crossfire_pico2_font theme=crossfire_pico2_theme ui=crossfire_pico2_ui
+                radio=crossfire_pico2_radio_image radio_limits=crossfire_pico2_radio_limits
+                radio_bt=crossfire_pico2_radio_bluetooth radio_nvram=crossfire_pico2_radio_nvram
+        CRATE light_app_crossfire_pico2 ENV LIGHT_ASSETS_SHA256
+        FAMILY data
 )
 
 #   the application image, signed and stamped with this project's own version: what the

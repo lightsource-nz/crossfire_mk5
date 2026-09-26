@@ -10,11 +10,20 @@
         Trees = @{
                 'conf-crossfire-host'       = 'build-host'
                 'conf-crossfire-pico2-debug' = 'build-crossfire-pico2'
+                #   the same targets built the way they ship. Reached with `-Preset`, since the
+                # CMake target is the same either way -- what changes is the tree it is built in
+                'conf-crossfire-pico2-release' = 'build-crossfire-pico2-release'
+                'conf-crossfire-pico2w-debug' = 'build-crossfire-pico2w'
                 'conf-crossfire-pico-debug'  = 'build-crossfire-pico'
         }
 
+        #   Bootloader names the target whose image carries this board's flash map -- the one
+        # thing the script layer cannot work out for itself. With it, writing the board means the
+        # bootloader, the application in the slot the map gives it and the assets in theirs, each
+        # at an address read back out of the built bootloader rather than restated here.
+        #   The RP2040 board has no such facility: its image is its whole flash.
         Targets = @{
-                'crossfire_pico2' = @{ Preset = 'conf-crossfire-pico2-debug'; Flash = 'swd' }
+                'crossfire_pico2' = @{ Preset = 'conf-crossfire-pico2-debug'; Flash = 'swd'; Bootloader = 'crossfire_bootloader' }
                 'crossfire_pico'  = @{ Preset = 'conf-crossfire-pico-debug'; Flash = 'swd' }
         }
 
@@ -23,6 +32,20 @@
         # project from drifting out of step with a fix made there
         Debug = @{
                 'conf-crossfire-pico2-debug' = @{
+                        Config = '../light_mk5/openocd-rp2350.cfg'
+                        Svd    = '../../pico-sdk/src/rp2350/hardware_regs/RP2350.svd'
+                        Chip   = 'RP235x'
+                }
+                #   the release tree is the same board and the same chip; what differs is how the
+                # code was compiled, which the debugger does not care about. It is written out
+                # rather than shared because this table is keyed by preset, and a release image
+                # is flashed and inspected exactly as often as a debug one
+                'conf-crossfire-pico2-release' = @{
+                        Config = '../light_mk5/openocd-rp2350.cfg'
+                        Svd    = '../../pico-sdk/src/rp2350/hardware_regs/RP2350.svd'
+                        Chip   = 'RP235x'
+                }
+                'conf-crossfire-pico2w-debug' = @{
                         Config = '../light_mk5/openocd-rp2350.cfg'
                         Svd    = '../../pico-sdk/src/rp2350/hardware_regs/RP2350.svd'
                         Chip   = 'RP235x'

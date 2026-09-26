@@ -17,3 +17,31 @@ members = [
 version = "0.1.0"
 edition = "2024"
 license = "MIT"
+
+#   THE SAME PROFILES THE FRAMEWORK'S OWN FIRMWARE WORKSPACE USES, and they have to be repeated
+# here because a profile is read only from the workspace a crate is BUILT in -- the framework's
+# settings do not travel with its crates when another project builds them. Without this section
+# the default applies, which is no optimisation at all: not merely this project's code but every
+# framework crate compiled into it, the port included.
+#
+#   It is not a small difference, and it does not announce itself. Measured on this board,
+# reading the asset region cost about two hundred cycles a byte, which put a third of a second
+# into every start-up and read exactly as though the flash interface were misconfigured. It was
+# not -- the part was doing quad reads at fifty megahertz the whole time. What was slow was the
+# code doing the reading.
+#
+#   Level one rather than three for the everyday build, matching the framework: it removes the
+# pathological cost while leaving the code recognisable in a debugger. A release build takes
+# everything.
+[profile.dev]
+panic = "abort"
+opt-level = 1
+debug = true
+
+[profile.release]
+panic = "abort"
+opt-level = 3
+debug = true
+lto = "fat"
+codegen-units = 1
+

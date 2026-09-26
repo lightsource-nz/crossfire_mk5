@@ -28,7 +28,7 @@ pub use probation::{judge, Permanent, Probation, ProbationMod, Verdict, Vitals, 
 pub const USB_SLOTS: usize = 4;
 
 #[derive(Clone, Copy, Debug)]
-enum AppEvent {
+pub enum AppEvent {
         /// The mounted set changed: the display's text is stale.
         Status,
         /// The RX/TX indicators changed. The fields ride along for `Debug` -- the display
@@ -40,9 +40,81 @@ enum AppEvent {
         Stats,
         /// The BOOTSEL button was pressed: move the display to the next page.
         NavToggle,
+        /// Replace this board's firmware with what a board-side module can reach. Published by the
+        /// console; acted on by whatever module the hardware supplied, or by nobody on a board
+        /// that cannot do it.
+        Update,
+        /// Keep the firmware that is running, where it was started on approval. Without this the
+        /// next reset goes back to what was there before -- which is the point of it.
+        Commit,
+        /// Join a network, on a board that has a radio to join it with.
+        Join(Credentials),
+        /// Ask the network that was joined for an address of this device's own.
+        Address,
+        /// List what the radio can see, which needs no passphrase and so is the one radio
+        /// diagnostic that can be run by anyone at any time.
+        Scan,
+        /// Fetch a firmware image over the network and stage it, the way `update` stages a copy
+        /// of what is already here.
+        Fetch(FetchTarget),
+        /// Bring up a radio the board may have.
+        ///
+        /// ASKED FOR RATHER THAN DONE AT STARTUP, because powering a radio and uploading a
+        /// quarter of a megabyte into it is the longest and least certain thing this firmware
+        /// does, and a board whose radio will not start is still a board that forwards its
+        /// instruments. On a board with no radio nothing answers, which is the right outcome.
+        Radio,
 }
 
-static EVENTS: EventBus<AppEvent, 8, 3> = EventBus::new();
+//   WHAT IT TAKES TO JOIN A NETWORK IS NO LONGER DECLARED HERE, and why is worth keeping. This was
+// an application's own type: it bounded the network name and the passphrase's MAXIMUM, while the
+// radio's driver separately bounded the passphrase's MINIMUM. Each was locally complete, neither
+// author could see the other, and between them a passphrase of five characters reached the part --
+// which refuses such a command outright, which its driver treats as fatal. A board stopped for a
+// typo, and the report blamed the passphrase's contents rather than its length.
+//
+//   The rules live in the framework now, in one type that cannot be built wrong and is tested on
+// the host, so this crate takes it rather than restating it. What was true of it here is still true
+// there: it is carried BY VALUE on an event rather than kept somewhere the console and the radio
+// both reach, because modules couple through the bus and nothing else -- it is the largest thing the
+// bus carries, and that is the price. It is typed in rather than built in, because a passphrase
+// compiled into a signed image cannot be changed without re-signing, is the same on every unit, and
+// lives in the repository. Nothing writes it to storage, so it is forgotten at the next reset. And
+// the passphrase is kept out of its Debug by hand, because this rides on an event, events are
+// printed by whatever is debugging at the time, and a console that echoes a secret once has leaked
+// it.
+pub use light_wireless::Credentials;
+
+/// Where an image is to be fetched from: an address, a port, and what to ask for.
+///
+/// AN ADDRESS AND NOT A NAME. Resolving a name means another service to depend on at exactly the
+/// moment a device is trying to repair itself, and one more thing that can be wrong when the
+/// update fails. An address given in the command is a smaller promise.
+#[derive(Clone, Copy, Debug)]
+pub struct FetchTarget {
+        pub ip: [u8; 4],
+        pub port: u16,
+        path: [u8; 96],
+        path_len: u8,
+}
+
+impl FetchTarget {
+        pub fn new(ip: [u8; 4], port: u16, path: &str) -> Option<Self> {
+                if path.is_empty() || path.len() > 96 {
+                        return None;
+                }
+                let mut t = Self { ip, port, path: [0; 96], path_len: path.len() as u8 };
+                t.path[..path.len()].copy_from_slice(path.as_bytes());
+                Some(t)
+        }
+
+        pub fn path(&self) -> &str {
+                core::str::from_utf8(&self.path[..self.path_len as usize]).unwrap_or("/")
+        }
+}
+
+///   The bus, public because a board may add a module of its own to it -- see `serve`.
+pub static EVENTS: EventBus<AppEvent, 8, 4> = EventBus::new();
 static CONSOLE_BYTES: Mailbox<u8, 128> = Mailbox::new();
 
 /// A console byte from the transport the hardware module owns. Never blocks; a full
@@ -105,13 +177,12 @@ pub struct UsbMod<H: Host> {
         host: H,
         forwarder: Forwarder<USB_SLOTS>,
         events: Subscription,
-        packets: u32,
         status: Status,
 }
 
 impl<H: Host> UsbMod<H> {
         pub fn new(host: H) -> Self {
-                Self { host, forwarder: Forwarder::new(), events: EVENTS.subscribe().expect("subscriber slot"), packets: 0, status: Status::default() }
+                Self { host, forwarder: Forwarder::new(), events: EVENTS.subscribe().expect("subscriber slot"), status: Status::default() }
         }
 
         fn publish_status(&mut self) {
@@ -126,7 +197,7 @@ impl<H: Host> UsbMod<H> {
         }
 
         fn publish_stats(&self) {
-                let s = StatsSnapshot { received: self.forwarder.received, forwarded: self.packets };
+                let s = StatsSnapshot { received: self.forwarder.received, forwarded: self.forwarder.forwarded };
                 // latest only, like the status mailbox
                 let _ = STATS.pop();
                 let _ = STATS.push(s);
@@ -141,7 +212,14 @@ impl<H: Host> Module for UsbMod<H> {
                 CORE0_PASSES.fetch_add(1, light_core::atomic::Ordering::Relaxed);
                 while let Some(ev) = EVENTS.poll(&self.events) {
                         match ev {
-                                AppEvent::Stats => info!("usb: {} mounted, hub addr {}, {} packets forwarded, {} dropped (cable), {} events dropped", self.forwarder.usb_mounted_count(), self.forwarder.hub_addr(), self.packets, self.forwarder.dropped, self.host.dropped_events()),
+                                //   two lines, because one does not fit a log record and the tail
+                                // of a truncated one is silently gone -- and the tail here is the
+                                // losses, which is the half worth reading
+                                AppEvent::Stats => {
+                                        let (lost_in, lost_out) = self.host.dropped_packets();
+                                        info!("usb: {} mounted, hub addr {}, {} packets in and {} out", self.forwarder.usb_mounted_count(), self.forwarder.hub_addr(), self.forwarder.received, self.forwarder.forwarded);
+                                        info!("usb: lost {} arriving, {} departing, {} to a cable number, {} mount events", lost_in, lost_out, self.forwarder.dropped, self.host.dropped_events());
+                                }
                                 _ => {}
                         }
                 }
@@ -173,7 +251,6 @@ impl<H: Host> Module for UsbMod<H> {
                 let now_ms = (log::now_us() / 1000) as u32;
                 let activity = self.forwarder.service(&mut self.host, now_ms);
                 if activity.forwarded {
-                        self.packets += 1;
                         busy = true;
                 }
                 let (rx, tx, changed) = self.forwarder.indicators(now_ms);
@@ -235,6 +312,16 @@ pub struct OledMod<B: SpiDisplayBus, C: Clock> {
         /// When the stats page last redrew, for its once-a-second uptime tick.
         stats_ms: u32,
         dirty: bool,
+        /// The longest single repaint and the longest single push of one, in microseconds.
+        ///
+        ///   THE DISPLAY IS THE ONE THING HERE THAT CAN STALL THE FORWARDING PATH. Every other
+        ///   module's pass is measured in microseconds; a repaint is a whole widget tree drawn
+        /// in one, and while it runs no MIDI packet is collected. A stall of a few milliseconds
+        /// is several USB frames, which is longer than an instrument's packets can wait in the
+        /// controller. These two figures say which half of the work it is, and `stats` reports
+        /// them beside the packets lost arriving -- the pair that would confirm the connection.
+        worst_paint_us: u32,
+        worst_push_us: u32,
 }
 
 impl<B: SpiDisplayBus, C: Clock> OledMod<B, C> {
@@ -255,7 +342,7 @@ impl<B: SpiDisplayBus, C: Clock> OledMod<B, C> {
                         Ok(l) => l,
                         Err(e) => panic!("the embedded UI does not parse: {e:?}"),
                 };
-                Self { display, layer, font, ui, lui, clock, display_offset, events: EVENTS.subscribe().expect("subscriber slot"), status: Status::default(), stats: StatsSnapshot::default(), page: PAGE_STATUS, stats_ms: 0, dirty: true }
+                Self { display, layer, font, ui, lui, clock, display_offset, events: EVENTS.subscribe().expect("subscriber slot"), status: Status::default(), stats: StatsSnapshot::default(), page: PAGE_STATUS, stats_ms: 0, dirty: true, worst_paint_us: 0, worst_push_us: 0 }
         }
 
         /// Refresh whichever page is shown from the latest published data.
@@ -378,16 +465,22 @@ impl<B: SpiDisplayBus, C: Clock> Module for OledMod<B, C> {
                 Ok(())
         }
         fn poll(&mut self) -> Poll {
+                let began = log::now_us();
                 match self.layer.poll(&mut self.display) {
                         Ok(_) => {}
                         Err(UpdateError::Timeout) => warn!("oled chunk timed out; update abandoned"),
                         Err(UpdateError::Busy) => unreachable!(),
                 }
+                self.worst_push_us = self.worst_push_us.max((log::now_us() - began) as u32);
                 while let Some(ev) = EVENTS.poll(&self.events) {
                         match ev {
                                 AppEvent::NavToggle => self.show_next_page(),
                                 AppEvent::Status | AppEvent::Indicators { .. } => self.dirty = true,
-                                AppEvent::Stats => info!("oled: {} frames, {} skipped, {} chunk timeouts", self.layer.frames(), self.layer.skipped, self.display.timeouts),
+                                AppEvent::Stats => {
+                                        let f = self.ui.frame_cost();
+                                        info!("oled: {} frames, {} skipped, {} chunk timeouts", self.layer.frames(), self.layer.skipped, self.display.timeouts);
+                                        info!("oled: worst paint {} us, flush {} us, transition step {} us; whole poll {} us", f.paint_us, f.flush_us, f.step_us, self.worst_paint_us);
+                                }
                                 _ => {}
                         }
                 }
@@ -405,7 +498,9 @@ impl<B: SpiDisplayBus, C: Clock> Module for OledMod<B, C> {
                         self.dirty = false;
                 }
                 let style = Style::new(*self.ui.theme(), Fonts::uniform(&self.font));
-                self.ui.render(self.layer, &mut self.display, &style, log::now_us());
+                let began = log::now_us();
+                self.ui.render(self.layer, &mut self.display, &style, began);
+                self.worst_paint_us = self.worst_paint_us.max((log::now_us() - began) as u32);
                 let busy = self.layer.busy(&self.display);
                 //   for the probation checks: a frame counts as shown once nothing of it is still on
                 // its way to the panel
@@ -459,8 +554,92 @@ fn parse_stats(_w: &mut Words) -> Parsed<AppEvent> {
         Parsed::Event(AppEvent::Stats)
 }
 
+//   replacing this board's own firmware. The console only ASKS: what an update is made of is the
+// hardware's business, and a board that cannot do it has nobody subscribed to hear
+fn parse_update(_w: &mut Words) -> Parsed<AppEvent> {
+        Parsed::Event(AppEvent::Update)
+}
+
+fn parse_commit(_w: &mut Words) -> Parsed<AppEvent> {
+        Parsed::Event(AppEvent::Commit)
+}
+
+fn parse_radio(_w: &mut Words) -> Parsed<AppEvent> {
+        Parsed::Event(AppEvent::Radio)
+}
+
+fn parse_address(_w: &mut Words) -> Parsed<AppEvent> {
+        Parsed::Event(AppEvent::Address)
+}
+
+fn parse_scan(_w: &mut Words) -> Parsed<AppEvent> {
+        Parsed::Event(AppEvent::Scan)
+}
+
+//   `fetch 192.168.1.10:8000 /crossfire.bin`, the port optional
+fn parse_fetch(w: &mut Words) -> Parsed<AppEvent> {
+        let (Some(where_), Some(path)) = (w.next(), w.next()) else {
+                return Parsed::Usage;
+        };
+        let (host, port) = match where_.split_once(':') {
+                Some((h, p)) => match p.parse() {
+                        Ok(p) => (h, p),
+                        Err(_) => return Parsed::Usage,
+                },
+                None => (where_, 80),
+        };
+        let mut ip = [0u8; 4];
+        let mut parts = host.split('.');
+        for slot in ip.iter_mut() {
+                match parts.next().map(str::parse) {
+                        Some(Ok(v)) => *slot = v,
+                        _ => return Parsed::Usage,
+                }
+        }
+        if parts.next().is_some() {
+                return Parsed::Usage;
+        }
+        match FetchTarget::new(ip, port, path) {
+                Some(t) => Parsed::Event(AppEvent::Fetch(t)),
+                None => Parsed::Usage,
+        }
+}
+
+//   a name or a passphrase with a space in it goes in double quotes, which the console's own
+// tokenizer understands. Plenty of real network names have one, so this is the ordinary case
+// rather than the awkward one
+fn parse_join(w: &mut Words) -> Parsed<AppEvent> {
+        let Some(ssid) = w.next() else {
+                return Parsed::Usage;
+        };
+        //   no passphrase means a network that asks for none
+        let pass = w.next().unwrap_or("");
+        //   REFUSED HERE, AT THE PROMPT, which is the earliest anything could refuse it and the only
+        // place a correction can just be retyped. Nothing has been said to the radio, so the single
+        // join attempt the part allows per power-up is still there to be used
+        //   an empty passphrase is a DIFFERENT REQUEST, not a short one: it means a network that
+        // asks for none, and it has its own constructor for exactly that reason
+        let built = if pass.is_empty() { Credentials::open(ssid) } else { Credentials::new(ssid, pass) };
+        //   REFUSED HERE, AT THE PROMPT, which is the earliest anything could refuse it and the only
+        // place a correction can just be retyped. Nothing has been said to the radio, so the single
+        // join attempt the part allows per power-up is still there to be used
+        match built {
+                Ok(c) => Parsed::Event(AppEvent::Join(c)),
+                Err(_) => Parsed::Usage,
+        }
+}
+
 static COMMANDS: &[Command<AppEvent>] = &[
         Command { name: "stats", usage: "stats", parse: parse_stats },
+        Command { name: "update", usage: "update", parse: parse_update },
+        Command { name: "commit", usage: "commit", parse: parse_commit },
+        Command { name: "radio", usage: "radio", parse: parse_radio },
+        //   the lengths are IN the usage line, because a refusal here can only report the usage --
+        // and "8 to 63" is the whole of what a rejected passphrase needs said about it
+        Command { name: "join", usage: "join <network> [passphrase]   (quote either if it has a space; passphrase 8-63)", parse: parse_join },
+        Command { name: "address", usage: "address", parse: parse_address },
+        Command { name: "scan", usage: "scan", parse: parse_scan },
+        Command { name: "fetch", usage: "fetch <address>[:port] <path>", parse: parse_fetch },
 ];
 static CLI: Cli<AppEvent> = Cli::new(COMMANDS);
 
@@ -554,25 +733,40 @@ impl Module for NavMod {
 /// Run crossfire on the parts a hardware module built, forever. The module allocates the
 /// big pieces where its memory map wants them (statics, not this core's stack) and hands
 /// in mutable borrows; this seals them into the runtime.
+///   `board` is the seam for what only the hardware can do, and it is a LIST because the boards
+/// genuinely differ rather than differing by one optional extra. One has an indicator on a pin of
+/// its own and nothing else. Another has no such pin at all -- its indicator is on the radio, so
+/// it belongs to the radio's module and not to a module of its own -- and can replace its own
+/// firmware besides. What they have in common is the four modules named above; everything else a
+/// board brings joins the same runtime and the same bus here, and a board that brings nothing
+/// passes an empty list.
 ///
-/// `probation` decides whether a firmware started on approval is kept: it loads after every
-/// other module and commits the image only once the application has shown it works -- see
-/// [`ProbationMod`]. A board with nothing on probation hands in one over [`Permanent`].
-pub fn serve<H: Host, B: SpiDisplayBus, C: Clock, P: OutputPin, Pr: Probation>(
+/// `probation` decides whether a firmware started on approval is kept: it commits the image only
+/// once the application has shown it works -- see [`ProbationMod`]. A board with nothing on
+/// probation hands in one over [`Permanent`].
+///
+///   IT IS NAMED SEPARATELY FROM `board` RATHER THAN BEING ONE OF ITS MODULES, because it has to
+/// load LAST and a list does not say so. Loading last is the point: a module's load is the proof
+/// that everything it needed loaded first, so a probation check that runs at all has already
+/// established more than any of its own measurements do.
+pub fn serve<H: Host, B: SpiDisplayBus, C: Clock, Pr: Probation>(
         usb: &mut UsbMod<H>,
         oled: &mut OledMod<B, C>,
-        led: &mut LedMod<P>,
         console: &mut ConsoleMod,
         nav: &mut NavMod,
+        board: &mut [&mut dyn Module],
         probation: &mut ProbationMod<Pr>,
         idle: impl FnMut(),
 ) -> ! {
-        let mut rt: Runtime<6> = Runtime::new();
+        let mut rt: Runtime<8> = Runtime::new();
         rt.add(usb).expect("capacity");
         rt.add(oled).expect("capacity");
-        rt.add(led).expect("capacity");
         rt.add(console).expect("capacity");
         rt.add(nav).expect("capacity");
+        for m in board.iter_mut() {
+                rt.add(*m).expect("capacity");
+        }
+        //   after everything a board brought, so that its load proves theirs
         rt.add(probation).expect("capacity");
         rt.start().expect("start");
         info!("runtime started; plug an instrument in");
