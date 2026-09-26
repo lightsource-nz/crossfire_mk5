@@ -299,6 +299,7 @@ dependencies = [
 name = "light_app_crossfire_pico2"
 version = "0.1.0"
 dependencies = [
+ "critical-section",
  "light-core",
  "light-display",
  "light-draw",
