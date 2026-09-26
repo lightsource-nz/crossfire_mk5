@@ -185,10 +185,14 @@ impl<P: Probation> Module for ProbationMod<P> {
                 //   ONLY THE ONES EVERY BOARD HAS -- which is to say, only the ones `serve` takes by
                 // name. A portable module must not depend on one a board merely MIGHT bring. Naming
                 // "led" here was enough to stop a board outright: where the indicator hangs off the
-                // radio there is no such module, the runtime fails at start on a missing dependency,
-                // and it fails UNREPORTABLY -- the panic goes into the log queue and the handler
-                // halts the core before the console has drained it, so the whole symptom is a board
-                // that says nothing whatsoever.
+                // radio there is no such module, and the runtime fails the whole application at
+                // start on a missing dependency.
+                //
+                //   It says so, clearly, and that is worth knowing because it is easy to conclude
+                // otherwise: the report names the module and the dependency, but it is out within
+                // twenty milliseconds of reset and then the board stops. A console opened after the
+                // fact sees an empty stream and reads exactly like hardware that never came up. To
+                // see it, the console has to be open across the reset.
                 &["usb", "oled", "console", "nav"]
         }
 
