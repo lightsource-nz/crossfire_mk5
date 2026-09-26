@@ -35,3 +35,6 @@ light-rp2 = { path = "../../../../light_mk5/crates/light-rp2", features = ["usb-
 # device with no cable on it. Additive to the wireless side -- one part, uploaded once, with the
 # over-the-air update path it already had
 light-cyw43 = { path = "../../../../light_mk5/crates/light-cyw43", features = ["bluetooth"] }
+#   the commit holds core 0's interrupts off while it rewrites the flash it runs from; the
+# implementation is the port's
+critical-section = "1.2"

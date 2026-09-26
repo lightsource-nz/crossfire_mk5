@@ -20,6 +20,9 @@ use light_font::Font;
 use light_midi::{Forwarder, Host, MidiEvent};
 use light_ui::{Descent, Fonts, Lui, LuiChild, Style, Theme, Ui};
 
+mod probation;
+pub use probation::{judge, Permanent, Probation, ProbationMod, Verdict, Vitals, COMMIT_DEADLINE_MS, MIN_PASSES, SETTLE_MS};
+
 /// USB device slots the engine tracks: the host stack's MIDI slot count (`light_rp2::usb_host::SLOTS`,
 /// four). The engine indexes its table with the mount index directly, so the two must agree.
 pub const USB_SLOTS: usize = 4;
@@ -148,6 +151,25 @@ static STATS: Mailbox<StatsSnapshot, 1> = Mailbox::new();
 /// the core is still executing its loop is the first question, and it should not take a debugger
 /// session that disturbs the answer. The console core keeps its own tick in the port.
 static CORE0_PASSES: light_core::atomic::AtomicU32 = light_core::atomic::AtomicU32::new(0);
+
+/// The display's health, published by the OLED module for the probation checks: how many frames
+/// have reached the glass in full, and how many pushes were abandoned because the bus stopped
+/// answering.
+static DISPLAY_SHOWN: light_core::atomic::AtomicU32 = light_core::atomic::AtomicU32::new(0);
+static DISPLAY_TIMEOUTS: light_core::atomic::AtomicU32 = light_core::atomic::AtomicU32::new(0);
+
+/// The application's signs of life, for a hardware module's [`ProbationMod`]: everything but the
+/// console core's pulse, which lives in the port and is handed in (`light_rp2::shell::core1_ticks`).
+pub fn vitals(console_ticks: u32) -> Vitals {
+        use light_core::atomic::Ordering::Relaxed;
+        Vitals {
+                uptime_ms: probation::uptime_ms(),
+                passes: CORE0_PASSES.load(Relaxed),
+                console_ticks,
+                frames_shown: DISPLAY_SHOWN.load(Relaxed),
+                display_timeouts: DISPLAY_TIMEOUTS.load(Relaxed),
+        }
+}
 
 /// Owns the host stack and the forwarding engine. Every pass: run the stack, apply what it
 /// reported, forward what arrived, and say what changed.
@@ -479,7 +501,14 @@ impl<B: SpiDisplayBus, C: Clock> Module for OledMod<B, C> {
                 let began = log::now_us();
                 self.ui.render(self.layer, &mut self.display, &style, began);
                 self.worst_paint_us = self.worst_paint_us.max((log::now_us() - began) as u32);
-                if self.ui.is_dirty() || self.layer.busy(&self.display) { Poll::Busy } else { Poll::Idle }
+                let busy = self.layer.busy(&self.display);
+                //   for the probation checks: a frame counts as shown once nothing of it is still on
+                // its way to the panel
+                if !busy {
+                        DISPLAY_SHOWN.store(self.layer.frames(), light_core::atomic::Ordering::Relaxed);
+                }
+                DISPLAY_TIMEOUTS.store(self.display.timeouts, light_core::atomic::Ordering::Relaxed);
+                if self.ui.is_dirty() || busy { Poll::Busy } else { Poll::Idle }
         }
         fn unload(&mut self) {
                 let _ = self.display.wait();
@@ -711,12 +740,22 @@ impl Module for NavMod {
 /// firmware besides. What they have in common is the four modules named above; everything else a
 /// board brings joins the same runtime and the same bus here, and a board that brings nothing
 /// passes an empty list.
-pub fn serve<H: Host, B: SpiDisplayBus, C: Clock>(
+///
+/// `probation` decides whether a firmware started on approval is kept: it commits the image only
+/// once the application has shown it works -- see [`ProbationMod`]. A board with nothing on
+/// probation hands in one over [`Permanent`].
+///
+///   IT IS NAMED SEPARATELY FROM `board` RATHER THAN BEING ONE OF ITS MODULES, because it has to
+/// load LAST and a list does not say so. Loading last is the point: a module's load is the proof
+/// that everything it needed loaded first, so a probation check that runs at all has already
+/// established more than any of its own measurements do.
+pub fn serve<H: Host, B: SpiDisplayBus, C: Clock, Pr: Probation>(
         usb: &mut UsbMod<H>,
         oled: &mut OledMod<B, C>,
         console: &mut ConsoleMod,
         nav: &mut NavMod,
         board: &mut [&mut dyn Module],
+        probation: &mut ProbationMod<Pr>,
         idle: impl FnMut(),
 ) -> ! {
         let mut rt: Runtime<8> = Runtime::new();
@@ -727,6 +766,8 @@ pub fn serve<H: Host, B: SpiDisplayBus, C: Clock>(
         for m in board.iter_mut() {
                 rt.add(*m).expect("capacity");
         }
+        //   after everything a board brought, so that its load proves theirs
+        rt.add(probation).expect("capacity");
         rt.start().expect("start");
         info!("runtime started; plug an instrument in");
         let result = rt.run(idle);

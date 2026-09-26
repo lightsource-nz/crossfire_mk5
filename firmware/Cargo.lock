@@ -649,6 +649,7 @@ dependencies = [
 name = "light_app_crossfire_pico2"
 version = "0.1.0"
 dependencies = [
+ "critical-section",
  "light-assets",
  "light-core",
  "light-cyw43",

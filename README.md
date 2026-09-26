@@ -29,3 +29,16 @@ protects nothing (see `keys/README.md`); a release is signed with a key that nev
 The flash map gives the application an A/B pair, so an update is written to the slot that is not
 running and chosen on the next boot, and a data partition for the assets. What the hardware
 verifies, and when, is specified in the framework's `documents/11-secure-boot-and-update.md`.
+
+## A new image keeps itself only if it works
+
+An update is started on probation: the Pico 2's boot ROM runs it once, and unless it commits itself
+the previous image boots again -- at the next reset, or when the ROM's probation watchdog runs out
+some seventeen seconds after the boot. crossfire makes that decision on its own
+(`crates/light_app_crossfire/src/probation.rs`). At boot the board asks the ROM whether the running
+image is a candidate; if so, the application watches itself for three seconds after every module has
+loaded and commits once the main loop is turning over, the console core is alive, and the display
+has taken a whole frame with no bus timeout. A panic, a stopped loop or a failed check means no
+commit, and so the old firmware comes back; a candidate that has not passed by ten seconds of uptime
+is given up on well inside the ROM's window. The console reports every step as `probation: ...`.
+The RP2040 has no second slot and puts nothing on probation, so there every image is already kept.
