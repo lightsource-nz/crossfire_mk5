@@ -12,6 +12,10 @@ light-display = { path = "../../../light_mk5/crates/light-display" }
 light-midi = { path = "../../../light_mk5/crates/light-midi" }
 light-font = { path = "../../../light_mk5/crates/light-font" }
 light-ui = { path = "../../../light_mk5/crates/light-ui" }
+#   the radio contract, for the credentials the console collects and puts on the bus. NOT a driver
+# and not hardware: this crate stays portable, and what a network may be called and what a passphrase
+# may be are the framework's rules rather than this application's
+light-wireless = { path = "../../../light_mk5/crates/light-wireless" }
 
 #   the host tests need a critical-section implementation: on a device the port supplies it,
 # and in this crate's own test binary nothing does. Inside the framework's workspace this

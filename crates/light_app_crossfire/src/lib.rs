@@ -63,56 +63,24 @@ pub enum AppEvent {
         Radio,
 }
 
-/// What it takes to join a network, sized to what the standard allows: a name of at most
-/// thirty-two bytes and a passphrase of at most sixty-three.
-///
-/// Carried BY VALUE on the event rather than kept somewhere both the console and the radio can
-/// reach, because modules here couple through the bus and nothing else. It is the largest thing
-/// the bus carries, which is the price of that.
-///
-/// Typed in rather than built in: a passphrase compiled into a signed image is a passphrase that
-/// cannot be changed without re-signing, that is the same on every unit, and that lives in the
-/// repository. Nothing here writes it to storage either, so it is forgotten at the next reset --
-/// which is the right default until a product decides otherwise.
-#[derive(Clone, Copy)]
-pub struct Credentials {
-        ssid: [u8; 32],
-        ssid_len: u8,
-        pass: [u8; 63],
-        pass_len: u8,
-}
-
-impl Credentials {
-        /// `None` if either is longer than a network can name, or the network is not named.
-        pub fn new(ssid: &str, pass: &str) -> Option<Self> {
-                if ssid.is_empty() || ssid.len() > 32 || pass.len() > 63 {
-                        return None;
-                }
-                let mut c = Self { ssid: [0; 32], ssid_len: ssid.len() as u8, pass: [0; 63], pass_len: pass.len() as u8 };
-                c.ssid[..ssid.len()].copy_from_slice(ssid.as_bytes());
-                c.pass[..pass.len()].copy_from_slice(pass.as_bytes());
-                Some(c)
-        }
-
-        pub fn ssid(&self) -> &str {
-                core::str::from_utf8(&self.ssid[..self.ssid_len as usize]).unwrap_or("")
-        }
-
-        /// Empty for a network that asks for nothing.
-        pub fn pass(&self) -> &str {
-                core::str::from_utf8(&self.pass[..self.pass_len as usize]).unwrap_or("")
-        }
-}
-
-//   WRITTEN BY HAND so that the passphrase is not in it. This rides on an event, events are
-// printed by whatever is debugging at the time, and a console that echoes a secret once has
-// leaked it -- the derived version would have done exactly that, quietly, the first time anyone
-// turned the log level up.
-impl core::fmt::Debug for Credentials {
-        fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-                write!(f, "Credentials({}, ...)", self.ssid())
-        }
-}
+//   WHAT IT TAKES TO JOIN A NETWORK IS NO LONGER DECLARED HERE, and why is worth keeping. This was
+// an application's own type: it bounded the network name and the passphrase's MAXIMUM, while the
+// radio's driver separately bounded the passphrase's MINIMUM. Each was locally complete, neither
+// author could see the other, and between them a passphrase of five characters reached the part --
+// which refuses such a command outright, which its driver treats as fatal. A board stopped for a
+// typo, and the report blamed the passphrase's contents rather than its length.
+//
+//   The rules live in the framework now, in one type that cannot be built wrong and is tested on
+// the host, so this crate takes it rather than restating it. What was true of it here is still true
+// there: it is carried BY VALUE on an event rather than kept somewhere the console and the radio
+// both reach, because modules couple through the bus and nothing else -- it is the largest thing the
+// bus carries, and that is the price. It is typed in rather than built in, because a passphrase
+// compiled into a signed image cannot be changed without re-signing, is the same on every unit, and
+// lives in the repository. Nothing writes it to storage, so it is forgotten at the next reset. And
+// the passphrase is kept out of its Debug by hand, because this rides on an event, events are
+// printed by whatever is debugging at the time, and a console that echoes a secret once has leaked
+// it.
+pub use light_wireless::Credentials;
 
 /// Where an image is to be fetched from: an address, a port, and what to ask for.
 ///
@@ -617,9 +585,18 @@ fn parse_join(w: &mut Words) -> Parsed<AppEvent> {
         };
         //   no passphrase means a network that asks for none
         let pass = w.next().unwrap_or("");
-        match Credentials::new(ssid, pass) {
-                Some(c) => Parsed::Event(AppEvent::Join(c)),
-                None => Parsed::Usage,
+        //   REFUSED HERE, AT THE PROMPT, which is the earliest anything could refuse it and the only
+        // place a correction can just be retyped. Nothing has been said to the radio, so the single
+        // join attempt the part allows per power-up is still there to be used
+        //   an empty passphrase is a DIFFERENT REQUEST, not a short one: it means a network that
+        // asks for none, and it has its own constructor for exactly that reason
+        let built = if pass.is_empty() { Credentials::open(ssid) } else { Credentials::new(ssid, pass) };
+        //   REFUSED HERE, AT THE PROMPT, which is the earliest anything could refuse it and the only
+        // place a correction can just be retyped. Nothing has been said to the radio, so the single
+        // join attempt the part allows per power-up is still there to be used
+        match built {
+                Ok(c) => Parsed::Event(AppEvent::Join(c)),
+                Err(_) => Parsed::Usage,
         }
 }
 
@@ -628,7 +605,9 @@ static COMMANDS: &[Command<AppEvent>] = &[
         Command { name: "update", usage: "update", parse: parse_update },
         Command { name: "commit", usage: "commit", parse: parse_commit },
         Command { name: "radio", usage: "radio", parse: parse_radio },
-        Command { name: "join", usage: "join <network> [passphrase]   (quote either if it contains a space)", parse: parse_join },
+        //   the lengths are IN the usage line, because a refusal here can only report the usage --
+        // and "8 to 63" is the whole of what a rejected passphrase needs said about it
+        Command { name: "join", usage: "join <network> [passphrase]   (quote either if it has a space; passphrase 8-63)", parse: parse_join },
         Command { name: "address", usage: "address", parse: parse_address },
         Command { name: "scan", usage: "scan", parse: parse_scan },
         Command { name: "fetch", usage: "fetch <address>[:port] <path>", parse: parse_fetch },

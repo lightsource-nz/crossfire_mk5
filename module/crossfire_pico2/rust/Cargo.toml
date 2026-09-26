@@ -25,8 +25,13 @@ light-update = { path = "../../../../light_mk5/crates/light-update" }
 #   the chip is THIS module's identity: the feature is pinned here, not switched by the
 # build system -- a crossfire_pico2 is an RP2350 or it is nothing
 #   wifi, because this variant of the board carries the radio -- which also means the pin the
-# plain board's indicator sits on is the radio's chip select here, so there is no led in board.rs
-#   bluetooth, because the same radio is wanted for a second thing: carrying instrument traffic
-# to a device with no cable on it. It is additive to wifi -- one part, uploaded once, with the
+# plain board's indicator sits on is the radio's chip select here, so there is no led in board.rs.
+# What that feature supplies is the BUS and the clock, which is all the chip owes a radio
+light-rp2 = { path = "../../../../light_mk5/crates/light-rp2", features = ["usb-host", "rp2350", "wifi"] }
+#   and the radio's DRIVER, which belongs to the part rather than to the chip -- so this board names
+# it directly beside the port rather than reaching it through one. Swapping to a board with a
+# different radio part changes this line and not the port.
+#   bluetooth, because the same part is wanted for a second thing: carrying instrument traffic to a
+# device with no cable on it. Additive to the wireless side -- one part, uploaded once, with the
 # over-the-air update path it already had
-light-rp2 = { path = "../../../../light_mk5/crates/light-rp2", features = ["usb-host", "rp2350", "wifi", "bluetooth"] }
+light-cyw43 = { path = "../../../../light_mk5/crates/light-cyw43", features = ["bluetooth"] }

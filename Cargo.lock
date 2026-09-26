@@ -82,6 +82,10 @@ dependencies = [
 ]
 
 [[package]]
+name = "light-wireless"
+version = "0.1.0"
+
+[[package]]
 name = "light_app_crossfire"
 version = "0.1.0"
 dependencies = [
@@ -92,6 +96,7 @@ dependencies = [
  "light-font",
  "light-midi",
  "light-ui",
+ "light-wireless",
 ]
 
 [[package]]

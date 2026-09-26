@@ -16,7 +16,11 @@ use light_core::events::Subscription;
 use light_core::{info, warn};
 use light_core::module::{Module, Poll};
 use light_rp2::update::FlashSlot;
-use light_rp2::wifi::{Incoming, JoinError, Pins, Radio};
+use light_rp2::wifi::Pins;
+//   THE DRIVER IS NAMED DIRECTLY, not reached through the port: it belongs to the radio part rather
+// than to the chip, so the chip supplies only the bus it runs over. A board built around a different
+// radio part changes this line and leaves the port alone.
+use light_cyw43::{Incoming, JoinError, Radio, ScanEntry};
 use light_update::Update;
 
 /// The radio's wiring on this board.
@@ -56,7 +60,9 @@ impl RadioMod {
                         return;
                 }
                 info!("radio: starting on {} bytes of image, {} of limits and {} of short-range patch", self.firmware.len(), self.limits.len(), self.bt_firmware.len());
-                let mut radio = Radio::new_with_bluetooth(PINS, self.sys_hz, DMA_CH, self.firmware, self.limits, self.nvram, self.bt_firmware);
+                //   the chip's two contributions, taken together so the wrong pair cannot be made
+                let (bus, pwr) = light_rp2::wifi::radio_bus(PINS, self.sys_hz, DMA_CH);
+                let mut radio = Radio::new_with_bluetooth(bus, pwr, self.firmware, self.limits, self.nvram, self.bt_firmware);
                 let a = radio.address();
                 //   READ OUT OF THE RUNNING RADIO, not out of the image: an address here is the
                 // proof that the bus carried a quarter of a megabyte correctly and that what is
@@ -87,9 +93,9 @@ impl RadioMod {
                 };
                 //   the name, never the passphrase -- see Credentials
                 info!("radio: joining {}", c.ssid());
-                match radio.join(c.ssid(), c.pass()) {
+                match radio.join(c) {
                         Ok(()) => info!("radio: joined {}", c.ssid()),
-                        Err(JoinError::NoSuchNetwork) => warn!("radio: no network called {} was found -- check the name, and that it is in range", c.ssid()),
+                        Err(JoinError::NotFound) => warn!("radio: no network called {} was found -- check the name, and that it is in range", c.ssid()),
                         //   NOT "worth trying again", which it was until the retry was found to
                         // stop the board: the part counts the attempt, not the outcome, so a second
                         // join needs the radio taken down and back up -- which here means a reset
@@ -99,22 +105,22 @@ impl RadioMod {
                         // it offers the newer exchange, the access point refuses it, and from here
                         // that is indistinguishable from a typo. Naming the other cause is the
                         // difference between checking a setting and doubting what you typed.
-                        Err(JoinError::Rejected) => {
+                        Err(JoinError::Refused) => {
                                 warn!("radio: {} refused us; reset the board to try again", c.ssid());
                                 warn!("radio: check the passphrase -- and that the network is not WPA3 or mixed WPA2/WPA3");
                         }
-                        Err(JoinError::Refused(code)) => warn!("radio: {} refused the join, reason {code}", c.ssid()),
+                        Err(JoinError::Other(code)) => warn!("radio: {} refused the join, reason {code}", c.ssid()),
                         Err(JoinError::NoAnswer) => warn!("radio: no answer from {} -- check the name, and that it is in range", c.ssid()),
                         //   a join has been tried once already, which may or may not have worked:
                         // either way the part will refuse the commands a second one needs, and the
                         // driver treats that refusal as fatal
-                        Err(JoinError::AlreadyJoined) => warn!("radio: a join has already been attempted on this power-up; reset the board to try another"),
-                        //   THESE TWO COST NOTHING, which is worth saying out loud in the message:
-                        // the radio was never asked, so the attempt is still there to be used and
-                        // the correction can be typed straight in
-                        Err(JoinError::BadName) => warn!("radio: a network name is 1 to 32 characters; nothing was sent"),
-                        Err(JoinError::BadPassphrase) => warn!("radio: a passphrase is 8 to 63 characters, not {}; nothing was sent", c.pass().len()),
+                        Err(JoinError::AlreadyAttempted) => warn!("radio: a join has already been attempted on this power-up; reset the board to try another"),
                 }
+                //   NO ARMS FOR A MALFORMED NAME OR PASSPHRASE, because there is no longer any way to
+                // reach here with one: the console refuses to build a set of credentials it could not
+                // send, so what arrives is always something the part will at least accept as a
+                // question. The two messages that used to stand here were carrying a check the type
+                // system now carries.
         }
 
         /// Ask the joined network for an address, and say what it gave.
@@ -232,16 +238,16 @@ impl RadioMod {
                         return;
                 };
                 info!("radio: looking for networks");
-                let seen = radio.scan(|name, bssid, rssi, chanspec| {
+                let seen = radio.scan(|e: &ScanEntry| {
                         //   the signal and the channel as well as the name: a network that is there
                         // but barely audible looks identical to one that is absent if only the name
                         // is reported, and the channel says which band answered
                         //   and the address of the radio last, which is what tells two entries of
                         // the same name apart -- one network carried by two radios, not one network
                         // listed twice
-                        let a = bssid;
-                        let name = if name.is_empty() { "(hidden)" } else { name };
-                        info!("radio:   {}, {} dBm, chanspec {:#06x}, {:02x}:{:02x}:{:02x}:{:02x}:{:02x}:{:02x}", name, rssi, chanspec, a[0], a[1], a[2], a[3], a[4], a[5]);
+                        let a = e.bssid;
+                        let name = if e.hidden() { "(hidden)" } else { e.ssid() };
+                        info!("radio:   {}, {} dBm, channel {}, {:02x}:{:02x}:{:02x}:{:02x}:{:02x}:{:02x}", name, e.rssi, e.channel, a[0], a[1], a[2], a[3], a[4], a[5]);
                 });
                 match seen {
                         0 => warn!("radio: nothing at all was heard -- this radio is not receiving, whatever is in the room"),
