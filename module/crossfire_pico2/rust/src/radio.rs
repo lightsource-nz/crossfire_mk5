@@ -105,16 +105,19 @@ impl RadioMod {
                         // it offers the newer exchange, the access point refuses it, and from here
                         // that is indistinguishable from a typo. Naming the other cause is the
                         // difference between checking a setting and doubting what you typed.
+                        //   NO LONGER "reset the board to try again", because it no longer needs one:
+                        // this radio takes its interface down and back up and simply tries what it is
+                        // given next. Saying otherwise sent people to the power switch over a typo
                         Err(JoinError::Refused) => {
-                                warn!("radio: {} refused us; reset the board to try again", c.ssid());
-                                warn!("radio: check the passphrase -- and that the network is not WPA3 or mixed WPA2/WPA3");
+                                warn!("radio: {} refused us -- try again with the right passphrase", c.ssid());
+                                warn!("radio: and check the network is not WPA3 or mixed WPA2/WPA3, which this radio cannot join");
                         }
                         Err(JoinError::Other(code)) => warn!("radio: {} refused the join, reason {code}", c.ssid()),
                         Err(JoinError::NoAnswer) => warn!("radio: no answer from {} -- check the name, and that it is in range", c.ssid()),
-                        //   a join has been tried once already, which may or may not have worked:
-                        // either way the part will refuse the commands a second one needs, and the
-                        // driver treats that refusal as fatal
-                        Err(JoinError::AlreadyAttempted) => warn!("radio: a join has already been attempted on this power-up; reset the board to try another"),
+                        //   this radio re-arms itself, so it does not answer this -- but the outcome
+                        // belongs to the contract rather than to one part, and a report that dropped
+                        // it silently would be a surprise on a board whose radio cannot
+                        Err(JoinError::CannotRetry) => warn!("radio: this radio cannot try again until it is powered off"),
                 }
                 //   NO ARMS FOR A MALFORMED NAME OR PASSPHRASE, because there is no longer any way to
                 // reach here with one: the console refuses to build a set of credentials it could not
