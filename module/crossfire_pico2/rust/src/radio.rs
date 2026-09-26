@@ -131,11 +131,10 @@ impl RadioMod {
                 };
                 match radio.configure() {
                         Ok(c) => {
-                                let a = c.address.address().octets();
-                                info!("radio: address {}.{}.{}.{}/{}", a[0], a[1], a[2], a[3], c.address.prefix_len());
+                                let a = c.address;
+                                info!("radio: address {}.{}.{}.{}/{}", a[0], a[1], a[2], a[3], c.prefix);
                                 match c.gateway {
                                         Some(g) => {
-                                                let g = g.octets();
                                                 info!("radio: the way out is {}.{}.{}.{}", g[0], g[1], g[2], g[3]);
                                         }
                                         //   worth saying: an address without one reaches the

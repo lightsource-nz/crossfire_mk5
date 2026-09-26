@@ -545,6 +545,7 @@ dependencies = [
  "embassy-net-driver",
  "embedded-hal 1.0.0",
  "light-core",
+ "light-net",
  "light-wireless",
  "log",
 ]
@@ -575,6 +576,10 @@ version = "0.1.0"
 dependencies = [
  "heapless 0.8.0",
 ]
+
+[[package]]
+name = "light-net"
+version = "0.1.0"
 
 [[package]]
 name = "light-rp2"
