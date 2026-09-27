@@ -54,6 +54,12 @@ pub enum AppEvent {
         /// List what the radio can see, which needs no passphrase and so is the one radio
         /// diagnostic that can be run by anyone at any time.
         Scan,
+        /// Advertise on the short-range radio and wait to be connected to, on a board that has one.
+        ///
+        /// ASKED FOR RATHER THAN ALWAYS ON, for the same reason the radio itself is: a device that
+        /// announces itself to the room whenever it is powered is a decision a product makes, not
+        /// one a framework should make for it.
+        Advertise,
         /// Fetch a firmware image over the network and stage it, the way `update` stages a copy
         /// of what is already here.
         Fetch(FetchTarget),
@@ -576,6 +582,10 @@ fn parse_scan(_w: &mut Words) -> Parsed<AppEvent> {
         Parsed::Event(AppEvent::Scan)
 }
 
+fn parse_advertise(_w: &mut Words) -> Parsed<AppEvent> {
+        Parsed::Event(AppEvent::Advertise)
+}
+
 //   `fetch 192.168.1.10:8000 /crossfire.bin`, the port optional
 fn parse_fetch(w: &mut Words) -> Parsed<AppEvent> {
         let (Some(where_), Some(path)) = (w.next(), w.next()) else {
@@ -639,6 +649,7 @@ static COMMANDS: &[Command<AppEvent>] = &[
         Command { name: "join", usage: "join <network> [passphrase]   (quote either if it has a space; passphrase 8-63)", parse: parse_join },
         Command { name: "address", usage: "address", parse: parse_address },
         Command { name: "scan", usage: "scan", parse: parse_scan },
+        Command { name: "advertise", usage: "advertise   (announce on the short-range radio and wait to be connected to)", parse: parse_advertise },
         Command { name: "fetch", usage: "fetch <address>[:port] <path>", parse: parse_fetch },
 ];
 static CLI: Cli<AppEvent> = Cli::new(COMMANDS);

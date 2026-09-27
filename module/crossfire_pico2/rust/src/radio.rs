@@ -30,6 +30,13 @@ const PINS: Pins = light_rp2::wifi::ONBOARD;
 const DMA_CH: usize = 14;
 /// Which of the radio's own pins the indicator is on.
 const INDICATOR: u8 = 0;
+/// What this board calls itself to anything looking for short-range radios nearby. A device nobody
+/// can pick out of a list is a device nobody connects to, and the whole advertisement is
+/// thirty-one bytes, so it is short on purpose.
+const ADVERTISED_NAME: &str = "crossfire";
+/// How long a request to announce waits to be connected to. Long enough to pick the board out of a
+/// list and tap it, short enough that a console is not held for a minute by a mistake.
+const ADVERTISE_TIMEOUT_US: u64 = 30_000_000;
 
 pub struct RadioMod {
         /// Nothing until it is asked for -- see `AppEvent::Radio` for why this is on request.
@@ -41,13 +48,18 @@ pub struct RadioMod {
         nvram: &'static [u8],
         /// The short-range radio's own patch, uploaded beside the other two.
         bt_firmware: &'static [u8],
+        /// The short-range side's address, read at bring-up and kept because the host stack wants
+        /// it and the handle it was read through is gone by then.
+        bt_address: Option<[u8; 6]>,
+        /// The host stack, once someone has asked this board to announce itself.
+        ble: Option<light_cyw43::ble::Ble>,
         events: Subscription,
 }
 
 impl RadioMod {
         /// Hold what the radio will need, without touching it.
         pub fn new(sys_hz: u32, firmware: &'static [u8], limits: &'static [u8], nvram: &'static [u8], bt_firmware: &'static [u8]) -> Self {
-                Self { radio: None, sys_hz, firmware, limits, nvram, bt_firmware, events: EVENTS.subscribe().expect("subscriber slot") }
+                Self { radio: None, sys_hz, firmware, limits, nvram, bt_firmware, bt_address: None, ble: None, events: EVENTS.subscribe().expect("subscriber slot") }
         }
 
         /// Power the radio up with the firmware out of this board's asset pack.
@@ -72,7 +84,10 @@ impl RadioMod {
                 // image and answers on its own protocol: a reset it accepted and a question it
                 // answered. Reported rather than insisted on -- the wireless side is what this
                 // board already depends on, and it should not be held back by the new one
-                match radio.bluetooth_address() {
+                //   kept, not just reported: the host stack needs an address to answer to, and by
+                // the time it is built the handle this was read through belongs to it
+                self.bt_address = radio.bluetooth_address();
+                match self.bt_address {
                         Some(b) => info!("radio: short-range up, address {:02x}:{:02x}:{:02x}:{:02x}:{:02x}:{:02x}", b[0], b[1], b[2], b[3], b[4], b[5]),
                         None => warn!("radio: the short-range controller did not answer; wireless is unaffected"),
                 }
@@ -260,6 +275,46 @@ impl RadioMod {
                 }
         }
 
+        /// Announce this board on the short-range radio and wait for something to connect.
+        ///
+        /// Brings the radio up first, for the same reason joining does: asking an unpowered radio
+        /// to announce itself is not a question.
+        fn advertise(&mut self) {
+                self.bring_up();
+                let Some(address) = self.bt_address else {
+                        warn!("radio: the short-range controller never answered, so there is nothing to announce on");
+                        return;
+                };
+                if self.ble.is_none() {
+                        let Some(radio) = self.radio.as_mut() else {
+                                return;
+                        };
+                        //   the handle MOVES to the stack: from here on the stack is the only thing
+                        // reading the controller's events, which is the only way that works
+                        match radio.host_bluetooth(address) {
+                                Some(ble) => self.ble = Some(ble),
+                                None => {
+                                        warn!("radio: the short-range side is already hosting a stack");
+                                        return;
+                                }
+                        }
+                }
+                info!("radio: announcing as {} for {} s -- connect to it now", ADVERTISED_NAME, ADVERTISE_TIMEOUT_US / 1_000_000);
+                //   BOTH are driven while this waits, and the two fields are taken apart so each
+                // can be borrowed on its own: the stack composes the packets, the part's driver
+                // carries them over the one bus they share, and either alone gets nowhere
+                let RadioMod { radio, ble, .. } = self;
+                let (Some(radio), Some(ble)) = (radio.as_mut(), ble.as_mut()) else {
+                        return;
+                };
+                let mut pump = || radio.poll();
+                if ble.accept(ADVERTISED_NAME, ADVERTISE_TIMEOUT_US, &mut pump) {
+                        info!("radio: connected on the short-range radio");
+                } else {
+                        warn!("radio: nothing connected before the wait ran out; ask again to announce again");
+                }
+        }
+
         fn set_indicator(&mut self, on: bool) {
                 if let Some(radio) = self.radio.as_mut() {
                         radio.set_gpio(INDICATOR, on);
@@ -292,6 +347,10 @@ impl Module for RadioMod {
                                         self.scan();
                                         busy = true;
                                 }
+                                AppEvent::Advertise => {
+                                        self.advertise();
+                                        busy = true;
+                                }
                                 AppEvent::Fetch(t) => {
                                         self.fetch(&t);
                                         busy = true;
@@ -307,6 +366,12 @@ impl Module for RadioMod {
                 // one pass of it a cooperative runtime gives every module
                 if let Some(radio) = self.radio.as_mut() {
                         radio.poll();
+                }
+                //   and the short-range stack's, which is a second thing written for an executor
+                // living on the same one pass. It keeps a connection alive, so it must be polled
+                // whether or not anyone is talking to it
+                if let Some(ble) = self.ble.as_mut() {
+                        ble.poll();
                 }
                 if busy { Poll::Busy } else { Poll::Idle }
         }
