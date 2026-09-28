@@ -131,10 +131,6 @@ on one edge guarantee someone will. A charger in the data port presents as an or
 is used as one. A computer in the power port supplies 5 V and simply has no data pins to reach. Both
 cases degrade; neither damages.
 
-Optionally the data port's two CC voltages go to a pair of ADC inputs, so the firmware reads what the
-attached source actually advertises instead of assuming the default. Two resistors and two pins turn
-a guess into a measurement.
-
 ### 3. What "under load" means
 
 Four ports at full USB 2.0 spec is 4 × 500 mA = 10 W, and an hour of that needs a cell around
@@ -185,8 +181,8 @@ graph LR
 The core rail catches people out, so it is worth stating: this MCU regulates its own core with a
 *switching* regulator, not a linear one. It brings out `VREG_VIN`, `VREG_LX` and `VREG_FB`, so the
 schematic carries an inductor and the rail it makes feeds the `DVDD` pins. The analogue supply for
-the ADC wants its own filter off 3.3 V as well, and the CC senses make that a rail that matters
-rather than one to leave floating.
+the ADC wants its own filter off 3.3 V as well, which is worth keeping even with nothing presently
+reading through it.
 
 Port power comes from VSYS rather than straight off VBUS. It costs a conversion when plugged in
 (about 90%), and it buys two things: a 5 V rail that does not change character when the cable is
@@ -243,15 +239,15 @@ Stock KiCad symbols exist for everything marked with one; the rest need drawing.
 | MCU | RP2350A, QFN-60 | `MCU_RaspberryPi:RP2350A` | 30 GPIO is enough (see below); RP2350B if a display is added |
 | flash | W25Q128JVS, 16 MB | `Memory_Flash:W25Q128JVS` | the A/B image pair plus the asset partition; 2 MB would not hold it, and its 133 MHz rating covers the 120 MHz the divider lands on |
 | hub | USB2514B | `Interface_USB:USB2514B_Bi` | four downstream ports, per-port power and overcurrent pins, no external EEPROM needed |
-| port switch ×4 | TPD3S044 | `Power_Protection:TPD3S044` | one part per port covering the current-limited VBUS switch *and* the D+/D− ESD. **Not the TPD3S014** -- that sibling allows 0.5 A continuous, which is the port budget itself with nothing left for inrush |
+| port switch ×4 | TPD3S044 | `Power_Protection:TPD3S044` | one part per port covering the current-limited VBUS switch *and* the D+/D− ESD. **Not the TPD3S014** — that sibling is rated 0.5 A continuous, which is the port budget itself with nothing left for inrush or for heat |
 | PD sink | HUSB238 | `Interface_USB:HUSB238_xxxDD` | already proven on hardware in this codebase, and it reports which profile was accepted |
 | charger / PMIC | BQ25798 | `Battery_Management:BQ25798` | buck-boost, takes 9 V in directly, 1S charge, and an I²C ADC the power manager can read |
 | 5 V boost | TPS61089 | `Regulator_Switching:TPS61089` | 5 A switch, comfortably 2 A out at 5 V from a 1S cell |
 | 3.3 V | TPS63060 | `Regulator_Switching:TPS63060` | buck-boost, so 3.3 V survives a flat cell |
+| data-port VBUS diode | Schottky, 1 A | — | the data port's whole contribution to the rail, and the reverse blocking that keeps 9 V off a laptop. Affordable only because that path is small |
 | upstream data ESD | 2-channel array, low capacitance | — | the downstream pairs get theirs from the port switch; the upstream pair has no such part in front of it |
 | power connector | USB-C, power only, 6-pin | `Connector:USB_C_Receptacle_PowerOnly_6P` | no data pins to mis-wire, and nothing on it a computer would want |
 | data connector | USB-C 2.0, 16-pin | `Connector:USB_C_Receptacle_USB2.0_16P` | |
-| source ORing | prioritised ORing controller with external FETs | — | the two inputs meet at the charger, and 9 V must never reach a laptop; a part rated well above 9 V, not a 5.5 V mux |
 | port connectors ×4 | type-A | `Connector:USB_A` | |
 | radio | CYW43439 module, pre-certified | — | the firmware is proven against this silicon; a module rather than the bare chip, so the radio arrives certified |
 
@@ -264,7 +260,7 @@ overcurrent arrives as a standard port status change, and eight GPIOs stay free.
 
 ### GPIO budget
 
-Twenty of the thirty, and the assignment is not arbitrary — four of the choices are forced and the
+Eighteen of the thirty, and the assignment is not arbitrary — the PIO pair is forced adjacent and the
 rest fall out of keeping peripherals on their default pins.
 
 | GPIO | net | why there |
@@ -284,8 +280,7 @@ rest fall out of keeping peripherals on their default pins.
 | 17 | `VBUS_DET` | data-port VBUS present, so a self-powered device only attaches when a host is there |
 | 18 | `HUB_VBUS_DET` | tells the hub its upstream is live; also the way to force a re-enumeration |
 | 19–25 | — | spare, and still contiguous: seven in a row is a display bus |
-| 26, 27 | `CC1_SENSE`, `CC2_SENSE` | **forced** — only 26–29 reach the ADC on this package |
-| 28, 29 | — | spare, and the last two ADC channels |
+| 26–29 | — | spare, and the only four that reach the ADC on this package |
 
 Dedicated pins take the rest: QSPI to the flash, the hardware USB pair to the data receptacle, SWD to
 the debug header, XIN/XOUT to the 12 MHz crystal, RUN to reset.
@@ -300,7 +295,7 @@ one.
 | --- | --- |
 | `mcu` | RP2350A, flash, crystal, SWD, boot button, decoupling |
 | `upstream_power` | the power-only receptacle, CC and the PD sink, VBUS out to the charger |
-| `upstream_data` | the data receptacle, Rd and CC sense, ESD on the hardware USB pair, VBUS sense and its capped contribution |
+| `upstream_data` | the data receptacle, Rd, ESD on the hardware USB pair, VBUS sense and its capped contribution |
 | `hub` | USB2514B, its 24 MHz crystal, the `RBIAS` resistor, the PIO host pair's series resistors and pull-downs, upstream detect from the MCU, and four downstream pairs |
 | `port` | one port: switch, receptacle, bulk capacitance — instanced four times |
 | `power` | the ORing of the two inputs, the charger, battery connector and thermistor, the 5 V boost, the 3.3 V buck-boost |
@@ -378,6 +373,46 @@ output connects straight to them with nothing in between; and the part wants a *
 resistor from `RBIAS` to ground** to set its transceiver bias, which is easy to leave off a
 schematic and not easy to diagnose afterwards.
 
+**The 9 V request is three writes, and this codebase has already made them work.** Select the
+profile by writing its index into the selection register, then write the go command; the order is
+not interchangeable, because the go command acts on whatever the selection register holds at that
+instant. Do not read the result back immediately — the negotiation finishes in its own time, and an
+immediate read reports the *previous* contract and looks like a failure.
+
+The trap is worth restating because it cost real time to find once already: **every register must be
+written as a strictly framed two-byte transaction.** A general write path that sends the address and
+the payload as two transfers separated by a repeated start is acknowledged by the part and stores
+nothing — the selection register took five writes of five different values and read back zero after
+every one, while every return code said success.
+
+**The CC senses come off the design.** They were there so the firmware could learn whether the data
+port's source offers more than the USB default. Asking what they needed answered the question
+differently: they buy nothing, because the data port's contribution is capped by intent rather than
+by what the source offers — it exists so a board with no battery and no charger can be reflashed,
+not as an operating mode. Removing them takes two pins, four resistors and a clamp question off the
+board. It also removes a subtler risk: any divider across CC sits in parallel with the termination
+resistor that tells the source what we are, and shifting that is worse than not knowing.
+
+**Which turns the ORing into one diode.** A prioritised ORing controller with external FETs was
+specified because two sources meet at the charger and 9 V must never reach the data port. But the
+data port now contributes at most the USB default, and a path that small can afford a Schottky: it
+blocks reverse absolutely and without being told, it costs about a fifth of a watt on a path that is
+rarely used at all, and the charger's buck-boost input does not care about the drop. The power port
+stays direct, because a diode at 3 A would not be affordable — **on the condition that the sink's
+own output switch opens when nothing is attached**, which is the one thing left to confirm there.
+
+The charger can then tell its two sources apart without being told either: they arrive at different
+voltages, and it measures input voltage already. Setting the input current limit from that is
+firmware work, not a board question.
+
+**One consequence of that switch worth stating plainly.** It is rated 1.5 A continuous and goes into
+constant-current at about 2.15 A, so it protects the *part* generously but it does not enforce the
+port's 500 mA budget — four of them could ask the 5 V rail for far more than the 2 A it is built
+for. That is the normal arrangement and not a fault: the budget is enforced above, by the hub's port
+power control and the firmware's policy, and **the rail's own current limit is the backstop**. It
+does mean the boost has to current-limit gracefully rather than latch off, which is a requirement on
+that part rather than an assumption about it.
+
 **The PIO port and the radio do not contend.** Counted rather than assumed: the radio's bus takes
 one state machine and eight of the thirty-two instruction slots in the first PIO block, four pins
 and one DMA channel. The part has three PIO blocks of four state machines each, and sixteen DMA
@@ -393,21 +428,13 @@ Things this document asserts that a datasheet has to confirm before layout:
   cost the power budget if it does not. 240 MHz is above the datasheet and proven only on the boards
   in hand, so a production population is the open question, not whether it runs.
 - The QSPI divider at 240 MHz, and that the flash part chosen is rated for the 120 MHz it lands on.
-- The ORing part. It has to block 9 V from reaching the data port by itself, prioritise the power
-  port, and cost little — a 5.5 V power mux cannot do the first of those, so this is a controller
-  with external FETs rather than an integrated switch.
-- What the data port's contribution is limited to, and by what. The USB default is the safe answer;
-  whether the charger's input current limit is the right place to enforce it, or a fixed limit in the
-  ORing path, is open.
-- Whether the CC senses need a divider or a clamp. CC can sit above the ADC's range in a fault, and
-  a divider costs resolution at the three thresholds that have to be told apart.
-- The TPD3S044's fault output: confirmed as the right current rating, but whether its fault pin is
-  open-drain and active low still wants checking against the hub's pull-up inputs. TI publishes this
-  datasheet as page images, so it needs reading by eye rather than by tool.
-- HUSB238's request sequence for a 9 V profile. On some parts a multi-byte register write silently
-  stores nothing and the single-byte form has to be used instead.
-- BQ25798's input voltage and current limit registers, and whether it can hold a different input
-  limit per source, since the two upstream connectors offer very different budgets.
+- Whether the PD sink opens its output switch when nothing is attached. If it does not, the power
+  port needs a blocking FET of its own so the data port cannot back-drive an exposed connector.
+- The TPD3S044's fault pin: whether it is open-drain and active low, so it can meet the hub's
+  pulled-up, active-low over-current inputs directly. Its current rating is settled; only the
+  polarity is not. TI publishes this datasheet as page images, so it wants reading by eye.
+- That the 5 V boost current-limits gracefully rather than latching off, since it is the real
+  backstop behind four switches that each trip well above the port budget.
 - Whether the radio module's antenna keep-out can be met at the board edge.
 
 The questions above the electrical detail are all answered now. A computer and the instruments are

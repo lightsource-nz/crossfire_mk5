@@ -38,17 +38,6 @@
 		)
 		(uuid "637ab99b-b656-4f54-abb7-9af344641d75")
 	)
-	(hierarchical_label "CC2_SENSE"
-		(shape output)
-		(at 60 52.7 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "87b5b0d2-50ba-44a0-aae3-ed6fac6aa055")
-	)
 	(hierarchical_label "VBUS_DATA"
 		(shape output)
 		(at 60 45.08 0)
@@ -59,16 +48,5 @@
 			(justify left)
 		)
 		(uuid "a2ad4621-1492-4e27-a33a-1c9c2736e145")
-	)
-	(hierarchical_label "CC1_SENSE"
-		(shape output)
-		(at 60 50.16 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "c1457960-5116-4399-a1db-a4f793a8f40e")
 	)
 )
