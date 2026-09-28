@@ -1519,7 +1519,7 @@
 	)
 	(sheet
 		(at 101.6 20.32)
-		(size 50.8 45.72)
+		(size 50.80 45.72)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
@@ -1697,6 +1697,16 @@
 				(justify right)
 			)
 		)
+		(pin "HUB_VBUS_DET" output
+			(at 152.40 63.50 0)
+			(uuid "02ee0b29-3124-4179-9eed-288494646796")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
 		(instances
 			(project "crossfire"
 				(path "/4c5cdd13-4f54-43b0-affb-0ae4b9a4d279"
@@ -1795,7 +1805,7 @@
 	)
 	(sheet
 		(at 101.6 101.6)
-		(size 50.8 53.34)
+		(size 50.80 53.34)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
@@ -2016,6 +2026,16 @@
 		(pin "P4_OC" input
 			(at 152.4 149.86 0)
 			(uuid "3f878bdd-c524-4b15-a203-9c3292137317")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "HUB_VBUS_DET" input
+			(at 152.40 152.40 0)
+			(uuid "a344ef97-1ee3-48a4-a1fb-6da5e4b18f36")
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2477,4 +2497,44 @@
 		)
 	)
 	(embedded_fonts no)
+	(wire
+		(pts
+			(xy 152.40 63.50) (xy 157.48 63.50)
+		)
+		(stroke
+			(width 0)
+			(type solid)
+		)
+		(uuid "68dad5a5-04f0-41c2-a68f-03c064edf7ce")
+	)
+	(label "HUB_VBUS_DET"
+		(at 157.48 63.50 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "4ab69a30-c7ac-4ccf-b9dd-dac335d2e09d")
+	)
+	(wire
+		(pts
+			(xy 152.40 152.40) (xy 157.48 152.40)
+		)
+		(stroke
+			(width 0)
+			(type solid)
+		)
+		(uuid "e87c7e2f-cb43-48c4-9451-12d84e6eede4")
+	)
+	(label "HUB_VBUS_DET"
+		(at 157.48 152.40 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "56fc1a13-bfa9-4fdb-bd81-b4e1e9158ef1")
+	)
 )

@@ -3805,10 +3805,6 @@
 		(uuid "42df2fd1-d1af-4b9b-a0d2-218be761a7d8")
 	)
 	(no_connect
-		(at 228.6 147.32)
-		(uuid "6202d2ee-c5dc-4122-a2b2-1dec1d4c620c")
-	)
-	(no_connect
 		(at 228.6 157.48)
 		(uuid "6a8f48c6-6ad7-4bc5-a0c4-4e928a6bfea5")
 	)
@@ -9909,5 +9905,26 @@
 				)
 			)
 		)
+	)
+	(wire
+		(pts
+			(xy 228.60 147.32) (xy 233.68 147.32)
+		)
+		(stroke
+			(width 0)
+			(type solid)
+		)
+		(uuid "ca1dd329-ea10-4921-b9ec-f46e72f3b002")
+	)
+	(hierarchical_label "HUB_VBUS_DET"
+		(shape output)
+		(at 233.68 147.32 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "c2b84b09-0dcd-4f77-8836-c6b41a76270f")
 	)
 )

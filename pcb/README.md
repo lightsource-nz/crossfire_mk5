@@ -311,14 +311,19 @@ and every pin carries a named stub, so each net that crosses a block boundary is
 `port.kicad_sch` is drawn once and instanced four times, with the root mapping its generic
 `DP`/`DM`/`PWR_EN`/`FAULT` onto the hub's `Pn_*`.
 
-**`mcu` is populated; the other six are not.** It holds the MCU, the flash, the core-rail inductor
-and its decoupling, the crystal, the analogue filter, reset and boot, the debug and console header,
-the indicators and the button — and every pin of every part is on a named net.
+**`mcu` and `hub` are populated; the other five are not.** `mcu` holds the MCU, the flash, the
+core-rail inductor and its decoupling, the crystal, the analogue filter, reset and boot, the debug
+and console header, the indicators and the button. `hub` holds the hub, its 24 MHz crystal, the
+`RBIAS` reference, the two regulator filters, the straps that select the default configuration, the
+reset and upstream-detect pull-downs, and the upstream pair's series resistors and host-side
+pull-downs. Every pin of every part is on a named net.
 
-It is drawn the way a person would draw it: **signals are wires**, and only the rails and the nets
-that leave the sheet are carried on symbols and labels. Parts sit beside the pins they serve — the
-flash is placed so all six lines of its bus are single straight segments across to the MCU, and the
-indicators and the button each drop down their own column so nothing crosses.
+Both are drawn the way a person would draw them: **signals are wires**, and only the rails and the
+nets that leave the sheet are carried on symbols and labels. Parts sit beside the pins they serve —
+the flash is placed so all six lines of its bus are single straight segments across to the MCU, and
+on the hub every passive is turned side-on so it sits in line with its own pin. That last one is
+what keeps a chip with fourteen left-hand pins from becoming a knot: each pin owns a row, and
+nothing has to cross anything.
 
 It can all be checked without opening the editor:
 
@@ -327,13 +332,15 @@ kicad-cli sch erc      -o erc.rpt crossfire.kicad_sch
 kicad-cli sch export netlist -o crossfire.net crossfire.kicad_sch
 ```
 
-The netlist is real: 51 nets, and the only unconnected pins are exactly the eleven spare GPIOs the
-pin map names — nothing has been left connected by accident, and nothing intended has been missed.
+The netlist is real: 79 nets, and the only unconnected pins are the twelve spare GPIOs the pin map
+names and the three hub pins the datasheet says to leave alone — nothing has been left connected by
+accident, and nothing intended has been missed.
 Read it rather than the picture when checking this sheet; a wire that looks right and a wire that
 *is* right are not the same thing, and the netlist is the one that answers.
 
-ERC on `mcu` reports two violations, both `power_pin_not_driven` on `+3V3` and `GND`, which is
-correct: this sheet consumes those rails and the `power` sheet has yet to make them. The locally
+ERC on the two drawn sheets reports only what is genuinely outstanding: `+3V3` and `GND` have no
+source until the `power` sheet exists, and the hub's four over-current inputs have nothing driving
+them until the `port` sheet does. The locally
 generated rails, `+1V1` and the analogue supply, carry flags because a passive inductor and a
 ferrite are not power sources.
 
