@@ -311,12 +311,12 @@ and every pin carries a named stub, so each net that crosses a block boundary is
 `port.kicad_sch` is drawn once and instanced four times, with the root mapping its generic
 `DP`/`DM`/`PWR_EN`/`FAULT` onto the hub's `Pn_*`.
 
-**`mcu`, `hub` and `port` are populated; the other four are not.** `mcu` holds the MCU, the flash, the
+**`mcu`, `hub`, `port` and `upstream_data` are populated; the other three are not.** `mcu` holds the MCU, the flash, the
 core-rail inductor and its decoupling, the crystal, the analogue filter, reset and boot, the debug
 and console header, the indicators and the button. `hub` holds the hub, its 24 MHz crystal, the
 `RBIAS` reference, the two regulator filters, the straps that select the default configuration, the
 reset and upstream-detect pull-downs, and the upstream pair's series resistors and host-side
-pull-downs. Every pin of every part is on a named net. `port` holds the current-limited switch, the ESD array, the receptacle and the bulk capacitance -- drawn once and placed four times.
+pull-downs. Every pin of every part is on a named net. `port` holds the current-limited switch, the ESD array, the receptacle and the bulk capacitance -- drawn once and placed four times. `upstream_data` holds the data receptacle, its terminations, the protection array, the sense divider and the diode through which the rail takes its capped contribution.
 
 Both are drawn the way a person would draw them: **signals are wires**, and only the rails and the
 nets that leave the sheet are carried on symbols and labels. Parts sit beside the pins they serve —
@@ -340,7 +340,7 @@ kicad-cli sch erc      -o erc.rpt crossfire.kicad_sch
 kicad-cli sch export netlist -o crossfire.net crossfire.kicad_sch
 ```
 
-The netlist is real: 92 nets, and the only unconnected pins are the twelve spare GPIOs the pin map
+The netlist is real: 100 nets, and the only unconnected pins are the twelve spare GPIOs the pin map
 names and the three hub pins the datasheet says to leave alone — nothing has been left connected by
 accident, and nothing intended has been missed.
 Read it rather than the picture when checking this sheet; a wire that looks right and a wire that
@@ -448,6 +448,18 @@ rail's own limit the backstop**, so the boost has to current-limit gracefully ra
 The chosen boost sets its limit with an external resistor, which is better than inheriting one —
 what it does on reaching that limit is the part still to confirm.
 
+**The PD sink has no output switch of its own — it drives an external one.** The question was whether
+it opens that switch when nothing is attached, so the data port cannot back-drive an exposed
+connector. Its pinout answers it differently and better: there is no internal switch to open. The
+part brings out a gate drive for an external FET, so the switch is ours to place and ours to
+orient — and a FET we choose can be made to block reverse by construction rather than by trusting
+someone else's internal arrangement. The condition on the power port is therefore a design task, not
+an unknown.
+
+It also explains the two spare pins beside it. The part takes a requested voltage and current as
+resistor settings as well as over the bus, so the profile has a hardware default before any firmware
+runs — which is worth having on a board whose firmware is the thing being updated.
+
 **The PIO port and the radio do not contend.** Counted rather than assumed: the radio's bus takes
 one state machine and eight of the thirty-two instruction slots in the first PIO block, four pins
 and one DMA channel. The part has three PIO blocks of four state machines each, and sixteen DMA
@@ -463,11 +475,14 @@ Things this document asserts that a datasheet has to confirm before layout:
   cost the power budget if it does not. 240 MHz is above the datasheet and proven only on the boards
   in hand, so a production population is the open question, not whether it runs.
 - The QSPI divider at 240 MHz, and that the flash part chosen is rated for the 120 MHz it lands on.
-- Whether the PD sink opens its output switch when nothing is attached. If it does not, the power
-  port needs a blocking FET of its own so the data port cannot back-drive an exposed connector.
-  Note that whatever sits on that shared node must tolerate 9 V, which rules out the 5.5 V-rated
-  load switches that would otherwise have done the job. Its datasheet does not extract, so this one
-  wants reading by eye.
+- How the power port's external switch FET is oriented, so it blocks reverse by construction. It has
+  to tolerate 9 V on the shared node, which is what ruled out the 5.5 V-rated load switches.
+- The three converters on the power sheet, which is why that sheet is not drawn. Each needs numbers
+  this toolchain cannot read: which resistor sets the charger's current programming against its
+  input-limit pin, and how to tell the boost's feedback divider apart from its current-limit and
+  frequency resistors. The vendor publishes both with the pin tables and design equations in a form
+  that extracts at four and thirty per cent respectively. The topology is understood; the values are
+  not, and a wrong number in the supply is expensive. This wants a human with the PDF open.
 
 - That the 5 V boost current-limits gracefully rather than latching off, since it is the real
   backstop behind four switches that each trip well above the port budget.
