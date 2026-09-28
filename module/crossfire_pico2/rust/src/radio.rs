@@ -37,6 +37,60 @@ const ADVERTISED_NAME: &str = "crossfire";
 /// How long a request to announce waits to be connected to. Long enough to pick the board out of a
 /// list and tap it, short enough that a console is not held for a minute by a mistake.
 const ADVERTISE_TIMEOUT_US: u64 = 30_000_000;
+/// How long a connected updater is given to send a whole image. Generous on purpose: this link is
+/// the slow one, and the point of measuring it is not to have guessed the answer first.
+const TRANSFER_TIMEOUT_US: u64 = 300_000_000;
+
+/// Somewhere for an arriving image to go, whichever radio carried it.
+///
+///   ONE OF THESE, NOT ONE PER TRANSPORT. Where an image comes from is the radio's business; what
+/// happens to it is this board's, and it is the same either way -- the slot that is not running,
+/// erased to the size promised, written as the pieces arrive. Two copies of that would be two places
+/// to get the approval, the slot choice or the refusals wrong, and only one of them would be
+/// exercised on any given day.
+struct Staging {
+        session: Option<Update<FlashSlot>>,
+        /// Why nothing was staged, in words the console can use. Held rather than returned because
+        /// a sink can only answer yes or no to the transport asking it.
+        failed: Option<&'static str>,
+}
+
+impl Staging {
+        fn new() -> Self {
+                Self { session: None, failed: None }
+        }
+
+        /// Take the next thing a transport has for us. `false` stops the transfer.
+        fn take(&mut self, incoming: Incoming) -> bool {
+                match incoming {
+                        Incoming::Length(n) => {
+                                let slot = match FlashSlot::inactive() {
+                                        Ok(s) => s,
+                                        Err(_) => {
+                                                self.failed = Some("this board has no second slot to stage into");
+                                                return false;
+                                        }
+                                };
+                                //   ON APPROVAL, as `update` does: an image that arrives whole
+                                // and then cannot do its job still has to expire on its own
+                                match Update::begin_on_approval(slot, n) {
+                                        Ok(u) => {
+                                                self.session = Some(u);
+                                                true
+                                        }
+                                        Err(_) => {
+                                                self.failed = Some("the slot will not take an image that size");
+                                                false
+                                        }
+                                }
+                        }
+                        Incoming::Body(b) => match self.session.as_mut() {
+                                Some(u) => u.write(b).is_ok(),
+                                None => false,
+                        },
+                }
+        }
+}
 
 pub struct RadioMod {
         /// Nothing until it is asked for -- see `AppEvent::Radio` for why this is on request.
@@ -179,37 +233,12 @@ impl RadioMod {
                 info!("radio: fetching {} from {}.{}.{}.{}:{}", t.path(), t.ip[0], t.ip[1], t.ip[2], t.ip[3], t.port);
 
                 let started = light_core::log::now_us();
-                let mut session: Option<Update<FlashSlot>> = None;
-                let mut failed: Option<&'static str> = None;
-                let mut sink = |incoming: Incoming| match incoming {
-                        Incoming::Length(n) => {
-                                let slot = match FlashSlot::inactive() {
-                                        Ok(s) => s,
-                                        Err(_) => {
-                                                failed = Some("this board has no second slot to stage into");
-                                                return false;
-                                        }
-                                };
-                                //   ON APPROVAL, as `update` does: an image that arrives whole
-                                // and then cannot do its job still has to expire on its own
-                                match Update::begin_on_approval(slot, n) {
-                                        Ok(u) => {
-                                                session = Some(u);
-                                                true
-                                        }
-                                        Err(_) => {
-                                                failed = Some("the slot will not take an image that size");
-                                                false
-                                        }
-                                }
-                        }
-                        Incoming::Body(b) => match session.as_mut() {
-                                Some(u) => u.write(b).is_ok(),
-                                None => false,
-                        },
+                let mut staging = Staging::new();
+                let outcome = {
+                        let mut sink = |incoming: Incoming| staging.take(incoming);
+                        radio.fetch(t.ip, t.port, t.path(), &mut sink)
                 };
-
-                let outcome = radio.fetch(t.ip, t.port, t.path(), &mut sink);
+                let Staging { session, failed } = staging;
                 if let Some(why) = failed {
                         warn!("radio: {why}");
                         return;
@@ -308,10 +337,43 @@ impl RadioMod {
                         return;
                 };
                 let mut pump = || radio.poll();
-                if ble.accept(ADVERTISED_NAME, ADVERTISE_TIMEOUT_US, &mut pump) {
-                        info!("radio: connected on the short-range radio");
-                } else {
+                if !ble.accept(ADVERTISED_NAME, ADVERTISE_TIMEOUT_US, &mut pump) {
                         warn!("radio: nothing connected before the wait ran out; ask again to announce again");
+                        return;
+                }
+                info!("radio: connected on the short-range radio; waiting for an image");
+
+                //   THE SAME STAGING THE WIRELESS SIDE USES. What carried the image is the radio's
+                // business; where it goes is this board's, and it does not differ
+                let mut staging = Staging::new();
+                let transferred = {
+                        let mut sink = |incoming: Incoming| staging.take(incoming);
+                        ble.serve(&mut sink, TRANSFER_TIMEOUT_US, &mut pump)
+                };
+                let Staging { session, failed } = staging;
+                if let Some(why) = failed {
+                        warn!("radio: {why}");
+                        return;
+                }
+                let Some(t) = transferred else {
+                        warn!("radio: nothing arrived over the short-range radio");
+                        return;
+                };
+                //   the number the whole spike was for: what the link actually moved, and in how
+                // many exchanges, which is what says whether an image is minutes or seconds
+                let rate = if t.ms > 0 { u64::from(t.bytes) * 1000 / u64::from(t.ms) / 1024 } else { 0 };
+                info!("radio: {} bytes in {} ms ({} KiB/s) over {} writes", t.bytes, t.ms, rate, t.writes);
+                let Some(session) = session else {
+                        warn!("radio: nothing was staged -- the length never arrived");
+                        return;
+                };
+                match session.finish() {
+                        Ok(staged) => {
+                                info!("radio: staged; starting it");
+                                let e = staged.boot();
+                                warn!("radio: the hardware would not start it ({e:?})");
+                        }
+                        Err(e) => warn!("radio: what arrived is not usable ({e:?})"),
                 }
         }
 
