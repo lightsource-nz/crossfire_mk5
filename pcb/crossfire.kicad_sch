@@ -263,6 +263,16 @@
 	)
 	(wire
 		(pts
+			(xy 152.4 63.5) (xy 157.48 63.5)
+		)
+		(stroke
+			(width 0)
+			(type solid)
+		)
+		(uuid "68dad5a5-04f0-41c2-a68f-03c064edf7ce")
+	)
+	(wire
+		(pts
 			(xy 152.4 38.1) (xy 157.48 38.1)
 		)
 		(stroke
@@ -593,6 +603,16 @@
 	)
 	(wire
 		(pts
+			(xy 152.4 152.4) (xy 157.48 152.4)
+		)
+		(stroke
+			(width 0)
+			(type solid)
+		)
+		(uuid "e87c7e2f-cb43-48c4-9451-12d84e6eede4")
+	)
+	(wire
+		(pts
 			(xy 152.4 104.14) (xy 157.48 104.14)
 		)
 		(stroke
@@ -901,6 +921,16 @@
 		)
 		(uuid "4370246f-697f-45b4-a1eb-664d33de76f2")
 	)
+	(label "HUB_VBUS_DET"
+		(at 157.48 63.5 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "4ab69a30-c7ac-4ccf-b9dd-dac335d2e09d")
+	)
 	(label "RF_PWR"
 		(at 238.76 30.48 0)
 		(effects
@@ -930,6 +960,16 @@
 			(justify left bottom)
 		)
 		(uuid "5667721a-be69-4080-a776-ccb685323e5c")
+	)
+	(label "HUB_VBUS_DET"
+		(at 157.48 152.4 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "56fc1a13-bfa9-4fdb-bd81-b4e1e9158ef1")
 	)
 	(label "USB_DP"
 		(at 157.48 22.86 0)
@@ -1519,7 +1559,7 @@
 	)
 	(sheet
 		(at 101.6 20.32)
-		(size 50.80 45.72)
+		(size 50.8 45.72)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
@@ -1698,7 +1738,7 @@
 			)
 		)
 		(pin "HUB_VBUS_DET" output
-			(at 152.40 63.50 0)
+			(at 152.4 63.5 0)
 			(uuid "02ee0b29-3124-4179-9eed-288494646796")
 			(effects
 				(font
@@ -1805,7 +1845,7 @@
 	)
 	(sheet
 		(at 101.6 101.6)
-		(size 50.80 53.34)
+		(size 50.8 53.34)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
@@ -2034,7 +2074,7 @@
 			)
 		)
 		(pin "HUB_VBUS_DET" input
-			(at 152.40 152.40 0)
+			(at 152.4 152.4 0)
 			(uuid "a344ef97-1ee3-48a4-a1fb-6da5e4b18f36")
 			(effects
 				(font
@@ -2497,44 +2537,4 @@
 		)
 	)
 	(embedded_fonts no)
-	(wire
-		(pts
-			(xy 152.40 63.50) (xy 157.48 63.50)
-		)
-		(stroke
-			(width 0)
-			(type solid)
-		)
-		(uuid "68dad5a5-04f0-41c2-a68f-03c064edf7ce")
-	)
-	(label "HUB_VBUS_DET"
-		(at 157.48 63.50 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "4ab69a30-c7ac-4ccf-b9dd-dac335d2e09d")
-	)
-	(wire
-		(pts
-			(xy 152.40 152.40) (xy 157.48 152.40)
-		)
-		(stroke
-			(width 0)
-			(type solid)
-		)
-		(uuid "e87c7e2f-cb43-48c4-9451-12d84e6eede4")
-	)
-	(label "HUB_VBUS_DET"
-		(at 157.48 152.40 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "56fc1a13-bfa9-4fdb-bd81-b4e1e9158ef1")
-	)
 )

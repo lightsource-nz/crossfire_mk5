@@ -4912,6 +4912,16 @@
 	)
 	(wire
 		(pts
+			(xy 228.6 147.32) (xy 233.68 147.32)
+		)
+		(stroke
+			(width 0)
+			(type solid)
+		)
+		(uuid "ca1dd329-ea10-4921-b9ec-f46e72f3b002")
+	)
+	(wire
+		(pts
 			(xy 147.32 167.64) (xy 147.32 172.72)
 		)
 		(stroke
@@ -5299,6 +5309,17 @@
 			(justify right)
 		)
 		(uuid "bec42346-8ce3-4151-ad09-2365b1f7a95b")
+	)
+	(hierarchical_label "HUB_VBUS_DET"
+		(shape output)
+		(at 233.68 147.32 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "c2b84b09-0dcd-4f77-8836-c6b41a76270f")
 	)
 	(hierarchical_label "CHG_INT"
 		(shape input)
@@ -9905,26 +9926,5 @@
 				)
 			)
 		)
-	)
-	(wire
-		(pts
-			(xy 228.60 147.32) (xy 233.68 147.32)
-		)
-		(stroke
-			(width 0)
-			(type solid)
-		)
-		(uuid "ca1dd329-ea10-4921-b9ec-f46e72f3b002")
-	)
-	(hierarchical_label "HUB_VBUS_DET"
-		(shape output)
-		(at 233.68 147.32 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "c2b84b09-0dcd-4f77-8836-c6b41a76270f")
 	)
 )
