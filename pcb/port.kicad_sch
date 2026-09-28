@@ -1,21 +1,10 @@
 (kicad_sch
-	(version 20250610)
+	(version 20260306)
 	(generator "eeschema")
 	(generator_version "10.0")
 	(uuid "6604f5f3-69be-4364-a5b3-58b5be897559")
 	(paper "A3")
 	(lib_symbols)
-	(hierarchical_label "DP"
-		(shape bidirectional)
-		(at 60 40.00 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "31f19849-e173-4b6c-a8b9-ef4380e1216c")
-	)
 	(hierarchical_label "DM"
 		(shape bidirectional)
 		(at 60 42.54 0)
@@ -26,17 +15,6 @@
 			(justify left)
 		)
 		(uuid "23691dd2-dbc1-4d5e-a6fa-3b242b797647")
-	)
-	(hierarchical_label "PWR_EN"
-		(shape input)
-		(at 60 45.08 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "c114d983-d456-4599-a6d0-3ebd858364cb")
 	)
 	(hierarchical_label "FAULT"
 		(shape output)
@@ -49,5 +27,26 @@
 		)
 		(uuid "26e8d2bb-b46a-4095-a611-45ea00bba4ff")
 	)
-	(embedded_fonts no)
+	(hierarchical_label "DP"
+		(shape bidirectional)
+		(at 60 40 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "31f19849-e173-4b6c-a8b9-ef4380e1216c")
+	)
+	(hierarchical_label "PWR_EN"
+		(shape input)
+		(at 60 45.08 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "c114d983-d456-4599-a6d0-3ebd858364cb")
+	)
 )

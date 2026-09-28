@@ -91,8 +91,12 @@ entirely on the board, from GPIOs to the hub, and never reaches a connector or a
 kindest possible first home for a software-timed USB port.
 
 One consequence of hosting on-board: **no host supplies VBUS to the hub's upstream port**, so the hub
-is strapped self-powered and its upstream-detect input is driven from the board's own 5 V through a
-divider. Without that the hub never believes it is connected.
+is self-powered, and its upstream-detect input is driven by the MCU. The datasheet is explicit about
+this case: a *detachable* hub divides that pin down from the upstream VBUS, but a self-powered hub
+with a permanently attached host takes it "from a dedicated host control output, or the 3.3 V domain
+that powers the host" — so a GPIO, which costs one pin and hands the firmware the ability to hold
+the hub down until it is ready and to force a re-enumeration by toggling it. Without that pin
+asserted the hub never believes it is connected.
 
 ### 2. Two upstream connectors, one for power and one for data
 
@@ -176,13 +180,20 @@ graph LR
 | VSYS | the charger's system node, 3.0–4.4 V | 4 A | the battery when unplugged, held up by the charger when not |
 | 5 V (ports) | boost from VSYS | 2 A | **always the same converter**, so a port sees the same 5 V plugged in or not |
 | 3.3 V | buck-boost from VSYS | 1 A | VSYS falls below 3.3 V on a flat cell, so a plain buck could not hold it |
+| 1.1 V (core) | the MCU's own switching regulator | — | not a board converter, but it needs board parts: an inductor on `VREG_LX` and a feedback network, which is why it is a rail and not just decoupling |
+
+The core rail catches people out, so it is worth stating: this MCU regulates its own core with a
+*switching* regulator, not a linear one. It brings out `VREG_VIN`, `VREG_LX` and `VREG_FB`, so the
+schematic carries an inductor and the rail it makes feeds the `DVDD` pins. The analogue supply for
+the ADC wants its own filter off 3.3 V as well, and the CC senses make that a rail that matters
+rather than one to leave floating.
 
 Port power comes from VSYS rather than straight off VBUS. It costs a conversion when plugged in
 (about 90%), and it buys two things: a 5 V rail that does not change character when the cable is
 pulled, and the freedom to negotiate 9 V upstream instead of being held to the 15 W that 5 V/3 A
-allows. The alternative — ports fed from VBUS, with the charger's OTG boost back-driving VBUS on
-battery — saves the boost entirely, and is the obvious cost-down if 15 W upstream turns out to be
-enough.
+allows. The cost-down that would have removed the boost — ports fed from VBUS, with the charger's
+OTG output back-driving it on battery — died with the single upstream connector: VBUS is now a
+power-only receptacle, and back-driving it powers nothing. The separate boost is settled.
 
 ### Budget
 
@@ -232,11 +243,11 @@ Stock KiCad symbols exist for everything marked with one; the rest need drawing.
 | MCU | RP2350A, QFN-60 | `MCU_RaspberryPi:RP2350A` | 30 GPIO is enough (see below); RP2350B if a display is added |
 | flash | W25Q128JVS, 16 MB | `Memory_Flash:W25Q128JVS` | the A/B image pair plus the asset partition; 2 MB would not hold it, and its 133 MHz rating covers the 120 MHz the divider lands on |
 | hub | USB2514B | `Interface_USB:USB2514B_Bi` | four downstream ports, per-port power and overcurrent pins, no external EEPROM needed |
-| port switch ×4 | TPD3S014 | `Power_Protection:TPD3S014` | one part per port covering the current-limited VBUS switch *and* the D+/D− ESD |
+| port switch ×4 | TPD3S044 | `Power_Protection:TPD3S044` | one part per port covering the current-limited VBUS switch *and* the D+/D− ESD. **Not the TPD3S014** -- that sibling allows 0.5 A continuous, which is the port budget itself with nothing left for inrush |
 | PD sink | HUSB238 | `Interface_USB:HUSB238_xxxDD` | already proven on hardware in this codebase, and it reports which profile was accepted |
 | charger / PMIC | BQ25798 | `Battery_Management:BQ25798` | buck-boost, takes 9 V in directly, 1S charge, and an I²C ADC the power manager can read |
-| 5 V boost | TPS61089 | — | 5 A switch, comfortably 2 A out at 5 V from a 1S cell |
-| 3.3 V | TPS63060 | — | buck-boost, so 3.3 V survives a flat cell |
+| 5 V boost | TPS61089 | `Regulator_Switching:TPS61089` | 5 A switch, comfortably 2 A out at 5 V from a 1S cell |
+| 3.3 V | TPS63060 | `Regulator_Switching:TPS63060` | buck-boost, so 3.3 V survives a flat cell |
 | upstream data ESD | 2-channel array, low capacitance | — | the downstream pairs get theirs from the port switch; the upstream pair has no such part in front of it |
 | power connector | USB-C, power only, 6-pin | `Connector:USB_C_Receptacle_PowerOnly_6P` | no data pins to mis-wire, and nothing on it a computer would want |
 | data connector | USB-C 2.0, 16-pin | `Connector:USB_C_Receptacle_USB2.0_16P` | |
@@ -247,28 +258,41 @@ Stock KiCad symbols exist for everything marked with one; the rest need drawing.
 Two notes on the hub. Its upstream link runs at full speed, because the RP2350's controller is
 full-speed only — so the whole tree is full speed and instruments that could do high speed fall
 back, which costs nothing, as USB-MIDI 1.0 is a full-speed class. And the hub drives the port
-switches itself: `PRTPWR[1:4]` to each switch's enable, each switch's fault back to `OCS[1:4]`. Port
+switches itself: `PRTPWR[1:4]` to each switch's enable, each switch's fault back to `OCS_N[1:4]`. Port
 power then goes on and off through ordinary hub requests that any host stack already makes,
 overcurrent arrives as a standard port status change, and eight GPIOs stay free.
 
 ### GPIO budget
 
-| use | pins |
-| --- | --- |
-| PIO USB host pair, adjacent | 2 |
-| hub reset | 1 |
-| I²C to the PD sink and the charger | 2 |
-| charger interrupt | 1 |
-| data-port VBUS detect | 1 |
-| data-port CC sense, ADC | 2 |
-| radio bus and power | 4 |
-| status indicators | 2 |
-| button | 1 |
-| console UART | 2 |
-| **used** | **18 of 30** |
+Twenty of the thirty, and the assignment is not arbitrary — four of the choices are forced and the
+rest fall out of keeping peripherals on their default pins.
 
-The hardware controller's own pair, QSPI and SWD are on dedicated pins. Twelve spare is room for a
-display. The two CC senses have to land on ADC-capable pins.
+| GPIO | net | why there |
+| --- | --- | --- |
+| 0, 1 | `CONSOLE_TX`, `CONSOLE_RX` | UART0's default pair |
+| 2 | `PD_ATTACH` | |
+| 3 | — | spare |
+| 4, 5 | `SDA`, `SCL` | I²C0's default pair; reaches the PD sink and the charger |
+| 6 | `CHG_INT` | |
+| 7 | `HUB_RESET` | |
+| 8, 9 | `PIO_DP`, `PIO_DM` | **forced adjacent**, low pin first — the PIO program addresses the pair as a base and an offset |
+| 10 | `RF_PWR` | |
+| 11 | `RF_CS` | |
+| 12, 13 | `RF_CLK`, `RF_DIO` | kept adjacent so the radio's PIO program can side-set the clock beside its data pin |
+| 14, 15 | `LED_1`, `LED_2` | |
+| 16 | `BUTTON` | |
+| 17 | `VBUS_DET` | data-port VBUS present, so a self-powered device only attaches when a host is there |
+| 18 | `HUB_VBUS_DET` | tells the hub its upstream is live; also the way to force a re-enumeration |
+| 19–25 | — | spare, and still contiguous: seven in a row is a display bus |
+| 26, 27 | `CC1_SENSE`, `CC2_SENSE` | **forced** — only 26–29 reach the ADC on this package |
+| 28, 29 | — | spare, and the last two ADC channels |
+
+Dedicated pins take the rest: QSPI to the flash, the hardware USB pair to the data receptacle, SWD to
+the debug header, XIN/XOUT to the 12 MHz crystal, RUN to reset.
+
+The boot button is not a GPIO. It pulls the flash's chip select low, the way the reference design
+does, so it costs nothing from the budget above — and the button on GPIO 16 is a separate, ordinary
+one.
 
 ## Sheets
 
@@ -277,31 +301,89 @@ display. The two CC senses have to land on ADC-capable pins.
 | `mcu` | RP2350A, flash, crystal, SWD, boot button, decoupling |
 | `upstream_power` | the power-only receptacle, CC and the PD sink, VBUS out to the charger |
 | `upstream_data` | the data receptacle, Rd and CC sense, ESD on the hardware USB pair, VBUS sense and its capped contribution |
-| `hub` | USB2514B, its crystal and straps, the PIO host pair's series resistors and pull-downs, upstream detect, and four downstream pairs |
+| `hub` | USB2514B, its 24 MHz crystal, the `RBIAS` resistor, the PIO host pair's series resistors and pull-downs, upstream detect from the MCU, and four downstream pairs |
 | `port` | one port: switch, receptacle, bulk capacitance — instanced four times |
 | `power` | the ORing of the two inputs, the charger, battery connector and thermistor, the 5 V boost, the 3.3 V buck-boost |
 | `radio` | the module, its bus and supply — fitted or not |
 
 ## The project as it stands
 
-`crossfire.kicad_pro` is a KiCad 10 project holding the root sheet, the seven child sheets and a
-project symbol library for the parts with no stock symbol. **No components are placed.** What
-is in it is the decomposition and the interface: every sheet has its pins, every pin has a matching
-hierarchical label inside its sheet, and every pin carries a named stub in the root, so each net
-that crosses a block boundary is already named and agreed. `port.kicad_sch` is drawn once and
-instanced four times, with the root mapping its generic `DP`/`DM`/`PWR_EN`/`FAULT` onto the hub's
-`Pn_*`.
+`crossfire.kicad_pro` is a KiCad 10 project holding the root sheet, seven child sheets and a project
+symbol library for the parts with no stock symbol. The root carries the decomposition and the
+interface: every sheet has its pins, every pin has a matching hierarchical label inside its sheet,
+and every pin carries a named stub, so each net that crosses a block boundary is named and agreed.
+`port.kicad_sch` is drawn once and instanced four times, with the root mapping its generic
+`DP`/`DM`/`PWR_EN`/`FAULT` onto the hub's `Pn_*`.
 
-It can be checked without opening the editor:
+**`mcu` is populated; the other six are not.** It holds the MCU, the flash, the core-rail inductor
+and its decoupling, the crystal, the analogue filter, reset and boot, the debug and console header,
+the indicators and the button — and every pin of every part is on a named net.
+
+It is drawn the way a person would draw it: **signals are wires**, and only the rails and the nets
+that leave the sheet are carried on symbols and labels. Parts sit beside the pins they serve — the
+flash is placed so all six lines of its bus are single straight segments across to the MCU, and the
+indicators and the button each drop down their own column so nothing crosses.
+
+It can all be checked without opening the editor:
 
 ```
-kicad-cli sch erc -o erc.rpt crossfire.kicad_sch
+kicad-cli sch erc      -o erc.rpt crossfire.kicad_sch
+kicad-cli sch export netlist -o crossfire.net crossfire.kicad_sch
 ```
 
-All eleven sheet instances resolve and no pin disagrees with its hierarchical label. The report is
-128 dangling labels, which is exactly what a schematic with no components in it should say — every
-net so far ends at a sheet boundary and reaches no pin. That count is the thing to watch: it should
-fall towards zero as each sheet is populated, and ERC becomes a real gate once it does.
+The netlist is real: 51 nets, and the only unconnected pins are exactly the eleven spare GPIOs the
+pin map names — nothing has been left connected by accident, and nothing intended has been missed.
+Read it rather than the picture when checking this sheet; a wire that looks right and a wire that
+*is* right are not the same thing, and the netlist is the one that answers.
+
+ERC on `mcu` reports two violations, both `power_pin_not_driven` on `+3V3` and `GND`, which is
+correct: this sheet consumes those rails and the `power` sheet has yet to make them. The locally
+generated rails, `+1V1` and the analogue supply, carry flags because a passive inductor and a
+ferrite are not power sources.
+
+The rest of the report is the six empty sheets: dangling hierarchical labels and stubs that reach no
+pin. That count is the thing to watch, and it falls as each sheet is populated.
+
+## Settled since
+
+**The host stack's seam carries a PIO transport.** This was the first thing to establish and it
+holds up. The stack is written against a `HostController` trait of eight methods — device detect,
+root-port reset, control, bulk in, bulk out, and interrupt-pipe allocation — and everything above it
+is generic over that trait, including the enumeration and the hub handling. It already has three
+implementations, two chips and a mock, and the mock is the proof: the stack has been substituted
+before. So the enumeration, the hub handling and the MIDI layer are all kept, and only the transport
+underneath is new.
+
+What that does *not* buy is a smaller job. The chip implementation is about 1,600 lines, and it
+divides in two. The transfer-level half — splitting transfers into packets, reassembling them, pipe
+bookkeeping — carries over in shape. The other half is register writes that ask the silicon to
+generate frame markers and keep-alive, and to do CRC, bit stuffing, encoding and retries. **A PIO
+transport has to supply all of that in software**, on a one-millisecond frame cadence and inside the
+bus turnaround window. The seam being clean means the work is contained, not that it is small.
+
+**The hub needs no EEPROM, and its defaults are already what this design wants.** Its configuration
+register 06h powers up at 9Bh, and that value decodes to self-powered operation, over-current
+sensing on a port-by-port basis, and port power switching on a port-by-port basis — the three things
+this design depends on, all of them the factory default. An EEPROM or an SMBus master would only be
+needed to change them, or to give the hub custom identifiers.
+
+The same register answers the speed question. Its high-speed-disable bit is clear by default, which
+means the part attaches as high- *or* full-speed, whichever the host offers; a full-speed host gets a
+full-speed hub, and no configuration is required to make that happen. The bit exists to force
+full-speed only, which is worth knowing about but not worth an EEPROM to set.
+
+Two details that came out of the same reading and would have been found the hard way: the
+over-current inputs carry internal pull-ups and are active low, so a switch with an open-drain fault
+output connects straight to them with nothing in between; and the part wants a **12.0 kΩ ±1%
+resistor from `RBIAS` to ground** to set its transceiver bias, which is easy to leave off a
+schematic and not easy to diagnose afterwards.
+
+**The PIO port and the radio do not contend.** Counted rather than assumed: the radio's bus takes
+one state machine and eight of the thirty-two instruction slots in the first PIO block, four pins
+and one DMA channel. The part has three PIO blocks of four state machines each, and sixteen DMA
+channels. Giving the USB host a whole block of its own leaves a third block and most of the DMA
+untouched, and any block can drive any pin, so the pin choice is not constrained by the split
+either.
 
 ## Still to settle
 
@@ -311,17 +393,6 @@ Things this document asserts that a datasheet has to confirm before layout:
   cost the power budget if it does not. 240 MHz is above the datasheet and proven only on the boards
   in hand, so a production population is the open question, not whether it runs.
 - The QSPI divider at 240 MHz, and that the flash part chosen is rated for the 120 MHz it lands on.
-- That the PIO port and the radio bus fit together. The radio's half-duplex bus is also driven from
-  PIO, so the two have to agree on state machines, instruction memory and DMA channels — a budget
-  worth writing down before either is built.
-- Which GPIO pair carries the PIO port. It has to be adjacent, clear of the radio's pins, and placed
-  so the pair reaches the hub as a short matched run.
-- That the existing host stack's host-controller seam really is enough to carry a PIO transport
-  underneath it. If it is, the stack, the hub handling and the MIDI layer above are kept and only the
-  transport is new; if it is not, the work is much larger than this document assumes. This is the
-  first thing to establish.
-- The hub's upstream-detect divider, and its self-powered strapping, since no host supplies VBUS to
-  that port on this board.
 - The ORing part. It has to block 9 V from reaching the data port by itself, prioritise the power
   port, and cost little — a 5.5 V power mux cannot do the first of those, so this is a controller
   with external FETs rather than an integrated switch.
@@ -330,25 +401,24 @@ Things this document asserts that a datasheet has to confirm before layout:
   ORing path, is open.
 - Whether the CC senses need a divider or a clamp. CC can sit above the ADC's range in a fault, and
   a divider costs resolution at the three thresholds that have to be told apart.
-- How the two receptacles are told apart by someone holding a cable. Nothing about either is harmful
-  to mis-plug, but only one of them charges, and silkscreen alone has never stopped anybody.
-- TPD3S014's current limit per port, and whether its fault output suits the hub's overcurrent input
-  directly or needs inverting.
-- The USB2514B strapping for individual rather than ganged port power, and whether it is reachable
-  without an EEPROM.
-- That the USB2514B is specified for a full-speed upstream link.
+- The TPD3S044's fault output: confirmed as the right current rating, but whether its fault pin is
+  open-drain and active low still wants checking against the hub's pull-up inputs. TI publishes this
+  datasheet as page images, so it needs reading by eye rather than by tool.
 - HUSB238's request sequence for a 9 V profile. On some parts a multi-byte register write silently
   stores nothing and the single-byte form has to be used instead.
-- BQ25798's input voltage and current limit registers, and whether its OTG boost is worth using in
-  place of the separate 5 V boost.
+- BQ25798's input voltage and current limit registers, and whether it can hold a different input
+  limit per source, since the two upstream connectors offer very different budgets.
 - Whether the radio module's antenna keep-out can be met at the board edge.
 
-And one question above the electrical detail, still open: whether 250 mA per port on battery is the
-right budget. The other one — whether a computer and the instruments have to be served at once — is
-answered, and this design answers it yes.
+The questions above the electrical detail are all answered now. A computer and the instruments are
+served at once, and this design does that. The declared battery budget of 250 mA a port stands, so
+the 3000 mAh cell and the hour it buys are settled rather than assumed. And the two receptacles are
+told apart by labelling — on the case, and on the silkscreen beneath it — which is a reasonable
+answer given that neither way of getting it wrong does any harm.
 
 The largest piece of work this board creates is not on the board: **a full-speed USB host in PIO**,
-carrying the existing host stack on a new transport. It is worth proving on a development board
-against the existing firmware before this design is committed to copper, because it is the one part
-of the architecture with nothing behind it yet — and because it is what holds the system clock at
-240 MHz, which everything else is timed against.
+carrying the existing host stack on a new transport. Its shape is now known — eight methods, with
+the frame cadence and the bit-level protocol to supply in software — but none of it is written. It
+is worth proving on a development board against the existing firmware before this design is
+committed to copper, because it is the one part of the architecture with nothing behind it yet, and
+because it is what holds the system clock at 240 MHz, which everything else is timed against.

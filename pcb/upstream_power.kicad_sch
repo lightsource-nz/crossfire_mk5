@@ -1,21 +1,10 @@
 (kicad_sch
-	(version 20250610)
+	(version 20260306)
 	(generator "eeschema")
 	(generator_version "10.0")
 	(uuid "6e666e95-59c9-40d5-a665-2ac38aee9d4a")
 	(paper "A3")
 	(lib_symbols)
-	(hierarchical_label "VBUS_PD"
-		(shape output)
-		(at 60 40.00 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "f509835a-5c5b-4720-aee1-74f041b33e2a")
-	)
 	(hierarchical_label "SDA"
 		(shape bidirectional)
 		(at 60 42.54 0)
@@ -49,5 +38,15 @@
 		)
 		(uuid "cf67271f-4ad1-4e7a-a6a8-f1d39cc62395")
 	)
-	(embedded_fonts no)
+	(hierarchical_label "VBUS_PD"
+		(shape output)
+		(at 60 40 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "f509835a-5c5b-4720-aee1-74f041b33e2a")
+	)
 )
