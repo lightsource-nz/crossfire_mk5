@@ -239,7 +239,7 @@ Stock KiCad symbols exist for everything marked with one; the rest need drawing.
 | MCU | RP2350A, QFN-60 | `MCU_RaspberryPi:RP2350A` | 30 GPIO is enough (see below); RP2350B if a display is added |
 | flash | W25Q128JVS, 16 MB | `Memory_Flash:W25Q128JVS` | the A/B image pair plus the asset partition; 2 MB would not hold it, and its 133 MHz rating covers the 120 MHz the divider lands on |
 | hub | USB2514B | `Interface_USB:USB2514B_Bi` | four downstream ports, per-port power and overcurrent pins, no external EEPROM needed |
-| port switch ×4 | TPS2051C or AP2171W | `Power_Management:TPS2051CDBV` | current-limited switch with an **active-high enable and an open-drain fault**, which is what the hub needs at both ends. The polarity matters: the same libraries hold active-low-enable siblings that would leave every port powered when the hub says off |
+| port switch ×4 | TPS2065C | `Power_Management:TPS2065CDBV` | 1 A threshold, **active-high enable, open-drain fault** — what the hub needs at both ends. It limits by going into constant current rather than latching off, and adds reverse blocking and output discharge, both of which a port wants. Its 0.5 A sibling is the same trap as before: that is the budget itself, with nothing for inrush |
 | port data ESD ×4 | 2-channel array, low capacitance | — | needed because the switch above protects power only. The TPD3S0x4 would have covered both, but it has no fault output, so it cannot tell the hub anything |
 | PD sink | HUSB238 | `Interface_USB:HUSB238_xxxDD` | already proven on hardware in this codebase, and it reports which profile was accepted |
 | charger / PMIC | BQ25798 | `Battery_Management:BQ25798` | buck-boost, takes 9 V in directly, 1S charge, and an I²C ADC the power manager can read |
@@ -424,12 +424,14 @@ same libraries carry active-low-enable siblings that would leave every port ener
 the hub asked for off. The fault must be **open-drain and active low**, which suits the hub's
 inputs directly — they are pulled up internally, so nothing goes between them.
 
-**And one thing the switch still will not do: enforce the budget.** Its current limit protects the
-part, not the port's 500 mA, so four of them can ask the 5 V rail for more than the 2 A it is built
-for. That is the normal arrangement — the budget is enforced above, by the hub's port power control
-and the firmware's policy — but it makes **the rail's own limit the backstop**, so the boost has to
-current-limit gracefully rather than latch off. That is a requirement on that part, not an
-assumption about it.
+**And one thing the switch still will not do: enforce the budget.** A 1 A threshold sits where it
+should — above the port's 500 mA with room for inrush, and far enough below the rail to be worth
+having — but four ports in limit is 4 A against a rail built for 2. That is the normal arrangement
+rather than a fault: the budget is enforced above, by the hub's port power control and the
+firmware's policy, and it only arises with four misbehaving devices at once. It does make **the
+rail's own limit the backstop**, so the boost has to current-limit gracefully rather than latch off.
+The chosen boost sets its limit with an external resistor, which is better than inheriting one —
+what it does on reaching that limit is the part still to confirm.
 
 **The PIO port and the radio do not contend.** Counted rather than assumed: the radio's bus takes
 one state machine and eight of the thirty-two instruction slots in the first PIO block, four pins
@@ -448,8 +450,10 @@ Things this document asserts that a datasheet has to confirm before layout:
 - The QSPI divider at 240 MHz, and that the flash part chosen is rated for the 120 MHz it lands on.
 - Whether the PD sink opens its output switch when nothing is attached. If it does not, the power
   port needs a blocking FET of its own so the data port cannot back-drive an exposed connector.
-- The port switch's current limit, once one is chosen. It wants to sit above 500 mA with room for
-  inrush and below anything that would embarrass the 5 V rail -- roughly an amp, not two.
+  Note that whatever sits on that shared node must tolerate 9 V, which rules out the 5.5 V-rated
+  load switches that would otherwise have done the job. Its datasheet does not extract, so this one
+  wants reading by eye.
+
 - That the 5 V boost current-limits gracefully rather than latching off, since it is the real
   backstop behind four switches that each trip well above the port budget.
 - Whether the radio module's antenna keep-out can be met at the board edge.
