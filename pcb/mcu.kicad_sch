@@ -1,0 +1,185 @@
+(kicad_sch
+	(version 20250610)
+	(generator "eeschema")
+	(generator_version "10.0")
+	(uuid "4925923d-5b58-421f-af61-47393f062f5f")
+	(paper "A3")
+	(lib_symbols)
+	(hierarchical_label "USB_DP"
+		(shape bidirectional)
+		(at 60 40.00 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "c3a918e2-3053-4c78-a4a0-48c943fc35bf")
+	)
+	(hierarchical_label "USB_DM"
+		(shape bidirectional)
+		(at 60 42.54 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "03777476-0f6c-4914-a44f-388a5a0d35ce")
+	)
+	(hierarchical_label "PIO_DP"
+		(shape bidirectional)
+		(at 60 45.08 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "800019a4-762d-490d-af69-9ab16889c0be")
+	)
+	(hierarchical_label "PIO_DM"
+		(shape bidirectional)
+		(at 60 47.62 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "f6396359-876d-478c-af74-549b4382f482")
+	)
+	(hierarchical_label "HUB_RESET"
+		(shape output)
+		(at 60 50.16 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "862a8714-1d07-405f-a4bf-23156ad3cc22")
+	)
+	(hierarchical_label "SDA"
+		(shape bidirectional)
+		(at 60 52.70 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "57bcf11f-e902-4a47-a4eb-431ce6ed1aa6")
+	)
+	(hierarchical_label "SCL"
+		(shape bidirectional)
+		(at 60 55.24 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "cb3c2b0c-d5df-497f-adae-88edf94dbccf")
+	)
+	(hierarchical_label "CHG_INT"
+		(shape input)
+		(at 60 57.78 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "83096ba6-cff6-4cbc-a502-a2f67810843f")
+	)
+	(hierarchical_label "PD_ATTACH"
+		(shape input)
+		(at 60 60.32 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "62d9bcc7-ac77-4947-a463-9292123b5712")
+	)
+	(hierarchical_label "VBUS_DET"
+		(shape input)
+		(at 60 62.86 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "dedf54fd-963b-43de-a677-113f835d24d1")
+	)
+	(hierarchical_label "CC1_SENSE"
+		(shape input)
+		(at 60 65.40 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "9fecd8af-1c93-4ad1-a890-de5e35f3f5df")
+	)
+	(hierarchical_label "CC2_SENSE"
+		(shape input)
+		(at 60 67.94 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "048e72ea-32b4-4669-aca9-4ff9186bae5f")
+	)
+	(hierarchical_label "RF_CLK"
+		(shape output)
+		(at 60 70.48 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "1be27e19-eba2-4382-afaa-7f0df312335e")
+	)
+	(hierarchical_label "RF_DIO"
+		(shape bidirectional)
+		(at 60 73.02 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "dcfad2e8-b183-429d-ad93-b4ddfb305257")
+	)
+	(hierarchical_label "RF_CS"
+		(shape output)
+		(at 60 75.56 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "990d3d37-d805-4aee-a40e-9814a672f60a")
+	)
+	(hierarchical_label "RF_PWR"
+		(shape output)
+		(at 60 78.10 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "df2344d4-0275-433c-abd5-3dd761f0b8b6")
+	)
+	(embedded_fonts no)
+)

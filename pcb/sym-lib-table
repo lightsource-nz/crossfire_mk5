@@ -1,0 +1,4 @@
+(sym_lib_table
+	(version 7)
+	(lib (name "crossfire")(type "KiCad")(uri "${KIPRJMOD}/crossfire.kicad_sym")(options "")(descr "parts with no stock symbol"))
+)

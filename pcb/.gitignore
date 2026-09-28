@@ -1,0 +1,6 @@
+# local editor state and caches, not part of the design
+*.kicad_prl
+*-backups/
+fp-info-cache
+*.bak
+~*.lck

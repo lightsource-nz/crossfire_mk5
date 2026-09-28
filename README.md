@@ -42,3 +42,11 @@ has taken a whole frame with no bus timeout. A panic, a stopped loop or a failed
 commit, and so the old firmware comes back; a candidate that has not passed by ten seconds of uptime
 is given up on well inside the ROM's window. The console reports every step as `probation: ...`.
 The RP2040 has no second slot and puts nothing on probation, so there every image is already kept.
+
+## The production board
+
+`pcb/` holds the hardware for the board this firmware is heading for -- an RP2350 hosting four
+instruments through a hub, powered over USB-C, optionally with a radio and a battery. It is a KiCad
+project with the blocks and their interfaces settled and no components placed yet, alongside the
+power budget, the part selection and the two decisions the rest of the design hangs off. See
+`pcb/README.md`. Nothing has been built or measured.

@@ -1,0 +1,64 @@
+(kicad_sch
+	(version 20250610)
+	(generator "eeschema")
+	(generator_version "10.0")
+	(uuid "7cfcde61-2c93-4257-a7d6-7beb2f98abc7")
+	(paper "A3")
+	(lib_symbols)
+	(hierarchical_label "VBUS_PD"
+		(shape input)
+		(at 60 40.00 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "55e55ce2-8ebf-43dd-a47d-7bb1a9dd5814")
+	)
+	(hierarchical_label "VBUS_DATA"
+		(shape input)
+		(at 60 42.54 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "1cf63243-d69c-4dea-aea3-ecc443ae6515")
+	)
+	(hierarchical_label "SDA"
+		(shape bidirectional)
+		(at 60 45.08 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "9cae3402-1d99-4ab4-a74f-75d719e46d3d")
+	)
+	(hierarchical_label "SCL"
+		(shape bidirectional)
+		(at 60 47.62 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "94c7254b-591c-4c5f-a309-9ee75f402ef4")
+	)
+	(hierarchical_label "CHG_INT"
+		(shape output)
+		(at 60 50.16 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "ab0a6cb5-43b5-4e36-a4d8-59be1ffc94ad")
+	)
+	(embedded_fonts no)
+)
