@@ -464,7 +464,7 @@ blocks turned out to be the part that needed telling, and none of it was guessab
 | `TS` | divider from `REGN`, with a 10 kΩ NTC | charging suspends when it reads out of range, so an absent thermistor is not a neutral state |
 | `STAT`, `~INT`, `SDA`, `SCL` | 10 kΩ to the logic rail each | all four are open-drain or bus lines |
 | `QON` | may be left alone | it has an internal pull-up, and its jobs are ship-mode exit and a reset through the ship FET we do not fit |
-| `PROG` | a resistor whose value **is still open** | it sets the power-on default cell count and switching frequency, from a table this document does not have |
+| `PROG` | **3.0 k, 1%** | it sets the power-on cell count and switching frequency together: 3.0 k selects one cell at 1.5 MHz, which is the frequency the 1.0 uH inductor belongs to |
 
 The capacitor banks are specified rather than chosen: three at `PMID`, two at `VBUS`, five at `SYS`,
 two at `BAT`, each with a 0.1 µF alongside where the datasheet asks for one, 4.7 µF at `REGN`, 47 nF
@@ -499,13 +499,13 @@ Things this document asserts that a datasheet has to confirm before layout:
 - The QSPI divider at 240 MHz, and that the flash part chosen is rated for the 120 MHz it lands on.
 - How the power port's external switch FET is oriented, so it blocks reverse by construction. It has
   to tolerate 9 V on the shared node, which is what ruled out the 5.5 V-rated load switches.
-- The charger's PROG resistor, which sets the power-on default cell count and switching frequency.
-  The pin table says the value comes from a PROG Pin Configuration table; that table is what is
-  needed, for a single-cell profile.
-- The boost's feedback reference. Its own 9 V application divides 681k against 107k, which lands at
-  8.87 V on a 1.204 V reference -- so either that is not the feedback pair or the reference is nearer
-  1.22. The difference moves the 5 V rail by 80 mV, so the 3.3 V stage is settled and this one is
-  not: that part's reference was derived from its own application values and comes out at 500 mV.
+- The 5 V boost's power stage: the inductor, the compensation network, the current-limit and the
+  frequency-setting resistors. This is the one part of the board that needs converter design rather
+  than datasheet lookup -- 5 V at 2 A from a cell that sags to 3 V is ten watts and about three and a
+  half amps of input current, which is why a fixed-output part with internal compensation cannot do
+  it. Its own application figure lists an inductor, a capacitor and five resistors, but which
+  resistor is the current limit and which is the frequency cannot be told apart from the extracted
+  text, and guessing between them sets the wrong current limit.
 
 - That the 5 V boost current-limits gracefully rather than latching off, since it is the real
   backstop behind four switches that each trip well above the port budget.
