@@ -4222,16 +4222,6 @@
 	)
 	(wire
 		(pts
-			(xy 228.6 106.68) (xy 233.68 106.68)
-		)
-		(stroke
-			(width 0)
-			(type solid)
-		)
-		(uuid "438ee42f-122f-4a0c-a6ee-bdffb7a23284")
-	)
-	(wire
-		(pts
 			(xy 101.6 68.58) (xy 101.6 67.31)
 		)
 		(stroke
@@ -5353,17 +5343,6 @@
 			(justify right)
 		)
 		(uuid "f67d4dce-49bc-4eab-a082-52b162f11314")
-	)
-	(hierarchical_label "PD_ATTACH"
-		(shape input)
-		(at 233.68 106.68 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "f73a8081-7e28-46ed-ab4d-c54a6a5241b9")
 	)
 	(symbol
 		(lib_id "Device:C_Small")
@@ -9926,5 +9905,9 @@
 				)
 			)
 		)
+	)
+	(no_connect
+		(at 228.60 106.68)
+		(uuid "ff6bd9ce-3ace-4936-87b8-12e35d3c1ef6")
 	)
 )

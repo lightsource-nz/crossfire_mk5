@@ -261,14 +261,13 @@ overcurrent arrives as a standard port status change, and eight GPIOs stay free.
 
 ### GPIO budget
 
-Eighteen of the thirty, and the assignment is not arbitrary — the PIO pair is forced adjacent and the
+Seventeen of the thirty, and the assignment is not arbitrary — the PIO pair is forced adjacent and the
 rest fall out of keeping peripherals on their default pins.
 
 | GPIO | net | why there |
 | --- | --- | --- |
 | 0, 1 | `CONSOLE_TX`, `CONSOLE_RX` | UART0's default pair |
-| 2 | `PD_ATTACH` | |
-| 3 | — | spare |
+| 2, 3 | — | spare |
 | 4, 5 | `SDA`, `SCL` | I²C0's default pair; reaches the PD sink and the charger |
 | 6 | `CHG_INT` | |
 | 7 | `HUB_RESET` | |
@@ -311,12 +310,12 @@ and every pin carries a named stub, so each net that crosses a block boundary is
 `port.kicad_sch` is drawn once and instanced four times, with the root mapping its generic
 `DP`/`DM`/`PWR_EN`/`FAULT` onto the hub's `Pn_*`.
 
-**`mcu`, `hub`, `port`, `upstream_data` and `power` are populated; `upstream_power` and `radio` are not.** `mcu` holds the MCU, the flash, the
+**Six of the seven sheets are populated; only `radio` is not.** `mcu` holds the MCU, the flash, the
 core-rail inductor and its decoupling, the crystal, the analogue filter, reset and boot, the debug
 and console header, the indicators and the button. `hub` holds the hub, its 24 MHz crystal, the
 `RBIAS` reference, the two regulator filters, the straps that select the default configuration, the
 reset and upstream-detect pull-downs, and the upstream pair's series resistors and host-side
-pull-downs. Every pin of every part is on a named net. `port` holds the current-limited switch, the ESD array, the receptacle and the bulk capacitance -- drawn once and placed four times. `upstream_data` holds the data receptacle, its terminations, the protection array, the sense divider and the diode through which the rail takes its capped contribution. `power` holds the charger with every bank the datasheet specifies, the thermistor network, the cell connector, and the two converters that make the rails.
+pull-downs. Every pin of every part is on a named net. `port` holds the current-limited switch, the ESD array, the receptacle and the bulk capacitance -- drawn once and placed four times. `upstream_data` holds the data receptacle, its terminations, the protection array, the sense divider and the diode through which the rail takes its capped contribution. `power` holds the charger with every bank the datasheet specifies, the thermistor network, the cell connector, and the two converters that make the rails. `upstream_power` holds the power receptacle and the sink that negotiates on it.
 
 Both are drawn the way a person would draw them: **signals are wires**, and only the rails and the
 nets that leave the sheet are carried on symbols and labels. Parts sit beside the pins they serve —
@@ -340,7 +339,7 @@ kicad-cli sch erc      -o erc.rpt crossfire.kicad_sch
 kicad-cli sch export netlist -o crossfire.net crossfire.kicad_sch
 ```
 
-The netlist is real: 131 nets, and every one of the twenty-one unconnected pins is deliberate — the
+The netlist is real: 138 nets, and every one of the twenty-seven unconnected pins is deliberate — the
 twelve spare GPIOs the pin map names, the three hub pins the datasheet says to leave alone, the
 charger's data-detect pair and its ship-mode input, the receptacle's sideband pins, and the
 buck-boost's power-good output. Nothing has been left connected by accident, and nothing intended
@@ -472,7 +471,7 @@ The capacitor banks are specified rather than chosen: three at `PMID`, two at `V
 two at `BAT`, each with a 0.1 µF alongside where the datasheet asks for one, 4.7 µF at `REGN`, 47 nF
 bootstraps, and a 1.0 µH inductor between the two switch nodes.
 
-**The PD sink has no output switch of its own — it drives an external one.** The question was whether
+**The PD sink has no output switch of its own, and it turns out it does not need to have one.** The question was whether
 it opens that switch when nothing is attached, so the data port cannot back-drive an exposed
 connector. Its pinout answers it differently and better: there is no internal switch to open. The
 part brings out a gate drive for an external FET, so the switch is ours to place and ours to
@@ -483,6 +482,14 @@ an unknown.
 It also explains the two spare pins beside it. The part takes a requested voltage and current as
 resistor settings as well as over the bus, so the profile has a hardware default before any firmware
 runs — which is worth having on a board whose firmware is the thing being updated.
+
+**And the switch found a better home than either answer expected.** The charger brings out a
+charge-pump drive for a back-to-back pair of transistors on its own input, raising their gates above
+their common source when the input is valid, and it does the reverse blocking itself. That is the
+same arrangement the open question was asking for, from a part already in the design, with the gate
+drive and the input-valid detection solved rather than designed. So the switch sits beside the
+charger, the power receptacle's sheet exports raw connector voltage, and the sink's own gate output
+goes unused.
 
 **The PIO port and the radio do not contend.** Counted rather than assumed: the radio's bus takes
 one state machine and eight of the thirty-two instruction slots in the first PIO block, four pins
@@ -499,8 +506,14 @@ Things this document asserts that a datasheet has to confirm before layout:
   cost the power budget if it does not. 240 MHz is above the datasheet and proven only on the boards
   in hand, so a production population is the open question, not whether it runs.
 - The QSPI divider at 240 MHz, and that the flash part chosen is rated for the 120 MHz it lands on.
-- How the power port's external switch FET is oriented, so it blocks reverse by construction. It has
-  to tolerate 9 V on the shared node, which is what ruled out the 5.5 V-rated load switches.
+- The two FETs for the charger's own input switch, which is where that switch now belongs: the part
+  brings out a charge-pump drive for a back-to-back pair and does the reverse blocking itself. What
+  is left is choosing them and adding them beside the charger, with the input-detect pin moved to
+  the connector side of the pair.
+- The PD sink's voltage and current set resistors, left unfitted. The profile is requested over the
+  bus by a driver already proven on hardware, so the hardware default is a convenience rather than
+  something depended on -- but two analogue set pins should not be left floating, and their coding
+  wants the vendor's tables.
 - The 5 V boost's compensation, which is carried over from the vendor's own 9 V application at the
   same input range and the same 2 A rather than computed. Everything else in that converter is
   derived -- but a compensation network is bench-verified whatever its starting values, so this is

@@ -323,16 +323,6 @@
 	)
 	(wire
 		(pts
-			(xy 71.12 30.48) (xy 76.2 30.48)
-		)
-		(stroke
-			(width 0)
-			(type solid)
-		)
-		(uuid "7acb57ea-d518-4928-a26d-817c661811a8")
-	)
-	(wire
-		(pts
 			(xy 325.12 144.78) (xy 330.2 144.78)
 		)
 		(stroke
@@ -510,16 +500,6 @@
 			(type solid)
 		)
 		(uuid "d25ecf39-00ac-4140-a1b7-f4ccf106891a")
-	)
-	(wire
-		(pts
-			(xy 152.4 43.18) (xy 157.48 43.18)
-		)
-		(stroke
-			(width 0)
-			(type solid)
-		)
-		(uuid "d2a455a2-3564-426f-a9e5-4ba6e41853e2")
 	)
 	(wire
 		(pts
@@ -1001,16 +981,6 @@
 		)
 		(uuid "5ae4a316-a99c-40e8-a553-cc61937eec5c")
 	)
-	(label "PD_ATTACH"
-		(at 157.48 43.18 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "5c1d4ff6-d4a6-4288-af23-45a8aa47ee3c")
-	)
 	(label "USB_DP"
 		(at 76.2 63.5 0)
 		(effects
@@ -1030,16 +1000,6 @@
 			(justify left bottom)
 		)
 		(uuid "6111bc57-e3b1-45f6-a6d3-1277840681ae")
-	)
-	(label "PD_ATTACH"
-		(at 76.2 30.48 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "619ea10d-f6a0-4a72-a525-29c06f244703")
 	)
 	(label "HUB_RESET"
 		(at 157.48 109.22 0)
@@ -1677,16 +1637,6 @@
 				(justify right)
 			)
 		)
-		(pin "PD_ATTACH" input
-			(at 152.4 43.18 0)
-			(uuid "a333673e-223b-4a0a-a826-3365f82f749c")
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-			)
-		)
 		(pin "VBUS_DET" input
 			(at 152.4 45.72 0)
 			(uuid "90f801ad-8d7c-4768-a109-2171edc8b593")
@@ -2154,16 +2104,6 @@
 		(pin "SCL" bidirectional
 			(at 71.12 27.94 0)
 			(uuid "5619263a-0e11-4dc1-a24e-23cc1d6238a3")
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-			)
-		)
-		(pin "PD_ATTACH" output
-			(at 71.12 30.48 0)
-			(uuid "169a183a-176a-4ced-ab43-9b2b7ac92dae")
 			(effects
 				(font
 					(size 1.27 1.27)
