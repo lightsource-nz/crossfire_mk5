@@ -487,15 +487,36 @@ states a level the part reads as a voltage and a current, and it asks for them o
 a charger is attached. Nothing else can: the rail they bring up is the one that powers the
 processor, so with a flat cell there is no firmware awake to ask over the bus.
 
+The charger meets them from the other side, which is what makes the cold start hold together. It
+states that charging is enabled by default at power-on and that it will run a complete cycle with no
+software involvement at all, and that when both its input and the battery are below their thresholds
+it powers *itself* from whichever detect pin sees a valid source first. So the sequence from a flat
+cell and a bare charger needs nothing but these two resistors and the charger's reset defaults.
+
 **So they ask for the modest contract, not the wanted one.** They have to succeed against whatever
 charger is on the end of the cable, and a cold boot draws a fraction of what a working board does.
-6.04 kΩ selects 9 V, which anything calling itself a fast charger offers. 10.5 kΩ asks for 2 A of
-it, and 18 W is the smallest 9 V offer in circulation — an 18 W, 20 W, 30 W or 65 W charger all
-satisfy it, where asking for the full 3 A the budget wants would only match the 27 W-and-up part of
-the field. The board then takes the larger contract in firmware, by selecting a source capability by
-index over the bus, which is a path already proven on hardware. The requested profile is the
-*lower* of the resistor setting and the internal default, so these resistors are a ceiling as well
-as a request — which is the right way round for a bootstrap.
+6.04 kΩ selects 9 V and 10.5 kΩ asks for 2 A of it. The board then takes the larger contract in
+firmware, by selecting a source capability by index over the bus, which is a path already proven on
+hardware.
+
+**The matching rule is what makes those the right two numbers**, and it is worth stating because it
+is not the obvious one. The part forms a request from the lower of the resistor setting and its own
+internal default, then walks the source's offers **from the highest voltage down**, taking the first
+whose voltage is at or below the request and whose current is at or above it. Two things follow.
+
+The voltage setting is a *ceiling*, not a target, and raising it can never lose a lower offer — so
+9 V is chosen to bound what an unattended cold start is allowed to put on the charger's input, which
+is what the input components either side of it are specified for, rather than to gamble on what is
+available. And the current setting is a *floor* the offer has to clear, which is the opposite way
+round, so asking for more narrows the field rather than widening it: at 3 A a common 18 W charger
+fails the 9 V line and the scan drops through to 5 V/3 A, giving 15 W, where asking for 2 A takes
+9 V/2 A and gives 18 W at a voltage the charger converts from more comfortably. The modest request
+is the one that wins more power here, which is why it is not merely the cautious choice.
+
+**There is no way for this to end with no contract.** If an offer fails on either test the part
+moves to the next one down and keeps going, and every source offers 5 V, so the floor is the 5 V
+case the design already accepts. If there is no power-delivery source at all it falls back to the
+older charger-detection schemes instead. That was an open question against this part; it is closed.
 
 **And the switch found a better home than either answer expected.** The charger brings out a
 charge-pump drive for a back-to-back pair of transistors on its own input, raising their gates above
@@ -504,6 +525,28 @@ same arrangement the open question was asking for, from a part already in the de
 drive and the input-valid detection solved rather than designed. So the switch sits beside the
 charger, the power receptacle's sheet exports raw connector voltage, and the sink's own gate output
 goes unused.
+
+**But fitting that switch to only the power port would strand the data port, and this is the open
+question the design now turns on.** The charger describes three arrangements. With no transistors at
+all — what is drawn today — both detect pins tie to the charger's own input and every source is
+simply wired together there, which is why the two upstream feeds currently meet at a diode. With one
+pair, the switched port is selected only while the *unswitched* input is quiet: among the conditions
+for closing that switch is that the charger's own input pin is below its present-threshold. So a
+computer already feeding the rail through the ORing diode holds the switch open, and the charger's
+own instruction for changing over is to have the host disable the source on the unswitched input and
+wait for it to decay — which is not something that can be done to someone else's computer.
+
+**With two pairs, one per port, the arbitration is the charger's and it needs no help.** It closes
+whichever path presented a valid input first, without host intervention; on a tie the first port
+wins, and it is nominated primary; and either path can afterwards be selected deliberately by
+writing a register, with a status bit per path to read back. That is a better input stage than the
+diode by every measure that matters here — no forward drop on the main supply path, reverse blocking
+in both directions rather than one, a defined answer when both are attached, and the choice
+available to firmware instead of fixed in copper. **It costs two more transistors and deletes the
+ORing diode**, and it moves the data port's contribution from the charger's input pin to the second
+detect pin. The one thing it gives up is that the charger's own inspection of the data lines is
+described as applying to the first port only, so a limit for the computer-fed path is a register the
+firmware writes rather than something the charger works out — which this design was doing anyway.
 
 **The PIO port and the radio do not contend.** Counted rather than assumed: the radio's bus takes
 one state machine and eight of the thirty-two instruction slots in the first PIO block, four pins
@@ -520,15 +563,13 @@ Things this document asserts that a datasheet has to confirm before layout:
   cost the power budget if it does not. 240 MHz is above the datasheet and proven only on the boards
   in hand, so a production population is the open question, not whether it runs.
 - The QSPI divider at 240 MHz, and that the flash part chosen is rated for the 120 MHz it lands on.
-- The two FETs for the charger's own input switch, which is where that switch now belongs: the part
-  brings out a charge-pump drive for a back-to-back pair and does the reverse blocking itself. What
-  is left is choosing them and adding them beside the charger, with the input-detect pin moved to
-  the connector side of the pair.
-- That the sink falls back cleanly when a charger offers no 9 V at all, rather than sitting with no
-  contract. The set resistors ask for the most widely met 9 V offer there is, so this is the plain
-  5 V case -- a phone charger, or a computer port -- and the design already names 5 V as an
-  acceptable input with the ports held to the battery budget. What wants confirming is that the part
-  reaches it by itself.
+- Choosing the transistors themselves. The charger states the drive it provides — it raises the gate
+  **5 V above the pair's common source** — and states nothing about how much gate charge it will
+  drive or how fast, so the selection is ours: an N-channel pair that is fully on at 5 V of gate
+  drive, rated past the 30 V the input pins tolerate, low enough in resistance for 3 A, and modest
+  in gate charge since the charge pump behind them is unspecified. The datasheet names no part.
+- **Whether the input switch is one pair of transistors or two.** The charger's own account of the
+  single-pair arrangement rules against the design as drawn, and the reasoning is below.
 - The 5 V boost's compensation, which is carried over from the vendor's own 9 V application at the
   same input range and the same 2 A rather than computed. Everything else in that converter is
   derived -- but a compensation network is bench-verified whatever its starting values, so this is
