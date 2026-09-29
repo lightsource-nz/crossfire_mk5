@@ -311,12 +311,12 @@ and every pin carries a named stub, so each net that crosses a block boundary is
 `port.kicad_sch` is drawn once and instanced four times, with the root mapping its generic
 `DP`/`DM`/`PWR_EN`/`FAULT` onto the hub's `Pn_*`.
 
-**`mcu`, `hub`, `port` and `upstream_data` are populated; the other three are not.** `mcu` holds the MCU, the flash, the
+**`mcu`, `hub`, `port`, `upstream_data` and `power` are populated; `upstream_power` and `radio` are not.** `mcu` holds the MCU, the flash, the
 core-rail inductor and its decoupling, the crystal, the analogue filter, reset and boot, the debug
 and console header, the indicators and the button. `hub` holds the hub, its 24 MHz crystal, the
 `RBIAS` reference, the two regulator filters, the straps that select the default configuration, the
 reset and upstream-detect pull-downs, and the upstream pair's series resistors and host-side
-pull-downs. Every pin of every part is on a named net. `port` holds the current-limited switch, the ESD array, the receptacle and the bulk capacitance -- drawn once and placed four times. `upstream_data` holds the data receptacle, its terminations, the protection array, the sense divider and the diode through which the rail takes its capped contribution.
+pull-downs. Every pin of every part is on a named net. `port` holds the current-limited switch, the ESD array, the receptacle and the bulk capacitance -- drawn once and placed four times. `upstream_data` holds the data receptacle, its terminations, the protection array, the sense divider and the diode through which the rail takes its capped contribution. `power` holds the charger with every bank the datasheet specifies, the thermistor network, the cell connector, and the two converters that make the rails.
 
 Both are drawn the way a person would draw them: **signals are wires**, and only the rails and the
 nets that leave the sheet are carried on symbols and labels. Parts sit beside the pins they serve —
@@ -340,9 +340,11 @@ kicad-cli sch erc      -o erc.rpt crossfire.kicad_sch
 kicad-cli sch export netlist -o crossfire.net crossfire.kicad_sch
 ```
 
-The netlist is real: 100 nets, and the only unconnected pins are the twelve spare GPIOs the pin map
-names and the three hub pins the datasheet says to leave alone — nothing has been left connected by
-accident, and nothing intended has been missed.
+The netlist is real: 131 nets, and every one of the twenty-one unconnected pins is deliberate — the
+twelve spare GPIOs the pin map names, the three hub pins the datasheet says to leave alone, the
+charger's data-detect pair and its ship-mode input, the receptacle's sideband pins, and the
+buck-boost's power-good output. Nothing has been left connected by accident, and nothing intended
+has been missed.
 Read it rather than the picture when checking this sheet; a wire that looks right and a wire that
 *is* right are not the same thing, and the netlist is the one that answers.
 
@@ -499,13 +501,11 @@ Things this document asserts that a datasheet has to confirm before layout:
 - The QSPI divider at 240 MHz, and that the flash part chosen is rated for the 120 MHz it lands on.
 - How the power port's external switch FET is oriented, so it blocks reverse by construction. It has
   to tolerate 9 V on the shared node, which is what ruled out the 5.5 V-rated load switches.
-- The 5 V boost's power stage: the inductor, the compensation network, the current-limit and the
-  frequency-setting resistors. This is the one part of the board that needs converter design rather
-  than datasheet lookup -- 5 V at 2 A from a cell that sags to 3 V is ten watts and about three and a
-  half amps of input current, which is why a fixed-output part with internal compensation cannot do
-  it. Its own application figure lists an inductor, a capacitor and five resistors, but which
-  resistor is the current limit and which is the frequency cannot be told apart from the extracted
-  text, and guessing between them sets the wrong current limit.
+- The 5 V boost's compensation, which is carried over from the vendor's own 9 V application at the
+  same input range and the same 2 A rather than computed. Everything else in that converter is
+  derived -- but a compensation network is bench-verified whatever its starting values, so this is
+  the right one to carry. The vendor's figure also shows a second, unlabelled capacitor at the
+  compensation pin; it is not fitted here, and wants checking.
 
 - That the 5 V boost current-limits gracefully rather than latching off, since it is the real
   backstop behind four switches that each trip well above the port budget.
