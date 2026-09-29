@@ -245,7 +245,8 @@ Stock KiCad symbols exist for everything marked with one; the rest need drawing.
 | charger / PMIC | BQ25798 | `Battery_Management:BQ25798` | buck-boost, takes 9 V in directly, 1S charge, and an I²C ADC the power manager can read |
 | 5 V boost | TPS61089 | `Regulator_Switching:TPS61089` | 5 A switch, comfortably 2 A out at 5 V from a 1S cell |
 | 3.3 V | TPS63060 | `Regulator_Switching:TPS63060` | buck-boost, so 3.3 V survives a flat cell |
-| data-port VBUS diode | Schottky, 1 A | — | the data port's whole contribution to the rail, and the reverse blocking that keeps 9 V off a laptop. Affordable only because that path is small |
+| input switch | DMNH4015SSD | `Device:Q_NMOS_DGS` ×2 per package | one dual N-channel package per switched upstream port — the two sources tied together, the two gates tied to that port's driver. 40 V, 20 mΩ at the 4.5 V the charger's charge pump provides, 7.5 A, ±20 V gate, AEC-Q101 |
+| data-port VBUS diode | Schottky, 1 A | — | the data port's whole contribution to the rail, and the reverse blocking that keeps 9 V off a laptop. Affordable only because that path is small. **Deleted if the data port gets a switch of its own**, which is the open question above |
 | upstream data ESD | 2-channel array, low capacitance | — | the downstream pairs get theirs from the port switch; the upstream pair has no such part in front of it |
 | power connector | USB-C, power only, 6-pin | `Connector:USB_C_Receptacle_PowerOnly_6P` | no data pins to mis-wire, and nothing on it a computer would want |
 | data connector | USB-C 2.0, 16-pin | `Connector:USB_C_Receptacle_USB2.0_16P` | |
@@ -548,6 +549,30 @@ detect pin. The one thing it gives up is that the charger's own inspection of th
 described as applying to the first port only, so a limit for the computer-fed path is a register the
 firmware writes rather than something the charger works out — which this design was doing anyway.
 
+**The transistors themselves are chosen: one `DMNH4015SSD` per switched port.** It is a dual
+N-channel in a single SO-8, which is the shape this job wants — the pair's common source becomes a
+short link between two adjacent pins, and the two gates land next to each other on the way to the
+driver, so a pair is one part rather than two.
+
+The charger sets three of the four requirements and the connector sets the fourth. It drives the
+gate **5 V above the common source**, so the part has to be fully on at 4.5 V, where this one is
+20 mΩ — two in series carry the worst-case 3 A at about 120 mV and a third of a watt, against a
+package rated for 1.4 W. The **40 V** rating is the connector's doing: the charger's own
+overvoltage trip defaults to 26 V and the pair has to hold off whatever arrives until it opens, so
+a 30 V part leaves around a tenth of its rating as margin on a socket the user can plug anything
+into. The gate rating is ±20 V against a 5 V drive, and the part is qualified to the automotive
+standard, which is free here and says something about the tails.
+
+**The gate charge is the one figure the charger does not bound, and it turns out not to matter.**
+Nothing is specified about the charge pump behind that pin — neither current nor turn-on time — so
+the honest question is whether it can drive what we hang on it. Two things answer it. The
+evaluation board for this charger drives four transistors of 20 nC each, which is more charge than
+the 15 nC of these; and slow is the right direction for an input switch anyway, since the gate
+ramp is what keeps the inrush into the charger's input capacitance gentle. A charge pump that takes
+milliseconds to close this switch is doing the right thing.
+
+The pin numbering is the one thing left to read off the drawing rather than assume.
+
 **The PIO port and the radio do not contend.** Counted rather than assumed: the radio's bus takes
 one state machine and eight of the thirty-two instruction slots in the first PIO block, four pins
 and one DMA channel. The part has three PIO blocks of four state machines each, and sixteen DMA
@@ -563,11 +588,9 @@ Things this document asserts that a datasheet has to confirm before layout:
   cost the power budget if it does not. 240 MHz is above the datasheet and proven only on the boards
   in hand, so a production population is the open question, not whether it runs.
 - The QSPI divider at 240 MHz, and that the flash part chosen is rated for the 120 MHz it lands on.
-- Choosing the transistors themselves. The charger states the drive it provides — it raises the gate
-  **5 V above the pair's common source** — and states nothing about how much gate charge it will
-  drive or how fast, so the selection is ours: an N-channel pair that is fully on at 5 V of gate
-  drive, rated past the 30 V the input pins tolerate, low enough in resistance for 3 A, and modest
-  in gate charge since the charge pump behind them is unspecified. The datasheet names no part.
+- Reading the chosen transistor's pin numbering off its own drawing rather than off the convention
+  for its package, before the pair is wired. The part is settled (below); which pin is which is a
+  thing to confirm, not assume.
 - **Whether the input switch is one pair of transistors or two.** The charger's own account of the
   single-pair arrangement rules against the design as drawn, and the reasoning is below.
 - The 5 V boost's compensation, which is carried over from the vendor's own 9 V application at the
