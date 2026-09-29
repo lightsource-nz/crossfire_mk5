@@ -3840,6 +3840,10 @@
 		(at 228.6 170.18)
 		(uuid "eaace2c0-b988-4198-a53f-09e0154cd364")
 	)
+	(no_connect
+		(at 228.6 106.68)
+		(uuid "ff6bd9ce-3ace-4936-87b8-12e35d3c1ef6")
+	)
 	(wire
 		(pts
 			(xy 121.92 67.31) (xy 132.08 67.31)
@@ -9905,9 +9909,5 @@
 				)
 			)
 		)
-	)
-	(no_connect
-		(at 228.60 106.68)
-		(uuid "ff6bd9ce-3ace-4936-87b8-12e35d3c1ef6")
 	)
 )

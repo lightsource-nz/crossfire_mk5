@@ -245,7 +245,7 @@ Stock KiCad symbols exist for everything marked with one; the rest need drawing.
 | charger / PMIC | BQ25798 | `Battery_Management:BQ25798` | buck-boost, takes 9 V in directly, 1S charge, and an I²C ADC the power manager can read |
 | 5 V boost | TPS61089 | `Regulator_Switching:TPS61089` | 5 A switch, comfortably 2 A out at 5 V from a 1S cell |
 | 3.3 V | TPS63060 | `Regulator_Switching:TPS63060` | buck-boost, so 3.3 V survives a flat cell |
-| input switch ×2 | DMNH4015SSD | `Device:Q_NMOS_DGS` ×2 per package | one dual N-channel package per upstream port — the two sources tied together, the two gates tied to that port's driver. 40 V, 20 mΩ at the 4.5 V the charger's charge pump provides, 7.5 A, ±20 V gate, AEC-Q101. Pin 1 S1, 2 G1, 3 S2, 4 G2, 5–6 D2, 7–8 D1 |
+| input switch ×2 | DMNH4015SSD | `Transistor_FET:Q_Dual_NMOS_S1G1S2G2D2D2D1D1` | one dual N-channel package per upstream port — the two sources tied together, the two gates tied to that port's driver. 40 V, 20 mΩ at the 4.5 V the charger's charge pump provides, 7.5 A, ±20 V gate, AEC-Q101. Pin 1 S1, 2 G1, 3 S2, 4 G2, 5–6 D2, 7–8 D1 |
 | upstream data ESD | 2-channel array, low capacitance | — | the downstream pairs get theirs from the port switch; the upstream pair has no such part in front of it |
 | power connector | USB-C, power only, 6-pin | `Connector:USB_C_Receptacle_PowerOnly_6P` | no data pins to mis-wire, and nothing on it a computer would want |
 | data connector | USB-C 2.0, 16-pin | `Connector:USB_C_Receptacle_USB2.0_16P` | |
@@ -315,7 +315,7 @@ core-rail inductor and its decoupling, the crystal, the analogue filter, reset a
 and console header, the indicators and the button. `hub` holds the hub, its 24 MHz crystal, the
 `RBIAS` reference, the two regulator filters, the straps that select the default configuration, the
 reset and upstream-detect pull-downs, and the upstream pair's series resistors and host-side
-pull-downs. Every pin of every part is on a named net. `port` holds the current-limited switch, the ESD array, the receptacle and the bulk capacitance -- drawn once and placed four times. `upstream_data` holds the data receptacle, its terminations, the protection array, the sense divider and -- until the pair of transistors decided below replaces it -- the diode through which the rail takes its capped contribution. `power` holds the charger with every bank the datasheet specifies, the thermistor network, the cell connector, and the two converters that make the rails. `upstream_power` holds the power receptacle, the sink that negotiates on it, and the two resistors that state the contract it asks for before any firmware is running.
+pull-downs. Every pin of every part is on a named net. `port` holds the current-limited switch, the ESD array, the receptacle and the bulk capacitance -- drawn once and placed four times. `upstream_data` holds the data receptacle, its terminations, the protection array and the sense divider; its contribution to the rail now leaves the sheet directly, because the switch beside the charger does the blocking that used to need a diode here. `power` holds the charger with every bank the datasheet specifies, the thermistor network, the cell connector, and the two converters that make the rails. `upstream_power` holds the power receptacle, the sink that negotiates on it, and the two resistors that state the contract it asks for before any firmware is running.
 
 Both are drawn the way a person would draw them: **signals are wires**, and only the rails and the
 nets that leave the sheet are carried on symbols and labels. Parts sit beside the pins they serve —
@@ -590,6 +590,26 @@ So a pair is wired as: the two **gates** (2 and 4) to that port's driver; the tw
 connector, with that port's detect pin on the same node, and the other to the charger's own input.
 Each end of the pair gets two pins rather than one, which is where the current wants them.
 
+**Both pairs are drawn, and the input stage now reads as three nets where it used to read as one.**
+The two feeds arrive on their own nets and stay apart; they meet only through the switches, on the
+node the input capacitors and the charger share. The detect pins moved to the connector side of
+their own pair, the drivers stopped being tied to ground, and the blocking diode came out of the
+data port's sheet. That also retired a long-standing complaint from the rules check — the two feeds
+used to be one net wearing two names, and now they are genuinely two.
+
+**Two faults turned up in the drawing while this was being wired, and both are worth recording.**
+The diode the switch replaced was **pointing the wrong way**: its cathode faced the connector, so it
+would have blocked the data port from contributing anything and conducted the charger's rail back
+out to whatever was plugged in — the exact failure it was placed to prevent. Removing it settles
+that, but it would have survived to a board if the switch had not displaced it. And the three input
+capacitors each had a **wire bridging their own two pins**, which shorted the charger's whole input
+to ground. Neither shows up as an error in the rules check, because neither is electrically illegal
+— a bridged part is just a net, and a rules check has no opinion about which parts ought to matter.
+Both were found by reading the connection list instead of the picture, which is the habit this
+project keeps for exactly this reason. A part moved in the editor can be left bridged by the wire it
+was sitting on, so the check worth repeating after any hand edit is: **does any two-terminal part
+have its own two pins on the same net?**
+
 **The PIO port and the radio do not contend.** Counted rather than assumed: the radio's bus takes
 one state machine and eight of the thirty-two instruction slots in the first PIO block, four pins
 and one DMA channel. The part has three PIO blocks of four state machines each, and sixteen DMA
@@ -605,8 +625,6 @@ Things this document asserts that a datasheet has to confirm before layout:
   cost the power budget if it does not. 240 MHz is above the datasheet and proven only on the boards
   in hand, so a production population is the open question, not whether it runs.
 - The QSPI divider at 240 MHz, and that the flash part chosen is rated for the 120 MHz it lands on.
-- Drawing the two pairs onto the two sheets that carry them, which is the last unbuilt part of the
-  input stage now that the arrangement and the part are both settled.
 - The 5 V boost's compensation, which is carried over from the vendor's own 9 V application at the
   same input range and the same 2 A rather than computed. Everything else in that converter is
   derived -- but a compensation network is bench-verified whatever its starting values, so this is
