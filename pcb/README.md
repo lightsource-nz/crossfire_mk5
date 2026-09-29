@@ -448,6 +448,28 @@ rail's own limit the backstop**, so the boost has to current-limit gracefully ra
 The chosen boost sets its limit with an external resistor, which is better than inheriting one —
 what it does on reaching that limit is the part still to confirm.
 
+### What the charger wants, from its pin table
+
+Read off the datasheet rather than inferred, because most of it could not have been. The unused
+blocks turned out to be the part that needed telling, and none of it was guessable:
+
+| pin | what it needs | why it is not obvious |
+| --- | --- | --- |
+| `VAC1`, `VAC2` | **to VBUS** | they are input-detect pins; with no external input FETs they watch the input directly |
+| `ACDRV1`, `ACDRV2` | **to ground** | gate drives for input FETs that are not fitted |
+| `ILIM_HIZ` | **to REGN** | that selects the maximum input limit and hands the budget to the register the firmware writes — exactly what this design wants, and the alternative is a divider computed from a milliohm term |
+| `SDRV` | **1 nF to ground** | it drives a ship FET we do not fit, and the capacitor is what it wants when idle |
+| `CE` | **pulled low** | "must be pulled HIGH or LOW, do not leave floating"; low enables charging under register control |
+| `BATP` | **100 Ω in series to the battery** | a sense input, not a power pin |
+| `TS` | divider from `REGN`, with a 10 kΩ NTC | charging suspends when it reads out of range, so an absent thermistor is not a neutral state |
+| `STAT`, `~INT`, `SDA`, `SCL` | 10 kΩ to the logic rail each | all four are open-drain or bus lines |
+| `QON` | may be left alone | it has an internal pull-up, and its jobs are ship-mode exit and a reset through the ship FET we do not fit |
+| `PROG` | a resistor whose value **is still open** | it sets the power-on default cell count and switching frequency, from a table this document does not have |
+
+The capacitor banks are specified rather than chosen: three at `PMID`, two at `VBUS`, five at `SYS`,
+two at `BAT`, each with a 0.1 µF alongside where the datasheet asks for one, 4.7 µF at `REGN`, 47 nF
+bootstraps, and a 1.0 µH inductor between the two switch nodes.
+
 **The PD sink has no output switch of its own — it drives an external one.** The question was whether
 it opens that switch when nothing is attached, so the data port cannot back-drive an exposed
 connector. Its pinout answers it differently and better: there is no internal switch to open. The
@@ -477,12 +499,13 @@ Things this document asserts that a datasheet has to confirm before layout:
 - The QSPI divider at 240 MHz, and that the flash part chosen is rated for the 120 MHz it lands on.
 - How the power port's external switch FET is oriented, so it blocks reverse by construction. It has
   to tolerate 9 V on the shared node, which is what ruled out the 5.5 V-rated load switches.
-- The three converters on the power sheet, which is why that sheet is not drawn. Each needs numbers
-  this toolchain cannot read: which resistor sets the charger's current programming against its
-  input-limit pin, and how to tell the boost's feedback divider apart from its current-limit and
-  frequency resistors. The vendor publishes both with the pin tables and design equations in a form
-  that extracts at four and thirty per cent respectively. The topology is understood; the values are
-  not, and a wrong number in the supply is expensive. This wants a human with the PDF open.
+- The charger's PROG resistor, which sets the power-on default cell count and switching frequency.
+  The pin table says the value comes from a PROG Pin Configuration table; that table is what is
+  needed, for a single-cell profile.
+- The boost's feedback reference. Its own 9 V application divides 681k against 107k, which lands at
+  8.87 V on a 1.204 V reference -- so either that is not the feedback pair or the reference is nearer
+  1.22. The difference moves the 5 V rail by 80 mV, so the 3.3 V stage is settled and this one is
+  not: that part's reference was derived from its own application values and comes out at 500 mV.
 
 - That the 5 V boost current-limits gracefully rather than latching off, since it is the real
   backstop behind four switches that each trip well above the port budget.
