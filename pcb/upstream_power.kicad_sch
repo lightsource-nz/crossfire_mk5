@@ -1299,6 +1299,12 @@
 		(uuid "0580e33c-652b-4d17-a044-53f1daaf551d")
 	)
 	(junction
+		(at 152.4 106.68)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "1819c1b0-c8c0-46c3-accc-adeba106d14c")
+	)
+	(junction
 		(at 114.3 106.68)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -1373,6 +1379,16 @@
 			(type solid)
 		)
 		(uuid "2d29525e-1910-478b-a7a7-1c8f8fffbf03")
+	)
+	(wire
+		(pts
+			(xy 152.4 101.6) (xy 152.4 106.68)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "56834c60-a235-4052-ab27-ce5df9ae23fe")
 	)
 	(wire
 		(pts
@@ -1682,6 +1698,84 @@
 			(project "crossfire"
 				(path "/4c5cdd13-4f54-43b0-affb-0ae4b9a4d279/642c224c-a7f8-48f8-a755-d35ebfb11807"
 					(reference "#PWR01")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:PWR_FLAG")
+		(at 152.4 101.6 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "2d7958dc-3bcb-4501-8894-4d531eb19520")
+		(property "Reference" "FLG5"
+			(at 152.4 93.98 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "PWR_FLAG"
+			(at 152.4 96.52 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" ""
+			(at 152.4 101.6 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 152.4 101.6 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" ""
+			(at 152.4 101.6 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "ecbe86df-034e-475e-b2a2-34874c7e9320")
+		)
+		(instances
+			(project "crossfire"
+				(path "/4c5cdd13-4f54-43b0-affb-0ae4b9a4d279/642c224c-a7f8-48f8-a755-d35ebfb11807"
+					(reference "FLG5")
 					(unit 1)
 				)
 			)
@@ -2106,99 +2200,5 @@
 				)
 			)
 		)
-	)
-	(symbol
-		(lib_id "power:PWR_FLAG")
-		(at 152.40 101.60 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(uuid "2d7958dc-3bcb-4501-8894-4d531eb19520")
-		(property "Reference" "FLG5"
-			(at 152.40 93.98 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "PWR_FLAG"
-			(at 152.40 96.52 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" ""
-			(at 152.40 101.60 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 152.40 101.60 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 152.40 101.60 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "ecbe86df-034e-475e-b2a2-34874c7e9320")
-		)
-		(instances
-			(project "crossfire"
-				(path "/4c5cdd13-4f54-43b0-affb-0ae4b9a4d279/642c224c-a7f8-48f8-a755-d35ebfb11807"
-					(reference "FLG5")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(wire
-		(pts
-			(xy 152.40 101.60) (xy 152.40 106.68)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "56834c60-a235-4052-ab27-ce5df9ae23fe")
-	)
-	(junction
-		(at 152.40 106.68)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "1819c1b0-c8c0-46c3-accc-adeba106d14c")
 	)
 )

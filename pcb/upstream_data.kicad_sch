@@ -1818,7 +1818,7 @@
 	)
 	(wire
 		(pts
-			(xy 91.44 99.06) (xy 146.05 99.06)
+			(xy 91.44 99.06) (xy 160.02 99.06)
 		)
 		(stroke
 			(width 0)
@@ -1915,16 +1915,6 @@
 			(type solid)
 		)
 		(uuid "51ca6d58-7c44-4f49-afc4-931332f517a9")
-	)
-	(wire
-		(pts
-			(xy 151.13 99.06) (xy 160.02 99.06)
-		)
-		(stroke
-			(width 0)
-			(type solid)
-		)
-		(uuid "57afe03b-2cba-461a-a048-ab03cd96a65c")
 	)
 	(wire
 		(pts
@@ -2712,7 +2702,7 @@
 				)
 			)
 		)
-	)
+	)
 	(symbol
 		(lib_id "power:GND")
 		(at 109.22 106.68 0)
@@ -3098,15 +3088,5 @@
 				)
 			)
 		)
-	)
-	(wire
-		(pts
-			(xy 146.05 99.06) (xy 151.13 99.06)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "8325ff07-3632-4641-a6bb-c19ecc9b6a37")
 	)
 )
