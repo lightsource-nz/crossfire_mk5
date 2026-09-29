@@ -315,7 +315,7 @@ core-rail inductor and its decoupling, the crystal, the analogue filter, reset a
 and console header, the indicators and the button. `hub` holds the hub, its 24 MHz crystal, the
 `RBIAS` reference, the two regulator filters, the straps that select the default configuration, the
 reset and upstream-detect pull-downs, and the upstream pair's series resistors and host-side
-pull-downs. Every pin of every part is on a named net. `port` holds the current-limited switch, the ESD array, the receptacle and the bulk capacitance -- drawn once and placed four times. `upstream_data` holds the data receptacle, its terminations, the protection array, the sense divider and the diode through which the rail takes its capped contribution. `power` holds the charger with every bank the datasheet specifies, the thermistor network, the cell connector, and the two converters that make the rails. `upstream_power` holds the power receptacle and the sink that negotiates on it.
+pull-downs. Every pin of every part is on a named net. `port` holds the current-limited switch, the ESD array, the receptacle and the bulk capacitance -- drawn once and placed four times. `upstream_data` holds the data receptacle, its terminations, the protection array, the sense divider and the diode through which the rail takes its capped contribution. `power` holds the charger with every bank the datasheet specifies, the thermistor network, the cell connector, and the two converters that make the rails. `upstream_power` holds the power receptacle, the sink that negotiates on it, and the two resistors that state the contract it asks for before any firmware is running.
 
 Both are drawn the way a person would draw them: **signals are wires**, and only the rails and the
 nets that leave the sheet are carried on symbols and labels. Parts sit beside the pins they serve —
@@ -480,8 +480,22 @@ someone else's internal arrangement. The condition on the power port is therefor
 an unknown.
 
 It also explains the two spare pins beside it. The part takes a requested voltage and current as
-resistor settings as well as over the bus, so the profile has a hardware default before any firmware
-runs — which is worth having on a board whose firmware is the thing being updated.
+resistor settings as well as over the bus — and on this board that is not a second way of doing the
+same thing, it is the only way the board starts. **These two resistors are the contract the board
+boots on**, and they are now fitted. A fixed 100 µA flows out of each pin, so a resistor to ground
+states a level the part reads as a voltage and a current, and it asks for them on its own the moment
+a charger is attached. Nothing else can: the rail they bring up is the one that powers the
+processor, so with a flat cell there is no firmware awake to ask over the bus.
+
+**So they ask for the modest contract, not the wanted one.** They have to succeed against whatever
+charger is on the end of the cable, and a cold boot draws a fraction of what a working board does.
+6.04 kΩ selects 9 V, which anything calling itself a fast charger offers. 10.5 kΩ asks for 2 A of
+it, and 18 W is the smallest 9 V offer in circulation — an 18 W, 20 W, 30 W or 65 W charger all
+satisfy it, where asking for the full 3 A the budget wants would only match the 27 W-and-up part of
+the field. The board then takes the larger contract in firmware, by selecting a source capability by
+index over the bus, which is a path already proven on hardware. The requested profile is the
+*lower* of the resistor setting and the internal default, so these resistors are a ceiling as well
+as a request — which is the right way round for a bootstrap.
 
 **And the switch found a better home than either answer expected.** The charger brings out a
 charge-pump drive for a back-to-back pair of transistors on its own input, raising their gates above
@@ -510,10 +524,11 @@ Things this document asserts that a datasheet has to confirm before layout:
   brings out a charge-pump drive for a back-to-back pair and does the reverse blocking itself. What
   is left is choosing them and adding them beside the charger, with the input-detect pin moved to
   the connector side of the pair.
-- The PD sink's voltage and current set resistors, left unfitted. The profile is requested over the
-  bus by a driver already proven on hardware, so the hardware default is a convenience rather than
-  something depended on -- but two analogue set pins should not be left floating, and their coding
-  wants the vendor's tables.
+- That the sink falls back cleanly when a charger offers no 9 V at all, rather than sitting with no
+  contract. The set resistors ask for the most widely met 9 V offer there is, so this is the plain
+  5 V case -- a phone charger, or a computer port -- and the design already names 5 V as an
+  acceptable input with the ports held to the battery budget. What wants confirming is that the part
+  reaches it by itself.
 - The 5 V boost's compensation, which is carried over from the vendor's own 9 V application at the
   same input range and the same 2 A rather than computed. Everything else in that converter is
   derived -- but a compensation network is bench-verified whatever its starting values, so this is
