@@ -245,6 +245,7 @@ Stock KiCad symbols exist for everything marked with one; the rest need drawing.
 | charger / PMIC | BQ25798 | `Battery_Management:BQ25798` | buck-boost, takes 9 V in directly, 1S charge, and an I²C ADC the power manager can read |
 | 5 V boost | TPS61089 | `Regulator_Switching:TPS61089` | 5 A switch, comfortably 2 A out at 5 V from a 1S cell |
 | 3.3 V | TPS63060 | `Regulator_Switching:TPS63060` | buck-boost, so 3.3 V survives a flat cell |
+| ship switch | DMNH4015SSD | `Transistor_FET:Q_Dual_NMOS_S1G1S2G2D2D2D1D1` | the same package again, both halves in parallel: ~10 mΩ at the 4.5 V available, so 35 mV and 0.12 W at the 3.5 A peak, and 18 mV at the declared budget. 30 nC against a 100 nA charge pump at half duty is about 600 ms to close, which is nothing for a power-path switch |
 | input switch ×2 | DMNH4015SSD | `Transistor_FET:Q_Dual_NMOS_S1G1S2G2D2D2D1D1` | one dual N-channel package per upstream port — the two sources tied together, the two gates tied to that port's driver. 40 V, 20 mΩ at the 4.5 V the charger's charge pump provides, 7.5 A, ±20 V gate, AEC-Q101. Pin 1 S1, 2 G1, 3 S2, 4 G2, 5–6 D2, 7–8 D1 |
 | upstream data ESD | 2-channel array, low capacitance | — | the downstream pairs get theirs from the port switch; the upstream pair has no such part in front of it |
 | power connector | USB-C, power only, 6-pin | `Connector:USB_C_Receptacle_PowerOnly_6P` | no data pins to mis-wire, and nothing on it a computer would want |
@@ -463,12 +464,12 @@ blocks turned out to be the part that needed telling, and none of it was guessab
 | `VAC1`, `VAC2` | **to VBUS** | they are input-detect pins; with no external input FETs they watch the input directly |
 | `ACDRV1`, `ACDRV2` | **to ground** | gate drives for input FETs that are not fitted |
 | `ILIM_HIZ` | **to REGN** | that selects the maximum input limit and hands the budget to the register the firmware writes — exactly what this design wants, and the alternative is a divider computed from a milliohm term |
-| `SDRV` | **1 nF to ground** | it drives a ship FET we do not fit, and the capacitor is what it wants when idle |
+| `SDRV` | **to the ship switch's gates** | it drives that switch from a 100 nA charge pump, 5 V above the cell. The 1 nF this pin wants when no switch is fitted is therefore *not* fitted: at 100 nA it would buy nothing but delay |
 | `CE` | **pulled low** | "must be pulled HIGH or LOW, do not leave floating"; low enables charging under register control |
 | `BATP` | **100 Ω in series to the battery** | a sense input, not a power pin |
 | `TS` | divider from `REGN`, with a 10 kΩ NTC | charging suspends when it reads out of range, so an absent thermistor is not a neutral state |
 | `STAT`, `~INT`, `SDA`, `SCL` | 10 kΩ to the logic rail each | all four are open-drain or bus lines |
-| `QON` | may be left alone | it has an internal pull-up, and its jobs are ship-mode exit and a reset through the ship FET we do not fit |
+| `QON` | left alone, but now worth a test pad | it has an internal pull-up, and with the ship switch fitted its two jobs become real: leaving ship mode, and a power reset that does not go through firmware. Both are available over the bus as well, so this buys only the firmware-independent path — and the pin idles at 3.6–3.8 V, above what a 3.3 V input should see, so sharing the existing button is not free |
 | `PROG` | **3.0 k, 1%** | it sets the power-on cell count and switching frequency together: 3.0 k selects one cell at 1.5 MHz, which is the frequency the 1.0 uH inductor belongs to |
 
 The capacitor banks are specified rather than chosen: three at `PMID`, two at `VBUS`, five at `SYS`,
@@ -610,6 +611,31 @@ Both were found by reading the connection list instead of the picture, which is 
 project keeps for exactly this reason. A part moved in the editor can be left bridged by the wire it
 was sitting on, so the check worth repeating after any hand edit is: **does any two-terminal part
 have its own two pins on the same net?**
+
+**The battery gets a switch, because without one this board has no off at all.** That is the finding,
+and it is in the schematic rather than in any datasheet: the 3.3 V converter has its enable tied
+straight to the system rail, and the 5 V converter's is pulled up to the 3.3 V rail. Neither is
+under firmware control. So for as long as the cell is connected, the processor, the flash, the hub
+and the port rail are all live, and the deepest state firmware can reach is sleep. **The ship switch
+is the only thing on the board that disconnects the battery.**
+
+It is worth being clear about what the argument is *not*. The charger's own draw in battery-only
+operation is 17 µA, which on this cell is measured in years — the charger is not what flattens it.
+What flattens it is everything else staying powered, and against that the charger's shutdown state
+is **500 nA**. The size of the gap is the point; the exact figure on the other side of it is an
+estimate of a sleeping-but-powered board and should be measured rather than believed.
+
+**Wake is safe, which is the objection that would otherwise sink it.** Both low-power states wake on
+a charger being plugged in, unconditionally. Ship mode also wakes by register or by pulling the
+reset input low; the deeper shutdown wakes *only* by plug-in. There is no sequence that strands the
+device.
+
+The switch is the part already in the design for the input pairs, both halves in parallel. Two
+consequences are easy to miss and both are taken: the capacitor that pin wants **when no switch is
+fitted** comes out, because against a 100 nA charge pump it would only add delay; and the battery
+sense resistor **stays on the cell side** of the switch, so the charger can still see the battery
+while the switch is open — the same discipline that puts each input's detect pin outside its own
+pair. The drains face the cell, so the body diodes block pack-to-system when the switch is open.
 
 **The radio is a specific part now, and drawing it added components the interface did not imply.**
 The module is chosen for a reason that has nothing to do with the radio and everything to do with

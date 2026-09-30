@@ -3122,17 +3122,7 @@
 			(type solid)
 		)
 		(uuid "0de2d4e8-3752-480b-ab11-c5237a87b0bb")
-	)
-	(wire
-		(pts
-			(xy 198.12 149.86) (xy 203.2 149.86)
-		)
-		(stroke
-			(width 0)
-			(type solid)
-		)
-		(uuid "0faeb562-6251-491f-a8a2-532ad8e1db63")
-	)
+	)
 	(wire
 		(pts
 			(xy 109.22 82.55) (xy 118.11 82.55)
@@ -4743,7 +4733,7 @@
 		)
 		(uuid "388088cb-7e71-4c44-a838-4f9aba950274")
 	)
-	(label "BATT"
+	(label "BATT_SW"
 		(at 193.04 195.58 0)
 		(effects
 			(font
@@ -4853,7 +4843,7 @@
 		)
 		(uuid "cfbaccaa-2d34-4ea1-a981-4dea756b9843")
 	)
-	(label "BATT"
+	(label "BATT_SW"
 		(at 215.9 144.78 0)
 		(effects
 			(font
@@ -10056,81 +10046,7 @@
 				)
 			)
 		)
-	)
-	(symbol
-		(lib_id "power:GND")
-		(at 203.2 149.86 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(uuid "9734fd7c-ca77-4d08-ac57-afe030408e25")
-		(property "Reference" "#PWR01"
-			(at 203.2 142.24 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "GND"
-			(at 203.2 157.48 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" ""
-			(at 203.2 149.86 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 203.2 149.86 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" ""
-			(at 203.2 149.86 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "65d50e65-9901-4632-af0c-ee5483f9bc0c")
-		)
-		(instances
-			(project "crossfire"
-				(path "/4c5cdd13-4f54-43b0-affb-0ae4b9a4d279/3a0d800d-f868-47e5-a520-4703480651cc"
-					(reference "#PWR01")
-					(unit 1)
-				)
-			)
-		)
-	)
+	)
 	(symbol
 		(lib_id "Device:R_Small")
 		(at 246.38 162.56 0)
@@ -12351,83 +12267,7 @@
 				)
 			)
 		)
-	)
-	(symbol
-		(lib_id "Device:C_Small")
-		(at 195.58 149.86 90)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(uuid "e3922a00-bbf2-47eb-a909-8c860bab0a52")
-		(property "Reference" "C70"
-			(at 195.58 142.24 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "1n0"
-			(at 195.58 157.48 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" ""
-			(at 195.58 149.86 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 195.58 149.86 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" ""
-			(at 195.58 149.86 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "3f103a50-727e-4cd0-a397-6d606a6dbdc7")
-		)
-		(pin "2"
-			(uuid "00bb3423-1522-4d97-af33-38075cbe345c")
-		)
-		(instances
-			(project "crossfire"
-				(path "/4c5cdd13-4f54-43b0-affb-0ae4b9a4d279/3a0d800d-f868-47e5-a520-4703480651cc"
-					(reference "C70")
-					(unit 1)
-				)
-			)
-		)
-	)
+	)
 	(symbol
 		(lib_id "power:+3V3")
 		(at 119.38 114.3 0)
@@ -13439,5 +13279,290 @@
 				)
 			)
 		)
+	)
+	(symbol
+		(lib_id "Transistor_FET:Q_Dual_NMOS_S1G1S2G2D2D2D1D1")
+		(at 190.50 175.26 0)
+		(mirror y)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "dfb3da1b-60a2-4641-90f4-7634f3def450")
+		(property "Reference" "Q3"
+			(at 190.50 190.50 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "Q_Dual_NMOS_S1G1S2G2D2D2D1D1"
+			(at 190.50 187.96 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" ""
+			(at 190.50 175.26 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 190.50 175.26 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 190.50 175.26 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "47762224-7661-4a7b-8765-28b8da3bd20e")
+		)
+		(pin "2"
+			(uuid "cf96b592-85df-41ea-8c40-81ad2fb990be")
+		)
+		(pin "7"
+			(uuid "4dc1a7a9-9664-4fd0-a0af-44492fcf8fdf")
+		)
+		(pin "8"
+			(uuid "29e0ae2f-87e7-4d80-ad04-9c3554a3745b")
+		)
+		(instances
+			(project "crossfire"
+				(path "/4c5cdd13-4f54-43b0-affb-0ae4b9a4d279/3a0d800d-f868-47e5-a520-4703480651cc"
+					(reference "Q3")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Transistor_FET:Q_Dual_NMOS_S1G1S2G2D2D2D1D1")
+		(at 205.74 175.26 0)
+		(unit 2)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "11a3de24-e68f-4fc9-87a1-5eadbf29045e")
+		(property "Reference" "Q3"
+			(at 205.74 205.74 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "Q_Dual_NMOS_S1G1S2G2D2D2D1D1"
+			(at 205.74 187.96 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" ""
+			(at 205.74 175.26 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 205.74 175.26 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 205.74 175.26 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "3"
+			(uuid "f133ba75-1192-4496-a1a6-ab355adc3f5f")
+		)
+		(pin "4"
+			(uuid "03c5a8bb-ea51-4bc1-b0fa-9696d0f61fa7")
+		)
+		(pin "5"
+			(uuid "18fbfff2-030b-4ccf-986b-4ba471db7c1a")
+		)
+		(pin "6"
+			(uuid "464adc7f-a68a-4fcd-b1a8-afde614c2c63")
+		)
+		(instances
+			(project "crossfire"
+				(path "/4c5cdd13-4f54-43b0-affb-0ae4b9a4d279/3a0d800d-f868-47e5-a520-4703480651cc"
+					(reference "Q3")
+					(unit 2)
+				)
+			)
+		)
+	)
+	(wire
+		(pts
+			(xy 195.58 175.26) (xy 200.66 175.26)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "7ab0bd11-d85a-48af-93f1-9c090c28e874")
+	)
+	(label "SDRV"
+		(at 198.12 175.26 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "95105d5d-fec5-4e9d-8118-f38761b514c4")
+	)
+	(label "SDRV"
+		(at 193.04 149.86 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "caaa5961-2d08-4c28-b88a-0b99218b2af5")
+	)
+	(wire
+		(pts
+			(xy 187.96 180.34) (xy 208.28 180.34)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "96fda80c-db46-4b99-960d-c2ba7e8f6198")
+	)
+	(wire
+		(pts
+			(xy 182.88 180.34) (xy 187.96 180.34)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "3d98b4c4-d588-414e-b1e7-6dde0ce16986")
+	)
+	(label "BATT_SW"
+		(at 182.88 180.34 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "7c2fd109-ca91-455f-aaee-88248adb577e")
+	)
+	(wire
+		(pts
+			(xy 185.42 170.18) (xy 187.96 170.18)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "7f94800a-d0e3-4cab-b7ff-8b0649edabdb")
+	)
+	(wire
+		(pts
+			(xy 187.96 170.18) (xy 208.28 170.18)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "67c4e6aa-b1fe-4278-b6e0-0195638cfba8")
+	)
+	(wire
+		(pts
+			(xy 208.28 170.18) (xy 210.82 170.18)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "fde72657-bfbe-4b98-a780-b8bf4802a310")
+	)
+	(wire
+		(pts
+			(xy 180.34 170.18) (xy 185.42 170.18)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "53225b95-9425-47ba-b2bb-ce6256d7d51a")
+	)
+	(label "BATT"
+		(at 180.34 170.18 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "5fe78223-b5ba-4df1-9f10-eaa0c5ee9aa3")
 	)
 )
