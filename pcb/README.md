@@ -250,7 +250,8 @@ Stock KiCad symbols exist for everything marked with one; the rest need drawing.
 | power connector | USB-C, power only, 6-pin | `Connector:USB_C_Receptacle_PowerOnly_6P` | no data pins to mis-wire, and nothing on it a computer would want |
 | data connector | USB-C 2.0, 16-pin | `Connector:USB_C_Receptacle_USB2.0_16P` | |
 | port connectors ×4 | type-A | `Connector:USB_A` | |
-| radio | CYW43439 module, pre-certified | — | the firmware is proven against this silicon; a module rather than the bare chip, so the radio arrives certified |
+| radio | Radio Module 2 (RMC20452T) | `crossfire:RM2`, drawn here | the same CYW43439 the firmware is already proven against, as a module rather than a bare chip so the radio arrives certified. Chosen over the other module of the same silicon because this one presents the **serial** host interface the proven driver speaks; the alternative offers only the wider bus. 21 castellated pads, −30 °C to +70 °C |
+| radio bus resistors | 470 Ω, 10 kΩ | `Device:R_Small` | not optional: one host pin serves three module pads, and these are what let it |
 
 Two notes on the hub. Its upstream link runs at full speed, because the RP2350's controller is
 full-speed only — so the whole tree is full speed and instruments that could do high speed fall
@@ -310,12 +311,12 @@ and every pin carries a named stub, so each net that crosses a block boundary is
 `port.kicad_sch` is drawn once and instanced four times, with the root mapping its generic
 `DP`/`DM`/`PWR_EN`/`FAULT` onto the hub's `Pn_*`.
 
-**Six of the seven sheets are populated; only `radio` is not.** `mcu` holds the MCU, the flash, the
+**All seven sheets are populated.** `mcu` holds the MCU, the flash, the
 core-rail inductor and its decoupling, the crystal, the analogue filter, reset and boot, the debug
 and console header, the indicators and the button. `hub` holds the hub, its 24 MHz crystal, the
 `RBIAS` reference, the two regulator filters, the straps that select the default configuration, the
 reset and upstream-detect pull-downs, and the upstream pair's series resistors and host-side
-pull-downs. Every pin of every part is on a named net. `port` holds the current-limited switch, the ESD array, the receptacle and the bulk capacitance -- drawn once and placed four times. `upstream_data` holds the data receptacle, its terminations, the protection array and the sense divider; its contribution to the rail now leaves the sheet directly, because the switch beside the charger does the blocking that used to need a diode here. `power` holds the charger with every bank the datasheet specifies, the thermistor network, the cell connector, and the two converters that make the rails. `upstream_power` holds the power receptacle, the sink that negotiates on it, and the two resistors that state the contract it asks for before any firmware is running.
+pull-downs. Every pin of every part is on a named net. `port` holds the current-limited switch, the ESD array, the receptacle and the bulk capacitance -- drawn once and placed four times. `upstream_data` holds the data receptacle, its terminations, the protection array and the sense divider; its contribution to the rail now leaves the sheet directly, because the switch beside the charger does the blocking that used to need a diode here. `power` holds the charger with every bank the datasheet specifies, the thermistor network, the cell connector, and the two converters that make the rails. `upstream_power` holds the power receptacle, the sink that negotiates on it, and the two resistors that state the contract it asks for before any firmware is running. `radio` holds the module, the two resistors that let one host pin serve three of its pads, its decoupling, and all six of its ground pads taken to the plane.
 
 Both are drawn the way a person would draw them: **signals are wires**, and only the rails and the
 nets that leave the sheet are carried on symbols and labels. Parts sit beside the pins they serve —
@@ -610,6 +611,25 @@ project keeps for exactly this reason. A part moved in the editor can be left br
 was sitting on, so the check worth repeating after any hand edit is: **does any two-terminal part
 have its own two pins on the same net?**
 
+**The radio is a specific part now, and drawing it added components the interface did not imply.**
+The module is chosen for a reason that has nothing to do with the radio and everything to do with
+the driver: two pre-certified modules carry this silicon, and only one of them brings out the
+**serial** host interface the proven firmware speaks — the other offers the wider bus only, which
+the driver cannot use. That decided it before any electrical comparison.
+
+**One host pin serves three of the module's pads, and the two resistors that make that work are not
+optional.** The host has a single data line; the module wants its data in, its data out and its
+interrupt on separate pads. The data-in pad takes the line directly. The data-out pad reaches it
+through **470 Ω**, so that when the module drives and the host drives at once neither is damaged and
+whichever is driving wins. The interrupt reaches it through **10 kΩ**, large enough to pull the
+shared line when the module wants attention without disturbing traffic on it. Both values are the
+module vendor's, and a design that read only the four-signal interface would have left them out.
+
+Two smaller things came with it. The module enables its two radios on **separate pads**, which this
+board ties together because nothing here wants one without the other. And it brings out three spare
+general-purpose pins; the pin budget has thirteen spare already, so they are left unconnected rather
+than used, but they are there if a later revision runs short.
+
 **The PIO port and the radio do not contend.** Counted rather than assumed: the radio's bus takes
 one state machine and eight of the thirty-two instruction slots in the first PIO block, four pins
 and one DMA channel. The part has three PIO blocks of four state machines each, and sixteen DMA
@@ -624,6 +644,10 @@ Things this document asserts that a datasheet has to confirm before layout:
 - That 240 MHz holds at temperature on stock core voltage, and what raising the core voltage would
   cost the power budget if it does not. 240 MHz is above the datasheet and proven only on the boards
   in hand, so a production population is the open question, not whether it runs.
+  **And it reaches the radio**: the module's bus timing is specified against a 125 MHz system clock,
+  and its vendor says the divisor has to be re-derived if the system clock changes. Ours is nearly
+  double. That is firmware rather than board, but it is a consequence of the clock decision and
+  belongs recorded against it rather than found at bring-up.
 - The QSPI divider at 240 MHz, and that the flash part chosen is rated for the 120 MHz it lands on.
 - The 5 V boost's compensation, which is carried over from the vendor's own 9 V application at the
   same input range and the same 2 A rather than computed. Everything else in that converter is
@@ -633,7 +657,14 @@ Things this document asserts that a datasheet has to confirm before layout:
 
 - That the 5 V boost current-limits gracefully rather than latching off, since it is the real
   backstop behind four switches that each trip well above the port budget.
-- Whether the radio module's antenna keep-out can be met at the board edge.
+- Whether the radio module's antenna keep-out can be met at the board edge. This is now a stated
+  constraint rather than a guess: the module wants a metal-free region off the antenna end, a good
+  ground everywhere else for the sake of its radiation pattern, and explicitly **no ground poured
+  near the antenna**. It is a placement question, so it belongs to layout rather than to the
+  schematic, but it is the one that decides where the module can sit.
+- The module's temperature range is **−30 °C to +70 °C**, which is narrower than anything else on
+  the board. It bounds the product, not the part, so it wants stating wherever the operating range
+  is claimed.
 
 The questions above the electrical detail are all answered now. A computer and the instruments are
 served at once, and this design does that. The declared battery budget of 250 mA a port stands, so
