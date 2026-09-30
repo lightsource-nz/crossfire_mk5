@@ -605,12 +605,21 @@ would have blocked the data port from contributing anything and conducted the ch
 out to whatever was plugged in — the exact failure it was placed to prevent. Removing it settles
 that, but it would have survived to a board if the switch had not displaced it. And the three input
 capacitors each had a **wire bridging their own two pins**, which shorted the charger's whole input
-to ground. Neither shows up as an error in the rules check, because neither is electrically illegal
-— a bridged part is just a net, and a rules check has no opinion about which parts ought to matter.
-Both were found by reading the connection list instead of the picture, which is the habit this
-project keeps for exactly this reason. A part moved in the editor can be left bridged by the wire it
-was sitting on, so the check worth repeating after any hand edit is: **does any two-terminal part
-have its own two pins on the same net?**
+to ground. Both were found by reading the connection list instead of the picture, which is the habit
+this project keeps for exactly this reason.
+
+**A bridged part is the one of those the rules check genuinely cannot see**, and it is worth being
+exact about why, because the looser version of this claim is wrong. Bridging a part is not illegal:
+it is just a net. What the check reports, if anything, is a *symptom*. When the bridge shorts two
+**named** nets — as the capacitors did, tying the charger's input to ground — it reports that two
+names are attached to the same items, which is a real complaint about the wrong thing and easy to
+wave through as a known one. When only one side carries a name, it reports **nothing at all**:
+bridging the radio's series resistor leaves the violation count unchanged and silently removes a net.
+That was measured, not assumed.
+
+So the check worth repeating after any hand edit is: **does any two-terminal part have its own two
+pins on the same net?** `scripts/check-pcb.ps1` asks it, along with two questions the rules check
+does also answer, so that one command covers the lot.
 
 **The battery gets a switch, because without one this board has no off at all.** That is the finding,
 and it is in the schematic rather than in any datasheet: the 3.3 V converter has its enable tied
