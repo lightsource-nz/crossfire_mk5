@@ -290,6 +290,28 @@ clears the profile with room and bounds what the bank can ever see. This is a bo
 creates a firmware requirement, which is exactly the sort that gets lost, so it is written here as
 well as in the firmware's own notes.
 
+**Resistors carry a tolerance, and it is 1% only where the value is read.** Nineteen of the
+thirty-eight are: a reference a part trims itself against, a divider ratio, a termination that
+states what this end of a cable is, a value that programs a threshold at power-on. The other
+nineteen are pull-ups, pull-downs, straps and series parts, where 5% is honest and 1% is a cost
+with nothing on the other side of it. Power is not a field: the largest dissipation anywhere on
+the board is a few milliwatts in an indicator's series resistor, so the smallest standard part
+covers every one of them.
+
+**Three values were arithmetic that had never been rounded to a part you can buy.** Two are the
+charger vendor's own figures for the temperature network -- 5.24 k and 30.31 k, neither of which
+exists -- and one was ours for the boost's current limit. They become 5.23 k, 30.1 k and 174 k,
+and the cost of each is stated rather than waved at: 0.2% and 0.7% on the temperature thresholds,
+which is a fraction of a degree, and about 2% on the current limit.
+
+That last one is worth stating properly, because the shorthand for it invites a misreading. The
+limit is **not** set *at* the worst-case peak. The boost's switch has to pass about 4.25 A at the
+bottom of the cell with every port drawing its full share, so a limit there would trip in normal
+service; it is set at about **5.9 A**, which clears that peak by nearly 40% and still leaves the
+converter protecting itself. The two resistance figures the vendor publishes against measured
+limits are what fix the relationship, and they also fix its direction: more resistance, less
+current.
+
 ### GPIO budget
 
 Seventeen of the thirty, and the assignment is not arbitrary — the PIO pair is forced adjacent and the

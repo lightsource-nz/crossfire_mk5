@@ -3012,6 +3012,17 @@
 				)
 			)
 		)
+		(property "Tolerance" "5%"
+			(at 167.894 144.526 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(property "Footprint" ""
 			(at 167.64 147.32 0)
 			(show_name no)
@@ -3430,6 +3441,17 @@
 				(font
 					(size 1.27 1.27)
 				)
+			)
+		)
+		(property "Tolerance" "5%"
+			(at 108.712 113.03 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
 			)
 		)
 		(property "Footprint" ""
@@ -3926,6 +3948,17 @@
 				)
 			)
 		)
+		(property "Tolerance" "1%"
+			(at 168.656 105.918 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(property "Footprint" ""
 			(at 167.64 109.22 0)
 			(show_name no)
@@ -4396,6 +4429,17 @@
 				)
 			)
 		)
+		(property "Tolerance" "5%"
+			(at 169.164 152.146 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(property "Footprint" ""
 			(at 167.64 154.94 0)
 			(show_name no)
@@ -4568,6 +4612,17 @@
 				(font
 					(size 1.27 1.27)
 				)
+			)
+		)
+		(property "Tolerance" "5%"
+			(at 122.174 118.872 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
 			)
 		)
 		(property "Footprint" ""
@@ -5072,6 +5127,17 @@
 				)
 			)
 		)
+		(property "Tolerance" "1%"
+			(at 160.528 108.712 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(property "Footprint" ""
 			(at 160.02 111.76 0)
 			(show_name no)
@@ -5310,7 +5376,7 @@
 				)
 			)
 		)
-		(property "Value" "12k1%"
+		(property "Value" "12k"
 			(at 168.148 120.396 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -5318,6 +5384,17 @@
 				(font
 					(size 1.27 1.27)
 				)
+			)
+		)
+		(property "Tolerance" "1%"
+			(at 168.148 120.396 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
 			)
 		)
 		(property "Footprint" ""
@@ -5394,6 +5471,17 @@
 				(font
 					(size 1.27 1.27)
 				)
+			)
+		)
+		(property "Tolerance" "5%"
+			(at 157.48 120.65 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
 			)
 		)
 		(property "Footprint" ""
@@ -5651,6 +5739,17 @@
 				(font
 					(size 1.27 1.27)
 				)
+			)
+		)
+		(property "Tolerance" "5%"
+			(at 137.16 121.158 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
 			)
 		)
 		(property "Footprint" ""
