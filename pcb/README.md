@@ -386,7 +386,8 @@ product exists to avoid.
 | downstream ports x4 | full-size type-A, horizontal, **through-hole** | the plug's force goes into the board. Every stock option is through-hole, which settles it |
 | upstream data | 16-pin type-C, surface pads with **through-hole shell tabs** | the signal pads are fine surface mount; the shell takes the strain through the board |
 | upstream power | **6-pin** type-C, same mounting | see below |
-| indicators, buttons | edge-mounted, facing **up** | pressable and visible on a bare board; an enclosure then needs a hole rather than a plunger |
+| indicators | 0603, **red and green** | the 1 kohm series resistor rules out the high-voltage colours |
+| buttons x3 | 6 mm surface-mount tactile, top-actuated | one part for all three, pressable on a bare board |
 | debug | 5-pin header on 2.54 mm | bench-first means a header that any probe's flying leads reach |
 | cell | two-way, 2.0 mm pitch | a two-wire pack, which is what is actually sold; the sensor it does not carry is on the board |
 
@@ -416,6 +417,25 @@ and away from everything that gets warm -- the charger, the two converters and t
 it near a heat source and it reads high and refuses to charge a perfectly good cell; put it out in
 open board and it reads ambient and reports nothing about the battery at all. Of the two mistakes
 the first is the one that will be blamed on firmware.
+
+**The indicators' series resistor has already chosen their colour, which is worth noticing before
+someone fits a blue one.** They run from a 3.3 V pin through 1 kohm, so the current depends entirely
+on the forward voltage: about **1.3 mA** for red, amber or ordinary green, and about **0.3 mA** for
+true green, blue or white, which is not enough to rely on seeing. The low-voltage colours are
+therefore not a preference here, they are a requirement of the resistor already drawn. Taken as
+**red and green**; swapping to blue or white means changing the resistor too, and at that supply
+there is very little headroom left to do it with.
+
+1.3 mA is deliberately modest rather than accidental -- a modern part is clearly visible at it
+indoors, and two indicators left on cost the cell about a fiftieth of its capacity a day.
+
+**The three buttons are one part, surface mount, top-actuated, at the edge.** One line item covers
+all three, a 6 mm actuator is comfortable to press on a bare board, and an enclosure then wants a
+hole rather than a plunger. Two notes for whoever draws that enclosure: the user button is the only
+one an owner should be able to reach, since the other two put the board into its bootloader and
+reset it, so recessing them is reasonable even though all three sit on the same edge. And the user
+button has **no pull-up on the board** -- it relies on the processor's internal one being enabled,
+which is ordinary, but it means the pin reads as floating until firmware has configured it.
 
 ### GPIO budget
 
