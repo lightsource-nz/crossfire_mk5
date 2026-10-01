@@ -6118,7 +6118,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Package_DFN_QFN:QFN-60-1EP_7x7mm_P0.4mm_EP3.4x3.4mm_ThermalVias"
+		(property "Footprint" "crossfire:rpi_rp2350a_vias"
 			(at 203.2 139.7 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7469,6 +7469,17 @@
 				)
 			)
 		)
+		(property "MPN" "Abracon AOTA-B201610S3R3-101-T"
+			(at 208.28 91.44 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(property "Tolerance" "20%"
 			(at 208.28 91.44 0)
 			(show_name no)
@@ -7502,7 +7513,7 @@
 				(hide yes)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "crossfire:abracon_aota-b201610s3r3-101-t"
 			(at 208.28 83.82 0)
 			(show_name no)
 			(do_not_autoplace no)

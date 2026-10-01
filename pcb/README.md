@@ -504,6 +504,36 @@ rather than using one. Their electrical requirements are settled above -- 3.3 uH
 and polarity-marked, 1.0 uH to 7 A, 1.0 uH to 3 A -- so what is left is picking parts that meet
 them and taking each one's own pattern. The 5 V boost's is already chosen on exactly that basis.
 
+**The inductors are chosen, and two of them are the same part.**
+
+| | part | why |
+| --- | --- | --- |
+| core regulator | Abracon AOTA-B201610S3R3-101-T | the processor's vendor names it, and publishes a layout built around it |
+| charger | Coilcraft XGL4030-102MEC | 7.6 A before its inductance is down a fifth, against a 7 A worst case |
+| 3.3 V buck-boost | Coilcraft XGL4030-102MEC | the same part again: one line item, one land pattern |
+| 5 V boost | Wurth 744311220 | on the converter vendor's own recommended list |
+
+**Saturation is quoted against an inductance droop, not as a single number**, which is what makes
+these comparable. The charger's needs about 7 A at its worst, and the chosen part is still holding
+80% of its inductance there; the first part considered reached that figure only at a 30% droop,
+which would have fed back into more ripple and a higher peak still. The taller part in the same
+4 mm footprint fixes that for a millimetre of height, and has lower resistance into the bargain.
+
+The 3.3 V converter needs only 3 A, so using the charger's part there is generous. It is worth it:
+one part number, one land pattern, one thing to stock, and lower resistance than the part its own
+vendor suggests. That vendor's recommendation -- a 4 mm part 1 mm shorter -- is the alternative if
+height ever matters more than the shared line item.
+
+**Two footprints come from the processor vendor's own reference design**, which is published under
+a permissive licence and carried into this project's footprint library with the notice that licence
+asks for. One is the core inductor's. The other is the **processor's own land pattern**, which
+settles one of the four packages that were fitted provisionally: the pad under that part is no
+longer a guess at the nearest library variant but the pattern its maker lays out. Three provisional
+packages remain.
+
+What is left on the two Coilcraft parts is their land pattern, which is one drawing covering both
+since the 4 mm family shares it.
+
 ### GPIO budget
 
 Seventeen of the thirty, and the assignment is not arbitrary — the PIO pair is forced adjacent and the

@@ -7146,6 +7146,17 @@
 				)
 			)
 		)
+		(property "MPN" "Coilcraft XGL4030-102MEC"
+			(at 207.01 121.92 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(property "Tolerance" "20%"
 			(at 207.01 121.92 0)
 			(show_name no)
@@ -7157,7 +7168,7 @@
 				(hide yes)
 			)
 		)
-		(property "Isat" "7A"
+		(property "Isat" "7.6A @20%"
 			(at 207.01 121.92 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7244,6 +7255,17 @@
 				)
 			)
 		)
+		(property "MPN" "Coilcraft XGL4030-102MEC"
+			(at 241.3 114.3 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(property "Tolerance" "20%"
 			(at 241.3 114.3 0)
 			(show_name no)
@@ -7255,7 +7277,7 @@
 				(hide yes)
 			)
 		)
-		(property "Isat" "3A"
+		(property "Isat" "7.6A @20%"
 			(at 241.3 114.3 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -8761,6 +8783,17 @@
 				)
 			)
 		)
+		(property "MPN" "Wurth 744311220"
+			(at 243.586 160.528 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(property "Tolerance" "20%"
 			(at 243.586 160.528 0)
 			(show_name no)
@@ -8772,7 +8805,7 @@
 				(hide yes)
 			)
 		)
-		(property "Isat" "7A"
+		(property "Isat" "13A"
 			(at 243.586 160.528 0)
 			(show_name no)
 			(do_not_autoplace no)
