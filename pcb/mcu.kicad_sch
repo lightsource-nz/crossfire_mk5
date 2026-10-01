@@ -5894,7 +5894,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Button_Switch_SMD:SW_Push_1P1T_NO_CK_KSC6xxJ"
 			(at 135.89 120.65 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6118,7 +6118,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Package_DFN_QFN:QFN-60-1EP_7x7mm_P0.4mm_EP3.4x3.4mm_ThermalVias"
 			(at 203.2 139.7 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7071,7 +7071,7 @@
 				(hide yes)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
 			(at 254 154.94 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7319,7 +7319,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Button_Switch_SMD:SW_Push_1P1T_NO_CK_KSC6xxJ"
 			(at 147.32 99.06 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7761,7 +7761,7 @@
 				(hide yes)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
 			(at 148.59 127 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7936,7 +7936,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_1x05_P2.54mm_Vertical"
 			(at 147.32 195.58 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -8461,7 +8461,7 @@
 				(hide yes)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Inductor_SMD:L_0603_1608Metric"
 			(at 189.23 53.34 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -8646,7 +8646,7 @@
 				(hide yes)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
 			(at 265.43 149.86 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -8722,7 +8722,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Button_Switch_SMD:SW_Push_1P1T_NO_CK_KSC6xxJ"
 			(at 261.62 189.23 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -8883,7 +8883,7 @@
 				(hide yes)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
 			(at 160.02 93.98 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -8960,7 +8960,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Package_SO:SOIC-8_5.3x5.3mm_P1.27mm"
 			(at 110.49 142.24 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -9076,7 +9076,7 @@
 				(hide yes)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Crystal:Crystal_SMD_3225-4Pin_3.2x2.5mm"
 			(at 147.32 165.1 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -9307,7 +9307,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "LED_SMD:LED_0603_1608Metric"
 			(at 273.05 160.02 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -10220,7 +10220,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "LED_SMD:LED_0603_1608Metric"
 			(at 261.62 172.72 0)
 			(show_name no)
 			(do_not_autoplace no)

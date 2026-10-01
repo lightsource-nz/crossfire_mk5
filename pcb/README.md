@@ -469,6 +469,41 @@ processor is the one part that specifies an **effective** tolerance: its core re
 capacitor must be 4.7 uF +/-20% *in circuit*, not nominally, which is a tighter thing to satisfy
 than it looks.
 
+### Footprints
+
+**132 of the 135 parts carry a footprint.** Most are decided the moment the part is -- a SOT-23-5
+is a SOT-23-5 -- and the capacitors' came out of the bias calculation above. The resistors are all
+0603 rather than 0402: the board has room, the first one runs bare on a bench, and a part you can
+get a probe or an iron onto is worth more there than the millimetre it saves.
+
+**The radio module's footprint is the vendor's own, and taking it corrected a near-miss.** The
+module has no footprint in any stock library, so the obvious move was to draw one from the
+dimension drawing in its datasheet. The pitch, the pad size and the pad length read off that
+drawing cleanly -- but where each pad sits along its edge did not, and what I had was inference
+from where things appeared in a rendered figure rather than a stated number. Raspberry Pi publish a
+KiCad symbol and footprint for it; that is the one fitted. The drawn figure turned out to agree on
+everything it stated plainly, which is some comfort, and says nothing about the parts it did not.
+
+Taking the official symbol also **checked the pinout drawn here against theirs**, and all 21 pins
+agree. Four carry different names -- their `DI` and `DO` for this document's data in and out, their
+`nIRQ` and `WL_ON` for its interrupt and enable -- and nothing else differs. The pin numbering
+derived from the module's own table is therefore confirmed against its author rather than merely
+self-consistent.
+
+**Four packages are fitted provisionally**, and they are listed because the thing that is unsettled
+about them is invisible: the processor, the hub, the 3.3 V converter and the power sink are all in
+packages whose library entries differ *only* in the size of the pad underneath the part. The body,
+the pitch and the pin count are right in every case; the pad is a guess at the nearest variant and
+has to be checked against each vendor's own land pattern before anything is made. A pad that is too
+small costs thermal performance and a pad that is too large can wick the part off its pins.
+
+**Three parts have deliberately not been given one**, because for them the footprint *is* the part:
+the three remaining inductors. Pad geometry differs between vendors at the same nominal size, so
+choosing a library entry that merely matches the millimetres would be inventing a land pattern
+rather than using one. Their electrical requirements are settled above -- 3.3 uH to 1.5 A shielded
+and polarity-marked, 1.0 uH to 7 A, 1.0 uH to 3 A -- so what is left is picking parts that meet
+them and taking each one's own pattern. The 5 V boost's is already chosen on exactly that basis.
+
 ### GPIO budget
 
 Seventeen of the thirty, and the assignment is not arbitrary — the PIO pair is forced adjacent and the

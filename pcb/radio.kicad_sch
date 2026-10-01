@@ -1050,6 +1050,17 @@
 				)
 			)
 		)
+		(property "Footprint" "crossfire:rpi_rmc20452t"
+			(at 177.80 121.92 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "3"
 			(uuid "7fdd45ad-054d-4604-a810-123021d05643")
 		)		(pin "9"
@@ -1125,6 +1136,17 @@
 				)
 			)
 		)
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+			(at 148.59 116.84 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(property "Tolerance" "5%"
 			(at 148.59 116.84 0)
 			(show_name no)
@@ -1171,6 +1193,17 @@
 				(font
 					(size 1.27 1.27)
 				)
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+			(at 148.59 119.38 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
 			)
 		)
 		(property "Tolerance" "5%"

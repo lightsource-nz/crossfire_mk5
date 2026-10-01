@@ -3023,7 +3023,7 @@
 				(hide yes)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
 			(at 167.64 147.32 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -3454,7 +3454,7 @@
 				(hide yes)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
 			(at 105.41 111.76 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -3959,7 +3959,7 @@
 				(hide yes)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
 			(at 167.64 109.22 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -4440,7 +4440,7 @@
 				(hide yes)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
 			(at 167.64 154.94 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -4625,7 +4625,7 @@
 				(hide yes)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
 			(at 119.38 118.11 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -4821,7 +4821,7 @@
 				(hide yes)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Crystal:Crystal_SMD_3225-4Pin_3.2x2.5mm"
 			(at 137.16 140.97 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -5160,7 +5160,7 @@
 				(hide yes)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
 			(at 160.02 111.76 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -5419,7 +5419,7 @@
 				(hide yes)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
 			(at 167.64 124.46 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -5506,7 +5506,7 @@
 				(hide yes)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
 			(at 154.94 120.65 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -5582,7 +5582,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Package_DFN_QFN:HVQFN-36-1EP_6x6mm_P0.5mm_EP3.9x3.9mm"
 			(at 203.2 127 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -5774,7 +5774,7 @@
 				(hide yes)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
 			(at 134.62 120.65 0)
 			(show_name no)
 			(do_not_autoplace no)

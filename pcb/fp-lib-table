@@ -1,3 +1,4 @@
 (fp_lib_table
 	(version 7)
+	(lib (name "crossfire")(type "KiCad")(uri "${KIPRJMOD}/crossfire.pretty")(options "")(descr "footprints with no stock equivalent"))
 )
