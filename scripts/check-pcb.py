@@ -74,8 +74,11 @@ def sexp_block(text, start):
 
 PIN_RE = re.compile(r'\(pin \w+ \w+\s*\(at ([\d.-]+) ([\d.-]+) (\d+)\).*?\(number "([^"]*)"', re.S)
 WIRE_RE = re.compile(r'\(wire\s*\(pts\s*\(xy ([\d.-]+) ([\d.-]+)\) \(xy ([\d.-]+) ([\d.-]+)\)\s*\)')
+#   The window has to reach past every property a symbol carries, and symbols grow properties as the
+# specification fills in -- rating, dielectric, tolerance, package. Taking it to the block's own
+# closing bracket rather than a fixed count means it cannot go stale again.
 INST_RE = re.compile(r'\(lib_id "([^"]+)"\)\s*\(at ([\d.-]+) ([\d.-]+) (\d+)\)\s*((?:\(mirror \w\)\s*)?)'
-                     r'(.{0,600})', re.S)
+                     r'(.*?\n\t\))', re.S)
 
 
 def cached_pins(sheet_text):

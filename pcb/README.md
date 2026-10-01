@@ -437,6 +437,38 @@ reset it, so recessing them is reasonable even though all three sit on the same 
 button has **no pull-up on the board** -- it relies on the processor's internal one being enabled,
 which is ordinary, but it means the pin reads as floating until firmware has configured it.
 
+**Each capacitor's package is chosen from how much of it has to survive its own bias**, which is
+the last thing a value and a rating leave undecided. The question is not how much capacitance is
+printed on the part, it is how much is there once the voltage is across it, and the answer differs
+by package for the same value and rating.
+
+The requirement is derived rather than assumed, bank by bank:
+
+| bank | what it has to do | effective value needed | fitted | so it must keep |
+| --- | --- | --- | --- | --- |
+| charger input, 9 V | hold input ripple to 100 mV at 5.4 A through the inductor | **8.6 uF** | 20 uF | **43%** |
+| 5 V rail | hold output ripple to 50 mV at 2 A | 24 uF | 66 uF | 36% |
+| system rail | answer a load step, not ripple -- ripple alone wants 2.5 uF | 25 uF | 92 uF | 27% |
+
+**The charger's input is the binding case at 43%, and it is the reason the package matters.** That
+much is comfortable in 1206 and marginal in 0603 for a 10 uF part at 9 V, so the five capacitors on
+the 9 V nodes take 1206 and everything at 4.5 V or under, which is a long way up its own curve,
+takes 0805. Decoupling goes to 0402, where being close to the pin matters more than the package,
+and the small frequency- and loop-setting parts to 0603, where there is nothing to derate.
+
+**The answer to the question this opened is that the counts do not change.** Every bank is adequate
+as drawn, provided each part keeps roughly half of itself, and that is what the package choice
+delivers. What remains is a purchasing check rather than a design one: the chosen part number's own
+bias curve has to show it clearing the figure in the table above.
+
+Two notes on where the vendors differ. The 3.3 V converter's datasheet says outright that its
+recommended values **anticipate** tolerance and bias derating, and quotes 20% and 50% -- so its
+table is nominal and the margin is already in it. The charger's and the boost's say nothing of the
+kind, so for those the derating is ours to carry, which is what the table above does. And the
+processor is the one part that specifies an **effective** tolerance: its core regulator's output
+capacitor must be 4.7 uF +/-20% *in circuit*, not nominally, which is a tighter thing to satisfy
+than it looks.
+
 ### GPIO budget
 
 Seventeen of the thirty, and the assignment is not arbitrary — the PIO pair is forced adjacent and the
@@ -875,14 +907,6 @@ Things this document asserts that a datasheet has to confirm before layout:
   double. That is firmware rather than board, but it is a consequence of the clock decision and
   belongs recorded against it rather than found at bring-up.
 - The QSPI divider at 240 MHz, and that the flash part chosen is rated for the 120 MHz it lands on.
-- **What the capacitor banks are actually worth once they are fitted.** The charger specifies them
-  as *counts* of 10 uF parts -- three here, five there -- and that only means something if each
-  part is still worth 10 uF where it sits. A ceramic loses capacitance under DC bias, and the
-  banks at the input carry 9 V, which is where the loss bites hardest. The rating and the
-  dielectric are settled; the **package** is not, and it is the package that decides how much
-  survives. So the footprint step has to check each chosen part's own bias curve and, if the
-  effective value falls short, add parts rather than assume the count was the point. This is the
-  one piece of the specification that can still change the part count.
 - The 5 V boost's compensation, which is carried over from the vendor's own 9 V application at the
   same input range and the same 2 A rather than computed. Everything else in that converter is
   derived -- but a compensation network is bench-verified whatever its starting values, so this is
