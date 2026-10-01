@@ -490,12 +490,24 @@ agree. Four carry different names -- their `DI` and `DO` for this document's dat
 derived from the module's own table is therefore confirmed against its author rather than merely
 self-consistent.
 
-**Four packages are fitted provisionally**, and they are listed because the thing that is unsettled
-about them is invisible: the processor, the hub, the 3.3 V converter and the power sink are all in
-packages whose library entries differ *only* in the size of the pad underneath the part. The body,
-the pitch and the pin count are right in every case; the pad is a guess at the nearest variant and
-has to be checked against each vendor's own land pattern before anything is made. A pad that is too
-small costs thermal performance and a pad that is too large can wick the part off its pins.
+**Three packages are fitted provisionally**, and they are listed because what is unsettled about
+them is invisible: the hub, the 3.3 V converter and the power sink are in packages whose library
+entries differ *only* in the size of the pad underneath the part. The body, the pitch and the pin
+count are right in every case; the pad is the nearest variant. A pad too small costs thermal
+performance and one too large can wick the part off its pins, so each wants checking against its
+own vendor's land pattern. The processor used to be the fourth of these and no longer is -- its
+maker's own pattern is fitted.
+
+**Checking the first of the three turned 'unconfirmed' into 'wrong', which is why they are listed.**
+The 3.3 V converter's vendor publishes a land-pattern drawing: its thermal pad is about
+**2.15 x 1.70 mm**, and not one of the library's five variants of that body is that shape -- the
+nearest is over 0.2 mm out on one side. So the generic entry is not merely unverified there, it
+does not match, and that part needs a footprint drawn to the vendor's figure rather than chosen
+from a list. The same check is owed to the other two.
+
+The drawings are readable, which is the useful part: they are pure graphics with no text to extract,
+so they have to be rendered and read rather than searched -- the same way the module's pin-1 marker
+and the transistor's pin numbering were settled.
 
 **Three parts have deliberately not been given one**, because for them the footprint *is* the part:
 the three remaining inductors. Pad geometry differs between vendors at the same nominal size, so
