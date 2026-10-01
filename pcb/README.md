@@ -358,6 +358,44 @@ loading capacitors. The same checklist confirms two things already drawn: the 12
 reference to ground, and that the reset line may be held by the processor rather than pulled up,
 which is what the pull-down and the GPIO on it amount to.
 
+### Mechanical, and the connectors
+
+**The enclosure is drawn around the board, not the board around an enclosure**, and the first one
+runs bare on a bench. That ordering decides more than it sounds like: the board may take whatever
+outline suits it, but it has to be usable with nothing around it, so parts that are pressed or
+looked at face upwards rather than sideways, and anything that takes a plug's insertion force goes
+through the board rather than resting on pads.
+
+**One constraint fixes the board's width, and it is the port pitch.** Four type-A receptacles at
+**25.4 mm between centres** span 76.2 mm centre to centre. The widest stock footprint for a
+full-size horizontal receptacle occupies 22.8 mm and the narrowest 15.4 mm, so every one of them
+fits the pitch -- the narrow end leaving about 10 mm of clear board between neighbours, which is
+where each port's switch, its protection array and its bulk capacitor have to live. Taking the
+narrow one, the four ports occupy 91.6 mm of courtyard, and with a few millimetres of edge each
+side **the port edge cannot be shorter than about 100 mm**. That is now a fixed dimension of the
+product, not an outcome of layout.
+
+It is worth recording *why* 25.4 mm rather than something tighter, because it looks generous
+against a 13 mm receptacle and invites being trimmed later. The number is not about the
+receptacle, it is about the **plug**: a moulded type-A plug is commonly 16 to 20 mm across, so a
+narrower pitch yields a hub whose four ports cannot all be used at once. That is the failure this
+product exists to avoid.
+
+| | part | why |
+| --- | --- | --- |
+| downstream ports x4 | full-size type-A, horizontal, **through-hole** | the plug's force goes into the board. Every stock option is through-hole, which settles it |
+| upstream data | 16-pin type-C, surface pads with **through-hole shell tabs** | the signal pads are fine surface mount; the shell takes the strain through the board |
+| upstream power | **6-pin** type-C, same mounting | see below |
+| indicators, buttons | edge-mounted, facing **up** | pressable and visible on a bare board; an enclosure then needs a hole rather than a plunger |
+| debug | 5-pin header on 2.54 mm | bench-first means a header that any probe's flying leads reach |
+
+**The power port is physically a different connector from the data port, and that is worth having.**
+A 6-pin power-only receptacle is a stocked part with a stock footprint, so taking it costs nothing
+over using a 16-pin part with its data pins unconnected -- and it means the power port **cannot**
+carry data, in copper rather than by labelling. The two receptacles were always going to be told
+apart by what is printed beside them; this makes the printing a convenience rather than the only
+thing standing between a user and a surprise.
+
 ### GPIO budget
 
 Seventeen of the thirty, and the assignment is not arbitrary — the PIO pair is forced adjacent and the
