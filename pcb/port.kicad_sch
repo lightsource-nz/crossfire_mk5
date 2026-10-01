@@ -2162,6 +2162,28 @@
 				)
 			)
 		)
+		(property "Voltage" "25V"
+			(at 171.958 93.726 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Dielectric" "X7R"
+			(at 171.958 93.726 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(property "Footprint" ""
 			(at 168.91 91.44 0)
 			(show_name no)

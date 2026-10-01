@@ -261,6 +261,35 @@ switches itself: `PRTPWR[1:4]` to each switch's enable, each switch's fault back
 power then goes on and off through ordinary hub requests that any host stack already makes,
 overcurrent arrives as a standard port status change, and eight GPIOs stay free.
 
+### Passives
+
+A value on its own is not a specification, so every capacitor now carries a **voltage rating and a
+dielectric**, chosen from the net it sits on rather than from a house default. The rule is at least
+twice the working voltage, rounded to a standard rating, and never below what a socket the user can
+reach is able to present.
+
+| what it decouples | rating | dielectric |
+| --- | --- | --- |
+| the core rail, 3.3 V, the system rail, the cell, the bootstraps and the internal filter nodes | 16 V | X7R |
+| the 5 V rail, each port's own output, the charger's input and the node beside it | 25 V | X7R |
+| the connector side — the sink's own supply, and the data port's | **50 V** | X7R |
+| crystal loads, the feedback tap and the compensation network | 50 V / 16 V | **C0G** |
+
+Two of those rows are decisions rather than arithmetic.
+
+**The connector-side parts are rated for abuse, because nothing on the board protects them.** Both
+input switches sit *downstream* of them, so the sink's own supply decoupling and the data port's
+are exposed to whatever a hostile charger produces, with no switch between. They are rated for a
+fault rather than for the 9 V and 5 V they are supposed to see.
+
+**The charger's own input bank is rated 25 V on a condition, and the condition is firmware.** The
+input over-voltage trip defaults to **26 V**, which is above a 25 V part — so rating the bank for
+the working voltage is only safe if that trip is moved down. The part offers 7 V, 12 V, 22 V and
+26 V, and **12 V is the right one for this board**: the sink never asks for more than 9 V, so 12 V
+clears the profile with room and bounds what the bank can ever see. This is a board decision that
+creates a firmware requirement, which is exactly the sort that gets lost, so it is written here as
+well as in the firmware's own notes.
+
 ### GPIO budget
 
 Seventeen of the thirty, and the assignment is not arbitrary — the PIO pair is forced adjacent and the
@@ -684,6 +713,14 @@ Things this document asserts that a datasheet has to confirm before layout:
   double. That is firmware rather than board, but it is a consequence of the clock decision and
   belongs recorded against it rather than found at bring-up.
 - The QSPI divider at 240 MHz, and that the flash part chosen is rated for the 120 MHz it lands on.
+- **What the capacitor banks are actually worth once they are fitted.** The charger specifies them
+  as *counts* of 10 uF parts -- three here, five there -- and that only means something if each
+  part is still worth 10 uF where it sits. A ceramic loses capacitance under DC bias, and the
+  banks at the input carry 9 V, which is where the loss bites hardest. The rating and the
+  dielectric are settled; the **package** is not, and it is the package that decides how much
+  survives. So the footprint step has to check each chosen part's own bias curve and, if the
+  effective value falls short, add parts rather than assume the count was the point. This is the
+  one piece of the specification that can still change the part count.
 - The 5 V boost's compensation, which is carried over from the vendor's own 9 V application at the
   same input range and the same 2 A rather than computed. Everything else in that converter is
   derived -- but a compensation network is bench-verified whatever its starting values, so this is

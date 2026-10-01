@@ -1417,6 +1417,28 @@
 				)
 			)
 		)
+		(property "Voltage" "16V"
+			(at 152.40 88.90 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Dielectric" "X7R"
+			(at 152.40 88.90 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "56276048-0904-41a2-a04f-daa5eebf4b53")
 		)		(pin "2"
@@ -1500,6 +1522,28 @@
 				)
 			)
 		)
+		(property "Voltage" "16V"
+			(at 160.02 88.90 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Dielectric" "X7R"
+			(at 160.02 88.90 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "5bfc6281-c9bc-4064-af7c-45a6e8e751bc")
 		)		(pin "2"
@@ -1581,6 +1625,28 @@
 				(font
 					(size 1.27 1.27)
 				)
+			)
+		)
+		(property "Voltage" "16V"
+			(at 195.58 88.90 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Dielectric" "X7R"
+			(at 195.58 88.90 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
 			)
 		)
 		(pin "1"
