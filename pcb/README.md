@@ -333,11 +333,30 @@ stray field from the inductor couples into the regulator's control loop and move
 with nominally shielded parts. That is a placement constraint arriving from a component datasheet,
 so it is recorded here where layout will look for it.
 
-**The crystals are specified by load, not just frequency.** The processor's wants a **10 pF** load,
-which the 15 pF pair either side of it meets once a couple of picofarads of stray are allowed for.
-The hub's pair implies about 12 pF by the same arithmetic, and that one is still to confirm: its
-datasheet and its design checklist are both scanned images, so nothing can be read out of them
-without rendering the pages.
+**The crystals are specified by load, not just frequency**, because the load is what decides
+whether they oscillate on frequency at all. Both work out at **10 pF**, and both vendors name the
+arithmetic rather than leaving it to be guessed.
+
+The processor's is simply stated: its vendor recommends a specific part and publishes its
+parameters, 10 pF load and +/-30 ppm either side. The hub's has to be derived, and the derivation
+is the part worth writing down, because the obvious way to do it is wrong. Stray capacitance sits
+in parallel with **each** loading capacitor, not with the two of them in series -- so the load is
+not half the pair plus the stray, it is half of *(the pair plus the stray)*. With the 18 pF the
+hub's own documents call typical and a few picofarads of board stray, that is about **10.5 pF**,
+and the nearest standard part is 10 pF. The naive arithmetic gives 12 pF, which is a different
+part. Both of the vendor's two formulations -- the older datasheet's and the newer checklist's --
+agree on this once they are read carefully.
+
+Its frequency allowance is **+/-350 ppm**, and that number is a trap in the other direction: it is
+the *total* the hub can tolerate, so a part sold as +/-350 ppm would spend the entire budget before
+temperature and ageing are counted. A commodity +/-50 ppm part meets it several times over.
+
+**There is no feedback resistor across either crystal, and none is wanted.** The hub's datasheet
+figure draws a 1 Mohm across the pins without saying which side of the package it is on; its
+design checklist, which exists to list what the board has to provide, asks only for the two
+loading capacitors. The same checklist confirms two things already drawn: the 12.0 kohm 1%
+reference to ground, and that the reset line may be held by the processor rather than pulled up,
+which is what the pull-down and the GPIO on it amount to.
 
 ### GPIO budget
 

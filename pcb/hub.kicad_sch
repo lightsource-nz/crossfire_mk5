@@ -4799,7 +4799,7 @@
 				)
 			)
 		)
-		(property "Tolerance" "30ppm"
+		(property "Tolerance" "50ppm"
 			(at 137.16 144.78 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -4810,7 +4810,7 @@
 				(hide yes)
 			)
 		)
-		(property "Load" "12pF"
+		(property "Load" "10pF"
 			(at 137.16 144.78 0)
 			(show_name no)
 			(do_not_autoplace no)
