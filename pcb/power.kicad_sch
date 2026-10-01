@@ -14269,4 +14269,10 @@
 		)
 		(uuid "5fe78223-b5ba-4df1-9f10-eaa0c5ee9aa3")
 	)
+	(junction
+		(at 292.10 99.06)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "91db5427-b467-43c9-ab34-854296507014")
+	)
 )

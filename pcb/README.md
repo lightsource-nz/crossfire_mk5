@@ -646,6 +646,21 @@ wave through as a known one. When only one side carries a name, it reports **not
 bridging the radio's series resistor leaves the violation count unchanged and silently removes a net.
 That was measured, not assumed.
 
+**A third fault, found while specifying the passives, was the worst of them.** The 3.3 V
+converter's feedback divider was not connected to its feedback pin. The divider is right -- 1 M
+over 178 k against a 500 mV reference puts the output at 3.3 V -- and its midpoint wire *crossed*
+the feedback line, one grid step from joining it, with no junction at the crossing. That draws
+exactly like a connection. The rail it sets feeds the processor, the flash, the hub and the radio,
+and with no feedback the converter has nothing telling it when to stop.
+
+**The rules check says nothing whatever about it**, which was measured by putting the fault back:
+not one violation moved. Nor would the earlier checks have caught it -- the divider's midpoint is
+a net with two nodes, so it is not a stub, and nothing is bridged. What catches it is asking which
+nets reach **nothing but two-terminal passives**. A divider whose output never arrived has that
+shape. So does an honest series compensation network, which is why that question is reported for
+reading rather than failed -- on this board it returns two lines, and the difference between them
+is obvious once they are side by side.
+
 So the check worth repeating after any hand edit is: **does any two-terminal part have its own two
 pins on the same net?** `scripts/check-pcb.ps1` asks it, along with two questions the rules check
 does also answer, so that one command covers the lot.

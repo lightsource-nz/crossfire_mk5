@@ -12,6 +12,16 @@ three below slips through it entirely:
     disappears.  Both behaviours were measured on this board, not assumed.  A part moved in the
     editor can be left bridged by the wire it was sitting on, which is how three of them arrived.
 
+  * A wire ending part-way along another wire with no junction dot.  The editor adds the dot when
+    you draw it that way; a file edited by other means does not get one, and the drawing then shows
+    a connection that the netlist does not have.
+
+  * A net that reaches nothing but two-terminal passives.  This one is REPORTED, NOT FAILED,
+    because it has an honest form -- the midpoint of a series compensation network is meant to go
+    nowhere -- but it is also the shape of a divider whose output never arrived, which is how the
+    3.3V rail came to have no feedback at all while its divider crossed the feedback line one grid
+    step away from joining it.  The list is short enough to read.
+
   * A pin whose only connection is a wire leading nowhere.
   * A wire ending off the grid, which looks connected at any sane zoom and is not.
 
@@ -106,8 +116,18 @@ def body_of(sheet_text):
     return sheet_text[sexp_block(sheet_text, at)[1]:]
 
 
+def inside(p, w):
+    """True when p lies strictly between the two ends of the axis-aligned wire w."""
+    (x1, y1, x2, y2), (x, y) = w, p
+    if abs(x1 - x2) < 1e-6 and abs(x - x1) < 1e-6:
+        return min(y1, y2) + 1e-6 < y < max(y1, y2) - 1e-6
+    if abs(y1 - y2) < 1e-6 and abs(y - y1) < 1e-6:
+        return min(x1, x2) + 1e-6 < x < max(x1, x2) - 1e-6
+    return False
+
+
 def check_sheets(pcb_dir):
-    bridged, offgrid, no_fp, parts = [], [], 0, 0
+    bridged, offgrid, no_fp, parts, undotted = [], [], 0, 0, []
     for name in sorted(os.listdir(pcb_dir)):
         if not name.endswith(".kicad_sch"):
             continue
@@ -120,6 +140,15 @@ def check_sheets(pcb_dir):
                 if abs(v / GRID - round(v / GRID)) > 1e-6:
                     offgrid.append((name, w))
                     break
+        dots = {(round(float(m.group(1)), 2), round(float(m.group(2)), 2))
+                for m in re.finditer(r"\(junction\s*\(at ([\d.-]+) ([\d.-]+)\)", text)}
+        for w in wires:
+            for p in ((w[0], w[1]), (w[2], w[3])):
+                for other in wires:
+                    if other is not w and inside(p, other) \
+                            and (round(p[0], 2), round(p[1], 2)) not in dots:
+                        undotted.append((name, p, other))
+                        break
         pins = cached_pins(text)
         ends = {(round(w[0], 2), round(w[1], 2), round(w[2], 2), round(w[3], 2)) for w in wires}
         ends |= {(c, d, a, b) for a, b, c, d in ends}
@@ -140,7 +169,7 @@ def check_sheets(pcb_dir):
             if key in ends:
                 ref = re.search(r'\(property "Reference" "([^"]*)"', blk)
                 bridged.append((name, ref.group(1) if ref else "?", lib_id))
-    return bridged, offgrid, no_fp, parts
+    return bridged, offgrid, no_fp, parts, undotted
 
 
 def check_netlist(cli, root):
@@ -150,7 +179,7 @@ def check_netlist(cli, root):
     with open(out, encoding="utf8") as f:
         text = f.read()
     at = text.index("(nets")
-    stubs = []
+    stubs, passive_only = [], []
     total = 0
     for b in re.findall(r"\(net\b(.*?)(?=\n\t\t\(net\b|\n\t\)\s*\)\s*$)", text[at:], re.S):
         total += 1
@@ -158,7 +187,9 @@ def check_netlist(cli, root):
         nodes = sorted(set(re.findall(r'\(ref "([^"]+)"\)\s*\(pin "([^"]+)"\)', b)))
         if len(nodes) == 1 and not name.startswith("unconnected-"):
             stubs.append((name, "%s pin %s" % nodes[0]))
-    return stubs, total
+        if name.startswith("Net-(") and nodes and all(re.match(r"^(R|C|L|FB)\d", r) for r, _ in nodes):
+            passive_only.append((name, " ".join(sorted({r for r, _ in nodes}))))
+    return stubs, total, passive_only
 
 
 def run_erc(cli, root):
@@ -182,8 +213,8 @@ def main():
     cli = find_kicad_cli()
 
     kinds = run_erc(cli, root)
-    stubs, nets = check_netlist(cli, root)
-    bridged, offgrid, no_fp, parts = check_sheets(pcb)
+    stubs, nets, passive_only = check_netlist(cli, root)
+    bridged, offgrid, no_fp, parts, undotted = check_sheets(pcb)
 
     print("crossfire schematic -- %s, %d nets, %d parts\n" % (roots[0], nets, parts))
     counts = {}
@@ -198,12 +229,19 @@ def main():
     print("  parts bridged by a wire        %d" % len(bridged))
     for sheet, ref, lib_id in bridged:
         print("      %-12s %-6s %s" % (sheet, ref, lib_id))
+    print("  wires joined without a dot     %d" % len(undotted))
+    for sheet, p, other in undotted:
+        print("      %-12s (%.2f,%.2f) lands inside (%.2f,%.2f)-(%.2f,%.2f)"
+              % ((sheet,) + p + other))
     print("  wire ends off the grid         %d" % len(offgrid))
     for sheet, w in offgrid:
         print("      %-12s (%.4f,%.4f)-(%.4f,%.4f)" % ((sheet,) + w))
     print("  parts without a footprint      %d of %d" % (no_fp, parts))
+    print("  nets of passives only          %d   (read these, do not trust them)" % len(passive_only))
+    for n, refs in passive_only:
+        print("      %-22s %s" % (n, refs))
 
-    bad = len(stubs) + len(bridged) + len(offgrid)
+    bad = len(stubs) + len(bridged) + len(offgrid) + len(undotted)
     print("\n%s" % ("OK" if not bad else "%d finding(s) the rules check cannot see" % bad))
     return 1 if bad else 0
 
