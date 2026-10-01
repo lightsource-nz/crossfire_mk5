@@ -312,6 +312,33 @@ converter protecting itself. The two resistance figures the vendor publishes aga
 limits are what fix the relationship, and they also fix its direction: more resistance, less
 current.
 
+**The four inductors are specified by what they have to carry, not by their value alone**, and two
+of the four had their value fixed for them by a decision already taken.
+
+| | value | has to stay unsaturated to | why that number |
+| --- | --- | --- | --- |
+| core regulator | 3.3 uH +/-20% | **1.5 A** | the processor's own datasheet says so, along with a 250 mohm ceiling on resistance |
+| charger | 1.0 uH | **7 A** | the input can deliver 27 W and the system sits near 4 V, so the output side carries about 6.3 A, plus half the ripple |
+| 3.3 V buck-boost | 1.0 uH | **3 A** | above the converter's own 2.0-2.5 A limit, so the part protects itself before the core does |
+| 5 V boost | 2.2 uH | **7 A** | above the 5.9 A the current-limit resistor sets, for the same reason |
+
+**The charger's inductor value is not a choice.** Its datasheet is explicit that 1.5 MHz works only
+with 1 uH and 750 kHz only with 2.2 uH -- and the frequency was already fixed, at power-on, by the
+resistor that also sets the cell count. One resistor therefore picks the inductor, and the two have
+to be changed together or not at all.
+
+**The core regulator's inductor has a requirement that is easy to lose**: it must be fully shielded
+and **marked for polarity**, and oriented the way the vendor's layout shows. Their own note is that
+stray field from the inductor couples into the regulator's control loop and moves the output even
+with nominally shielded parts. That is a placement constraint arriving from a component datasheet,
+so it is recorded here where layout will look for it.
+
+**The crystals are specified by load, not just frequency.** The processor's wants a **10 pF** load,
+which the 15 pF pair either side of it meets once a couple of picofarads of stray are allowed for.
+The hub's pair implies about 12 pF by the same arithmetic, and that one is still to confirm: its
+datasheet and its design checklist are both scanned images, so nothing can be read out of them
+without rendering the pages.
+
 ### GPIO budget
 
 Seventeen of the thirty, and the assignment is not arbitrary — the PIO pair is forced adjacent and the
