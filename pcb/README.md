@@ -388,6 +388,7 @@ product exists to avoid.
 | upstream power | **6-pin** type-C, same mounting | see below |
 | indicators, buttons | edge-mounted, facing **up** | pressable and visible on a bare board; an enclosure then needs a hole rather than a plunger |
 | debug | 5-pin header on 2.54 mm | bench-first means a header that any probe's flying leads reach |
+| cell | two-way, 2.0 mm pitch | a two-wire pack, which is what is actually sold; the sensor it does not carry is on the board |
 
 **The power port is physically a different connector from the data port, and that is worth having.**
 A 6-pin power-only receptacle is a stocked part with a stock footprint, so taking it costs nothing
@@ -395,6 +396,26 @@ over using a 16-pin part with its data pins unconnected -- and it means the powe
 carry data, in copper rather than by labelling. The two receptacles were always going to be told
 apart by what is printed beside them; this makes the printing a convenience rather than the only
 thing standing between a user and a surprise.
+
+**The cell is a two-wire pack on a 2.0 mm connector, so the thermistor moves onto the board.** The
+charger's temperature network is unchanged -- the same two resistors, computed by its vendor for a
+10 kohm sensor -- and the thermistor now sits across the lower leg exactly where the pack's one
+would have connected. It must be a **10 kohm B3435** part, because that is the sensor those two
+resistors were calculated against; a different beta moves both ends of the window.
+
+**What this protects against changes, and the change is worth being honest about.** A thermistor
+inside the pack watches the cell. One on the board watches the board. It can no longer catch a cell
+heating up on its own -- the failure people picture when they think of battery thermal protection --
+and what it does instead is refuse to charge when the surroundings are too cold or too hot for
+charging to be safe. That is not nothing: charging a lithium cell below freezing plates lithium and
+damages it permanently, and ambient is a fair proxy for a resting cell's temperature. But it is a
+different guarantee, and the specification should say which one the product makes.
+
+**It also turns a component into a placement requirement.** The sensor has to sit against the cell
+and away from everything that gets warm -- the charger, the two converters and their inductors. Put
+it near a heat source and it reads high and refuses to charge a perfectly good cell; put it out in
+open board and it reads ambient and reports nothing about the battery at all. Of the two mistakes
+the first is the one that will be blamed on firmware.
 
 ### GPIO budget
 
