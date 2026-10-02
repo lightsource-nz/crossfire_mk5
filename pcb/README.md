@@ -578,6 +578,49 @@ The boot button is not a GPIO. It pulls the flash's chip select low, the way the
 does, so it costs nothing from the budget above — and the button on GPIO 16 is a separate, ordinary
 one.
 
+## The board
+
+**Four layers**, with the two inner ones named for what they are: a ground plane and a power
+plane. Two would have been possible -- the processor's own vendor escapes this exact package on
+two -- but their reference board has no hub, no switching charger and no radio. This one has three
+switching converters wanting a solid return for their hot loops, a radio whose datasheet asks in so
+many words for a good ground plane, six signal pairs wanting a continuous reference, and a 0.4 mm
+pitch sixty-pin package sitting next to a thirty-six-pin one. Any one of those is survivable on two
+layers; all four together are not.
+
+**No controlled impedance, and that is a decision rather than an omission.** Every port on this
+board runs at full speed, because the processor's own controller is full-speed only and the hub
+therefore presents a full-speed tree. At twelve megabits a hundred millimetres of track is
+electrically short, and the 90 ohm figure the USB specification quotes is a property of the cable,
+not of the board. The pairs still get a class of their own -- routed together, over unbroken
+ground, lengths loosely matched -- but the fab needs no impedance option, which is a real saving on
+a four-layer board.
+
+**The rules come from a board that is known to work with this processor.** Its vendor's reference
+design uses 0.15 mm minimum track, 0.2 mm clearance and a 0.5 mm via on a 0.25 mm drill -- and
+escapes the sixty-pin package with them on *two* layers. Taking the same numbers on four leaves
+margin rather than demanding a finer process, and they are ordinary enough that no fabricator
+charges extra for them.
+
+**The net classes are sized from the current each rail carries**, not left at a default. External
+copper at one ounce and a ten degree rise carries roughly an amp in 0.3 mm, two in 0.8 mm, three in
+1.4 mm and five in 2.8 mm, which gives:
+
+| class | width | what it carries |
+| --- | --- | --- |
+| Signal | 0.20 mm | everything carrying information rather than current |
+| USB | 0.25 mm | the six pairs, as pairs |
+| Power | 0.50 mm | up to an amp: the logic rails, one port's output |
+| Power+ | 1.00 mm | two to three amps: the 5 V rail and the upstream feeds |
+| Battery | 2.00 mm | up to six amps between cell, charger and system |
+
+The heavy rails are expected to end up as poured copper rather than track, so those last two widths
+are the floor for any stub that *is* tracked, not a plan for how the current gets there.
+
+**The outline is 100 x 80 mm** with 3 mm corners. The 100 is not a choice -- it is what four
+receptacles at 25.4 mm centres plus edge margin come to. The 80 is an estimate from what has to fit
+behind them, and is expected to tighten once placement is real rather than guessed.
+
 ## Sheets
 
 | sheet | contents |
