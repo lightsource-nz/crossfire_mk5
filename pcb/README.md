@@ -675,6 +675,24 @@ reach their shield pads, so the radius is set by the parts nearest the corners r
 
 ### Placement
 
+**All four sockets were placed facing the wrong way, and it took a person to see it.** Every
+numeric check passed: the pitch was exact, the courtyards cleared, the rules check was silent, and
+the thing was unusable -- mouths pointing into the middle of the board and their closed backs
+presented to the edge. A board check tests whether parts collide, never whether a connector opens
+where a plug can reach it.
+
+The footprint settles the question and there was no need to guess. Its origin is at the pins and its
+body runs from 2.77 mm behind them to **13.49 mm in front**: that 13.49 mm is the shell, and its far
+end is the mouth. The mouth therefore faces the edge when the part is *not* turned, and the pins sit
+13.49 mm inboard of it, which is where a right-angle socket's pins belong -- inside the board rather
+than crushed against its edge. The two upstream connectors were already right and say so in their
+own drawing, which carries a line marked **"PCB Edge"**; lining that line up with the outline is the
+whole placement, and the front flange then overhangs by half a millimetre as it is meant to.
+
+Two things follow. The mouths are flush with the outline and the port centres are exactly on 25.4 mm
+pitch, which is the one fixed dimension of the product. And the port pins moved 12.6 mm inboard,
+which shortens every data route and improves the clamp positions described below.
+
 **The parts that cannot move were placed first and everything else fitted around them**, which is
 recorded above. The remaining 113 are passives, and a passive's position is not a free choice: a
 decoupling capacitor belongs at the pin it decouples, a divider at the pin it feeds, a load capacitor
@@ -696,19 +714,17 @@ Two things the connection list does not say, both found by getting them wrong:
 
 **The four port clamps are on the back of the board**, and this is the one placement decision that
 costs something. A clamp works by being nearer to the pin than anything it protects, because what it
-has to beat is the inductance of the track in front of it. On the front it cannot be near: the
-receptacle is a horizontal through-hole part whose housing covers a strip 10 mm deep inboard of its
-own pins, and its data pins sit at the end of the row furthest from the only gap the 25.4 mm pitch
-leaves. The best front-side position is **11.5 mm** away on three ports and **16.8 mm** on the
-fourth, and roughly ten nanohenries of track gives most of the protection back.
+has to beat is the inductance of the track in front of it. On the front it cannot get near: a
+right-angle receptacle's shell covers the board for 13.5 mm, its pins sit inside that, and the best
+free position outside it is **5.2 to 10.5 mm** from the pins depending on the port. Behind the shell
+the same area is free, and the pins are through-hole so their pads reach it, so each clamp sits
+**3.2 mm** from what it protects -- through the thickness of the board instead of around the
+connector, and the same on all four ports rather than varying by a factor of two.
 
-Behind the housing the same area is free, and the pins are through-hole so their pads reach it. Each
-clamp now sits **3.2 mm** from the pins it protects, through the thickness of the board instead of
-around the connector. What this costs is that the board is no longer assembled on one side only --
-four parts of one type in four similar positions, which is the cheapest form of that cost, and it
-buys protection rather than density. The bulk capacitors stay on the front: eight millimetres to a
-22 uF reservoir is nothing, because it holds a rail up over microseconds and the inductance that
-matters to a clamp does not matter to it.
+What this costs is that the board is no longer assembled on one side only: four parts of one type in
+four similar positions, which is the cheapest form of that cost. The bulk capacitors stay on the
+front, because eight millimetres to a 22 uF reservoir is nothing -- it holds a rail up over
+microseconds, and the inductance that matters to a clamp does not matter to it.
 
 **The designators were placed by the same method**, after the check found 108 of them printed on
 exposed copper and 57 overlapping each other -- ink on a pad keeps solder off the joint, so this is
