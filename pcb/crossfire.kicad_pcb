@@ -96,7 +96,7 @@
 		(descr "USB type A, Horizontal, https://www.molex.com/pdm_docs/sd/676433910_sd.pdf")
 		(tags "USB_A Female Connector receptacle")
 		(property "Reference" "J4"
-			(at 3.5 -3.19 180)
+			(at 3.5 6.7 180)
 			(layer "F.SilkS")
 			(uuid "d45f1584-2bce-4849-a260-22c8acd7e553")
 			(effects
@@ -11675,7 +11675,7 @@
 		(descr "USB type A, Horizontal, https://www.molex.com/pdm_docs/sd/676433910_sd.pdf")
 		(tags "USB_A Female Connector receptacle")
 		(property "Reference" "J2"
-			(at 3.5 -3.19 180)
+			(at 3.5 6.7 180)
 			(layer "F.SilkS")
 			(uuid "26e1b06e-b99c-4ebb-9bb1-e8405f59c4e6")
 			(effects
@@ -16427,7 +16427,7 @@
 		(descr "USB type A, Horizontal, https://www.molex.com/pdm_docs/sd/676433910_sd.pdf")
 		(tags "USB_A Female Connector receptacle")
 		(property "Reference" "J5"
-			(at 3.5 -3.19 180)
+			(at 3.5 6.7 180)
 			(layer "F.SilkS")
 			(uuid "49e0f091-34c1-4657-a457-a1b8a20e39db")
 			(effects
@@ -22793,7 +22793,7 @@
 	(footprint "Connector_PinHeader_2.54mm:PinHeader_1x05_P2.54mm_Vertical"
 		(layer "F.Cu")
 		(uuid "a32c4db8-068f-43ed-b24b-cd73b0b60c6d")
-		(at 86 20)
+		(at 86 25)
 		(descr "Through hole straight pin header, 1x05, 2.54mm pitch, single row")
 		(tags "Through hole pin header THT 1x05 2.54mm single row")
 		(property "Reference" "J1"
@@ -29416,7 +29416,7 @@
 			(layer "F.Fab")
 			(uuid "57ee9e11-9b17-437e-8e0d-6fa775ccd97d")
 		)
-		(fp_text user "REF**"
+		(fp_text user "${REFERENCE}"
 			(at 5.5 9.5 0)
 			(unlocked yes)
 			(layer "F.SilkS")
@@ -33998,7 +33998,7 @@
 		(descr "USB type A, Horizontal, https://www.molex.com/pdm_docs/sd/676433910_sd.pdf")
 		(tags "USB_A Female Connector receptacle")
 		(property "Reference" "J3"
-			(at 3.5 -3.19 180)
+			(at 3.5 6.7 180)
 			(layer "F.SilkS")
 			(uuid "f4d13050-048e-4e2c-ab16-d042e228f58f")
 			(effects
@@ -35469,88 +35469,88 @@
 		)
 	)
 	(gr_line
-		(start 0 77)
-		(end 0 3)
+		(start 0 78.5)
+		(end 0 1.5)
 		(stroke
 			(width 0.1)
 			(type default)
 		)
 		(layer "Edge.Cuts")
-		(uuid "42c4dd2a-fc2e-465f-9757-6705537a9d75")
+		(uuid "bc411ded-33d2-4837-a426-798d613d5841")
 	)
 	(gr_arc
-		(start 0 77)
-		(mid 5.12132 74.87868)
-		(end 3 80)
+		(start 0 78.5)
+		(mid 2.56066 77.43934)
+		(end 1.5 80)
 		(stroke
 			(width 0.1)
 			(type default)
 		)
 		(layer "Edge.Cuts")
-		(uuid "b325f3ab-4ce3-4400-abe4-2398a1a5e8f6")
+		(uuid "99a1a0a9-b4d8-41b6-b8cb-38a87ec5ad7e")
 	)
 	(gr_arc
-		(start 3 0)
-		(mid 5.12132 5.12132)
-		(end 0 3)
+		(start 1.5 0)
+		(mid 2.56066 2.56066)
+		(end 0 1.5)
 		(stroke
 			(width 0.1)
 			(type default)
 		)
 		(layer "Edge.Cuts")
-		(uuid "481a26ad-3940-4f87-a8b3-95a9a42bd940")
+		(uuid "7c22e063-98b8-4731-a8a8-1d355cdd0847")
 	)
 	(gr_line
-		(start 3 0)
-		(end 97 0)
+		(start 1.5 0)
+		(end 98.5 0)
 		(stroke
 			(width 0.1)
 			(type default)
 		)
 		(layer "Edge.Cuts")
-		(uuid "eed52c88-2bee-4c30-8745-bc5f1fa557bf")
+		(uuid "c120b918-16ed-4a7e-9756-3960c352b469")
 	)
 	(gr_line
-		(start 97 80)
-		(end 3 80)
+		(start 98.5 80)
+		(end 1.5 80)
 		(stroke
 			(width 0.1)
 			(type default)
 		)
 		(layer "Edge.Cuts")
-		(uuid "c16676d1-f546-47ee-a377-306d6753b928")
+		(uuid "bd67ba65-0339-4ea4-9d57-530043825e4e")
 	)
 	(gr_arc
-		(start 97 80)
-		(mid 94.87868 74.87868)
-		(end 100 77)
+		(start 98.5 80)
+		(mid 97.43934 77.43934)
+		(end 100 78.5)
 		(stroke
 			(width 0.1)
 			(type default)
 		)
 		(layer "Edge.Cuts")
-		(uuid "a10ec3b4-1a3e-4baf-8884-d0df37fda3ab")
+		(uuid "ac7a4823-7792-4f13-93ed-60d007b08a84")
 	)
 	(gr_arc
-		(start 100 3)
-		(mid 94.87868 5.12132)
-		(end 97 0)
+		(start 100 1.5)
+		(mid 97.43934 2.56066)
+		(end 98.5 0)
 		(stroke
 			(width 0.1)
 			(type default)
 		)
 		(layer "Edge.Cuts")
-		(uuid "9f1d8f57-a038-483e-b66f-5e94ce9b2617")
+		(uuid "e8469c46-4837-4872-bf0d-bf4fd8ec8bf6")
 	)
 	(gr_line
-		(start 100 3)
-		(end 100 77)
+		(start 100 1.5)
+		(end 100 78.5)
 		(stroke
 			(width 0.1)
 			(type default)
 		)
 		(layer "Edge.Cuts")
-		(uuid "bf6d9bc5-33d4-4b05-a9f3-6ef2c348da7c")
+		(uuid "3b8fcaca-5062-4217-90a1-f9eb20741e07")
 	)
 	(zone
 		(layers "F.Cu" "B.Cu" "In1.Cu" "In2.Cu")

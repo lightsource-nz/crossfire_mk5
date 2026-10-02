@@ -490,6 +490,14 @@ agree. Four carry different names -- their `DI` and `DO` for this document's dat
 derived from the module's own table is therefore confirmed against its author rather than merely
 self-consistent.
 
+**That footprint did arrive with one defect, which the silkscreen check found.** Its reference field
+is hidden, and a plain text reading `REF**` is left visible in its place -- so the module would have
+been printed with the placeholder and never with its designator, on every board built from it. The
+text keeps the position and size the vendor gives it; only its content changes, to the token that
+resolves to whatever the part is called. Worth noting as a class of error: an imported footprint can
+be correct in every dimension that matters electrically and still be wrong in what it prints, and
+only one of those two is checked by comparing against a drawing.
+
 **Every part has a footprint, and the provisional ones were checked against their own vendors'
 data rather than left to a body-size match. Two of the three were wrong.**
 
@@ -597,10 +605,23 @@ ground, lengths loosely matched -- but the fab needs no impedance option, which 
 a four-layer board.
 
 **The rules come from a board that is known to work with this processor.** Its vendor's reference
-design uses 0.15 mm minimum track, 0.2 mm clearance and a 0.5 mm via on a 0.25 mm drill -- and
+design uses 0.15 mm minimum track, 0.15 mm clearance and a 0.5 mm via on a 0.25 mm drill -- and
 escapes the sixty-pin package with them on *two* layers. Taking the same numbers on four leaves
 margin rather than demanding a finer process, and they are ordinary enough that no fabricator
-charges extra for them.
+charges extra for them. Two of the figures were set higher than that at first, and the parts
+rejected both:
+
+* **Clearance is 0.15 mm, uniformly, including on the power classes.** The processor's pads are on
+  0.4 mm pitch and 0.23 mm across, so the gap between one pad and the next is 0.17 mm. That is a
+  property of the package, and no rule above it can be satisfied by *any* board carrying the part.
+  A class clearance is a routing figure -- how much air to leave between tracks -- and a pad field
+  cannot honour one. Nothing is given away by lowering it: IPC-2221 asks 0.1 mm between uncoated
+  external conductors below 30 V, and the highest potential anywhere on this board is a 20 V supply
+  contract. The heavy rails still get more room than the floor wherever the layout allows; what
+  changed is that this is a layout practice rather than a rule the parts break.
+* **The smallest hole is 0.2 mm**, not 0.25. The boost converter's thermal pad carries vias of that
+  size, deliberately small so solder does not wick down them and starve the joint. Through 1.6 mm
+  of board that is an 8:1 aspect ratio, which is ordinary capability rather than a special request.
 
 **The net classes are sized from the current each rail carries**, not left at a default. External
 copper at one ounce and a ten degree rise carries roughly an amp in 0.3 mm, two in 0.8 mm, three in
@@ -608,18 +629,21 @@ copper at one ounce and a ten degree rise carries roughly an amp in 0.3 mm, two 
 
 | class | width | what it carries |
 | --- | --- | --- |
-| Signal | 0.20 mm | everything carrying information rather than current |
+| Default | 0.20 mm | everything carrying information rather than current |
 | USB | 0.25 mm | the six pairs, as pairs |
 | Power | 0.50 mm | up to an amp: the logic rails, one port's output |
 | Power+ | 1.00 mm | two to three amps: the 5 V rail and the upstream feeds |
 | Battery | 2.00 mm | up to six amps between cell, charger and system |
 
 The heavy rails are expected to end up as poured copper rather than track, so those last two widths
-are the floor for any stub that *is* tracked, not a plan for how the current gets there.
+are the floor for any stub that *is* tracked, not a plan for how the current gets there. There is no
+separate signal class: the default *is* the signal class, which is one fewer thing to keep in step.
 
-**The outline is 100 x 80 mm** with 3 mm corners. The 100 is not a choice -- it is what four
+**The outline is 100 x 80 mm** with 1.5 mm corners. The 100 is not a choice -- it is what four
 receptacles at 25.4 mm centres plus edge margin come to. The 80 is an estimate from what has to fit
-behind them, and is expected to tighten once placement is real rather than guessed.
+behind them, and is expected to tighten once placement is real rather than guessed. The corners were
+3 mm until the outer two receptacles were placed: a 3 mm radius cuts across the corner far enough to
+reach their shield pads, so the radius is set by the parts nearest the corners rather than by taste.
 
 ## Sheets
 
