@@ -7179,7 +7179,7 @@
 				(hide yes)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Inductor_SMD:L_Coilcraft_XxL4030"
 			(at 207.01 114.3 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7288,7 +7288,7 @@
 				(hide yes)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Inductor_SMD:L_Coilcraft_XxL4030"
 			(at 241.3 106.68 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -13834,7 +13834,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Package_DFN_QFN:DFN-10-1EP_3x3mm_P0.5mm_EP1.65x2.38mm"
+		(property "Footprint" "Package_SON:Texas_DSC0010J_ThermalVias"
 			(at 266.7 101.6 0)
 			(show_name no)
 			(do_not_autoplace no)

@@ -5582,7 +5582,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Package_DFN_QFN:HVQFN-36-1EP_6x6mm_P0.5mm_EP3.9x3.9mm"
+		(property "Footprint" "Package_DFN_QFN:QFN-36-1EP_6x6mm_P0.5mm_EP3.7x3.7mm"
 			(at 203.2 127 0)
 			(show_name no)
 			(do_not_autoplace no)
