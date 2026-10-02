@@ -806,8 +806,50 @@ One more number was wrong and worth naming: the first pass used 0.25 mm clearanc
 own rule is 0.15 mm. At 0.4 mm pitch that difference is the entire gap -- it is the reason 25 supply
 pins appeared impossible to connect when only two were.
 
-The board check is clear: **0 violations and 0 footprint errors**, with 207 unconnected pads left,
+The board check is clear: **0 violations and 0 footprint errors**, with 204 unconnected pads left,
 down from 409. What remains is the signal routing.
+
+### Routing, and what a written router was and was not good for
+
+The plan was to route by script the nets where a rule exists and can be checked -- the twelve data
+pairs as pairs, both crystals, the converters' switch nodes -- and route the rest by hand. That was
+the right division and the wrong expectation of the tool. **The scripted router is not kept, and
+three short routes are all that survives it.** It is worth saying why, because the attempt was not
+wasted: it is what found the placement problem that mattered far more.
+
+A maze search over the two outer layers was written, with a pair searched as one object -- the state
+being the CENTRELINE between the two tracks, each offset half the pair pitch to its own side, so the
+two come out parallel by construction. It routed. What it did not do was agree with the rules check.
+Each disagreement, found and fixed, revealed another:
+
+* **A pad's own cells were blocked**, because the centre of a pin on a 0.4 mm package is within
+  clearance of the pins either side. True, and irrelevant: that copper is already there, and a track
+  inside its own pad adds no clearance problem the pad does not already have. Until this was fixed
+  the router could not start a route, and reported that it could not cross one millimetre.
+* **A clearance halo was painted as a grown bounding box**, which blocks a rectangle's diagonals by
+  the clearance in each axis at once -- a factor of root two too far at the corners. That is the
+  difference between an escape corridor and a sealed one on fine pitch.
+* **A pair cannot leave fine pitch as a pair.** It needs about a millimetre of clear width; between
+  0.4 mm pins there is none and there should not be. A pair fans out as two separate tracks and comes
+  together outside the part.
+* **The fan-out itself was drawn without checking anything**, which produced thirty-nine shorts in
+  one run -- a pin reaching its staging point straight across its neighbours.
+
+After all of that the checker still rejected most of what was produced, so the rule applied was the
+only safe one: **keep what the authority verifies and take the rest off.** The rules check is run,
+every net named in a violation is read out of it, and every track on a routed net named there is
+removed. That left three routes, all short and all verified: the core regulator's switch node at
+0.9 mm, the boost's bootstrap at 1.8 mm, and the hub's crystal input at 4.0 mm.
+
+A fourth was removed by hand afterwards and the reason is the useful one. The charger's switch node
+passed the rules check as 10.4 mm of 0.2 mm track -- and that net carries up to seven amps. A rules
+check tests clearance and width minima, not whether a conductor is adequate for its current, so a
+route can be clean and wrong at once. It wants a short wide path and gets one by hand.
+
+**What the attempt was actually worth** is the measurement it forced. Listing the critical nets before
+routing them is what showed the switch nodes and crystals were four to fifteen millimetres long,
+which is a placement fault that no routing can repair, and fixing it halved them. The copper between
+two parts is the easy part; which two millimetres of board they sit on is not.
 
 ## Sheets
 
