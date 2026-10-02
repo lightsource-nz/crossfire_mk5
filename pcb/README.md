@@ -490,31 +490,33 @@ agree. Four carry different names -- their `DI` and `DO` for this document's dat
 derived from the module's own table is therefore confirmed against its author rather than merely
 self-consistent.
 
-**Three packages are fitted provisionally**, and they are listed because what is unsettled about
-them is invisible: the hub, the 3.3 V converter and the power sink are in packages whose library
-entries differ *only* in the size of the pad underneath the part. The body, the pitch and the pin
-count are right in every case; the pad is the nearest variant. A pad too small costs thermal
-performance and one too large can wick the part off its pins, so each wants checking against its
-own vendor's land pattern. The processor used to be the fourth of these and no longer is -- its
-maker's own pattern is fitted.
+**Every part has a footprint, and the provisional ones were checked against their own vendors'
+data rather than left to a body-size match. Two of the three were wrong.**
 
-**Checking the first of the three turned 'unconfirmed' into 'wrong', which is why they are listed.**
-The 3.3 V converter's vendor publishes a land-pattern drawing: its thermal pad is about
-**2.15 x 1.70 mm**, and not one of the library's five variants of that body is that shape -- the
-nearest is over 0.2 mm out on one side. So the generic entry is not merely unverified there, it
-does not match, and that part needs a footprint drawn to the vendor's figure rather than chosen
-from a list. The same check is owed to the other two.
+The 3.3 V converter's was wrong in kind rather than by a margin. Its maker's land pattern puts a
+*shaped* thermal pad under the part -- a centre rectangle with fingers and tabs, thirteen pieces in
+all -- and gives the signal pads extended toes beyond the body. The generic entry has a plain
+rectangle and no toes. That shape is the thing in the drawing that looked like a drafting flourish
+and is not: it is the pattern. The library carries the real one under the vendor's own package
+code, which is what is fitted.
 
-The drawings are readable, which is the useful part: they are pure graphics with no text to extract,
-so they have to be rendered and read rather than searched -- the same way the module's pin-1 marker
-and the transistor's pin numbering were settled.
+The hub's was wrong by 0.2 mm in each direction. Its datasheet tabulates a **recommended** land
+pattern, not merely a package outline, and names a 3.70 mm pad where the provisional entry had
+3.90. Too large is the direction that floats a part off its pins on reflow.
 
-**Three parts have deliberately not been given one**, because for them the footprint *is* the part:
-the three remaining inductors. Pad geometry differs between vendors at the same nominal size, so
-choosing a library entry that merely matches the millimetres would be inventing a land pattern
-rather than using one. Their electrical requirements are settled above -- 3.3 uH to 1.5 A shielded
-and polarity-marked, 1.0 uH to 7 A, 1.0 uH to 3 A -- so what is left is picking parts that meet
-them and taking each one's own pattern. The 5 V boost's is already chosen on exactly that basis.
+The power sink's was right, and worth confirming rather than assuming: its vendor's exposed pad is
+1.70 x 2.40 nominal against the 1.65 x 2.38 fitted -- a few hundredths under, which is the safe
+side to be on.
+
+The two remaining inductors took a footprint the library keeps under a family name, and its 4 mm
+entries at both heights carry **identical pads** -- which independently confirms the shared land
+pattern that made the taller, higher-current part a free swap when it was chosen.
+
+**The hit rate is the lesson.** Choosing a footprint by matching body size and pin count got two of
+three wrong, and neither error would have shown in the schematic, the connection list or any rules
+check -- only on a board that did not assemble properly. The drawings that settle it are pure
+graphics with no text to extract, so they have to be rendered and read rather than searched, the
+same way the module's pin-1 marker and the transistor's pin numbering were settled.
 
 **The inductors are chosen, and two of them are the same part.**
 
