@@ -3553,7 +3553,7 @@
 			(type solid)
 		)
 		(uuid "0de2d4e8-3752-480b-ab11-c5237a87b0bb")
-	)
+	)
 	(wire
 		(pts
 			(xy 109.22 82.55) (xy 118.11 82.55)
@@ -4923,7 +4923,7 @@
 			(type solid)
 		)
 		(uuid "e952b744-d7b3-48c8-bb4c-980058e6582b")
-	)
+	)
 	(wire
 		(pts
 			(xy 276.86 91.44) (xy 304.8 91.44)
@@ -5033,7 +5033,7 @@
 			(type solid)
 		)
 		(uuid "f95c9b98-db4f-4061-a8f8-d2507374098d")
-	)
+	)
 	(wire
 		(pts
 			(xy 276.86 106.68) (xy 289.56 106.68)
@@ -5173,7 +5173,7 @@
 			(justify left bottom)
 		)
 		(uuid "50a43e97-bd51-47b0-a2e9-77a91ce3f939")
-	)
+	)
 	(label "VSYS"
 		(at 48.26 157.48 0)
 		(effects
@@ -10499,7 +10499,7 @@
 				)
 			)
 		)
-	)
+	)
 	(symbol
 		(lib_id "power:PWR_FLAG")
 		(at 118.11 77.47 0)
@@ -11039,7 +11039,7 @@
 				)
 			)
 		)
-	)
+	)
 	(symbol
 		(lib_id "Device:R_Small")
 		(at 246.38 162.56 0)
@@ -13469,7 +13469,7 @@
 				)
 			)
 		)
-	)
+	)
 	(symbol
 		(lib_id "power:+3V3")
 		(at 119.38 114.3 0)
