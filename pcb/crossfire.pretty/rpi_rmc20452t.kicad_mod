@@ -7,7 +7,6 @@
 		(at -5.2 -8.95 0)
 		(unlocked yes)
 		(layer "F.SilkS")
-		(hide yes)
 		(uuid "8213d2a3-8cb4-4b9d-a4a4-261799523c8b")
 		(effects
 			(font
@@ -103,20 +102,6 @@
 		(fill no)
 		(layer "F.Fab")
 		(uuid "634ae885-95cd-493c-892e-2bce6b136262")
-	)
-	(fp_text user "${REFERENCE}"
-		(at 5.5 9.5 0)
-		(unlocked yes)
-		(layer "F.SilkS")
-		(uuid "4c64868c-9dbd-4154-becc-c57286c60449")
-		(effects
-			(font
-				(size 0.8 0.5)
-				(thickness 0.125)
-				(bold yes)
-			)
-			(justify left bottom)
-		)
 	)
 	(fp_text user "RF Keep Out Area"
 		(at 0 -14.4 0)

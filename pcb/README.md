@@ -493,10 +493,12 @@ self-consistent.
 **That footprint did arrive with one defect, which the silkscreen check found.** Its reference field
 is hidden, and a plain text reading `REF**` is left visible in its place -- so the module would have
 been printed with the placeholder and never with its designator, on every board built from it. The
-text keeps the position and size the vendor gives it; only its content changes, to the token that
-resolves to whatever the part is called. Worth noting as a class of error: an imported footprint can
-be correct in every dimension that matters electrically and still be wrong in what it prints, and
-only one of those two is checked by comparing against a drawing.
+placeholder text is removed and the field itself prints, which is what every other part on this board
+does -- pointing the spare text at the reference was the quicker fix and left the module printing its
+designator twice, once where the pass chose and once under its own body where nothing can be read.
+Worth noting as a class of error: an imported footprint can be correct in every dimension that
+matters electrically and still be wrong in what it prints, and only one of those two is checked by
+comparing it against a drawing.
 
 **Every part has a footprint, and the provisional ones were checked against their own vendors'
 data rather than left to a body-size match. Two of the three were wrong.**
@@ -644,6 +646,54 @@ receptacles at 25.4 mm centres plus edge margin come to. The 80 is an estimate f
 behind them, and is expected to tighten once placement is real rather than guessed. The corners were
 3 mm until the outer two receptacles were placed: a 3 mm radius cuts across the corner far enough to
 reach their shield pads, so the radius is set by the parts nearest the corners rather than by taste.
+
+### Placement
+
+**The parts that cannot move were placed first and everything else fitted around them**, which is
+recorded above. The remaining 113 are passives, and a passive's position is not a free choice: a
+decoupling capacitor belongs at the pin it decouples, a divider at the pin it feeds, a load capacitor
+at the crystal. Nearly all of that is already stated in the connection list, so it was read from
+there rather than decided -- for each part, a pad of an already-placed part sharing one of its nets
+is its anchor, and the part sits as near that anchor as there is room for. Ground is excluded from
+anchoring: every one of these parts touches it and nothing is learned from that.
+
+Two things the connection list does not say, both found by getting them wrong:
+
+* **Which chip a rail capacitor belongs to.** On the net list every 3.3 V bypass is the same two
+  nets, so the first attempt sent the radio's three and the converter's output bulk to the hub,
+  which happened to own the nearest pad on the rail. The drawing does say, because a part is on the
+  sheet of the block it serves. The sheet now comes first in choosing an anchor, and all 113 parts
+  ended up beside something on their own sheet.
+* **That a pin can only have one part beside it.** Six capacitors anchored to the same pad of the hub
+  and fanned outward from it. A pad is claimed once used, so a chip with six supply pins gets its six
+  bypasses spread one to a pin, which is what they are for.
+
+**The four port clamps are on the back of the board**, and this is the one placement decision that
+costs something. A clamp works by being nearer to the pin than anything it protects, because what it
+has to beat is the inductance of the track in front of it. On the front it cannot be near: the
+receptacle is a horizontal through-hole part whose housing covers a strip 10 mm deep inboard of its
+own pins, and its data pins sit at the end of the row furthest from the only gap the 25.4 mm pitch
+leaves. The best front-side position is **11.5 mm** away on three ports and **16.8 mm** on the
+fourth, and roughly ten nanohenries of track gives most of the protection back.
+
+Behind the housing the same area is free, and the pins are through-hole so their pads reach it. Each
+clamp now sits **3.2 mm** from the pins it protects, through the thickness of the board instead of
+around the connector. What this costs is that the board is no longer assembled on one side only --
+four parts of one type in four similar positions, which is the cheapest form of that cost, and it
+buys protection rather than density. The bulk capacitors stay on the front: eight millimetres to a
+22 uF reservoir is nothing, because it holds a rail up over microseconds and the inductance that
+matters to a clamp does not matter to it.
+
+**The designators were placed by the same method**, after the check found 108 of them printed on
+exposed copper and 57 overlapping each other -- ink on a pad keeps solder off the joint, so this is
+not cosmetic. Each one is placed outward from the centre of the part it names, clear of every pad on
+its own face, every body outline, and every designator already placed, and they stay horizontal
+whatever the part does, because a board is read in one orientation. All 144 are at 0.8 mm, which is
+the board's own floor for printed text; the first attempt put the small parts at 0.7 and that is
+simply below what the process is asked to resolve.
+
+The board check is clear: **0 violations and 0 footprint errors**. The 409 unconnected pads are every
+net on the board, because nothing is routed yet.
 
 ## Sheets
 
@@ -989,6 +1039,15 @@ is obvious once they are side by side.
 So the check worth repeating after any hand edit is: **does any two-terminal part have its own two
 pins on the same net?** `scripts/check-pcb.ps1` asks it, along with two questions the rules check
 does also answer, so that one command covers the lot.
+
+**The one symbol mismatch the check reports is structural and has been looked into, so that it does
+not have to be again.** The flash's library entry carries no pins of its own -- it is declared as an
+extension of another part in the same family, and inherits them -- while the copy cached in the sheet
+is flattened, with all eight pins written out. The checker compares the two shapes and calls them
+different. They are not electrically: every pin was compared against the part the library entry
+extends, and all eight agree on number, name and electrical type. The remaining four warnings are
+`pin_not_driven`, which is the expected shape of a rail fed by a converter the checker cannot see
+into.
 
 **The battery gets a switch, because without one this board has no off at all.** That is the finding,
 and it is in the schematic rather than in any datasheet: the 3.3 V converter has its enable tied
