@@ -718,6 +718,29 @@ whatever the part does, because a board is read in one orientation. All 144 are 
 the board's own floor for printed text; the first attempt put the small parts at 0.7 and that is
 simply below what the process is asked to resolve.
 
+**The fast nodes are placed by measurement, not by the general rule**, and that correction was worth
+more than any amount of careful routing afterwards. Three kinds of node on this board are not a
+matter of taste: a converter's **switch node**, which swings the full input voltage in nanoseconds
+and whose loop with the inductor and the input capacitor is the one that radiates; a **crystal's two
+pins**, the most sensitive input a processor has, where added length collects noise and added
+capacitance pulls the frequency; and a **bootstrap capacitor**, which has to hold a gate up for a
+whole switching cycle. The area of those loops is set by where the parts are, not by how the copper
+between them is drawn.
+
+The first floorplan put the four power inductors and both crystals at positions chosen by eye, and
+the result was a charger switch node 15.5 mm long, a core regulator's 10.7 mm, and both crystals
+about 10 mm from the pins they serve. The general placement rule did not fix it, because it places a
+part's *centre* near an anchor *pad* and has no opinion about which of the part's own pads ends up
+facing it -- on a 7.3 mm inductor those are different questions, and the boost's sat with its switch
+pad 13 mm from the switch pin and its output pad pointing at the converter.
+
+So these parts are now asked the question directly: every pad that shares a net with a device pin is
+given that pin as a target, and the part is searched over all four orientations and every position on
+a fine grid for the one that minimises the total distance to its own targets without touching
+anything. They are also placed **first**, before the bypasses, because a pad is claimed once and
+whatever is placed first takes the position. Across the ten nodes that span **107.7 mm in total
+originally and 46.6 mm now**; pin to inductor is 0.9 to 6.8 mm, and most are three to four.
+
 **Sixty of the 112 two-terminal parts were facing the wrong way**, which the placement pass had no
 opinion about: it turned each one so its length lay along the line to the pin it serves, but not
 which *end* pointed that way. A decoupling capacitor with its ground pad towards the supply pin it
