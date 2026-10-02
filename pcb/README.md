@@ -813,6 +813,55 @@ input and the output of a converter their own copper in the same square millimet
 are local: they join up on the surface and drop to their rail where the plane begins. Every system
 rail pad is over its own plane, and **no pad anywhere is over nothing**.
 
+### What the vendor's own layout says, and what it corrected
+
+The copper around the charger was drawn as a hull over every pad of each net, which produced blobs
+sixteen to thirty-five millimetres across that then fought each other for the same ground. That is
+not what a converter's layout looks like, and the vendor publishes the answer: the charger's
+datasheet carries a **numbered layout priority list** and a **reference layout figure**, and the
+other two converters' datasheets say the same thing in prose.
+
+**The priority list is the finding, and this board had it inverted.** In order: the 0.1 uF
+capacitors at the power pins come *first*, placed on the same layer as and on top of the IC; the
+inductor comes *second*, and -- this is the part worth quoting -- the inductor is reached by "multiple
+vias under the IC to internal or bottom layer traces", precisely **because** holding the capacitors
+against the package leaves it nowhere nearer to go.
+
+The reason is in the vendor's current-path figure rather than in intuition. The loops carrying
+nanosecond edges are capacitor-to-switches-and-back: the input reservoir through one switch pair, the
+output reservoir through the other. **The inductor is in neither of them.** Its current is
+continuous, so moving it further out costs a longer conductor carrying a smooth current, which is far
+cheaper than opening either switching loop. The boost's datasheet makes the same point in its own
+words -- its output capacitor loop is "the most critical current path" -- and the buck-boost names
+input capacitor, output capacitor, then inductor, in that order.
+
+This board's placement rule ranked inductors above capacitors, on the reasoning that an inductor
+carries the current. What carries the *edges* is the capacitor. So the charger's inductor held the
+ground beside the package at 5.5 mm while the capacitors that close those loops sat at 8.9 mm on the
+input reservoir and 16.0 mm on the system rail. Corrected:
+
+| | the vendor's order | before | now |
+| --- | --- | --- | --- |
+| 1 | 0.1 uF at the charger's PMID pin | 8.9 mm | **1.6 mm** |
+| 1 | 0.1 uF at the charger's VBUS pin | 15.5 mm | **1.4 mm** |
+| 1 | 0.1 uF at the buck-boost's input | — | **1.2 mm** |
+| 1 | 0.1 uF at the boost's bootstrap | — | **1.8 mm** |
+| 2 | the charger's inductor, *pushed out* | 5.5 mm | 4.1 mm |
+| 3 | the REGN decoupling capacitor | 8.7 mm | 5.5 mm |
+| 5 | the battery reservoir | 14.0 mm | 13.2 mm |
+
+**And the pours are local now, which is the same instruction read twice.** The list says the nearest
+capacitors go on top of the IC and "the remaining bulk capacitors must connect with low impedance --
+same layer with wide traces and/or through multiple vias -- back to PMID, SYS and GND". A reservoir
+eight or twenty-eight millimetres away therefore belongs to the *plane*, not to the local pour.
+Limiting each pour to the pads within 7 mm of the converter it serves took them from 16–35 mm blobs
+to regions of 2–8 mm holding 3 to 19 mm2, which is the shape the reference figure shows: one compact
+region per net, radiating from the package in the direction its own pins face.
+
+**Two things from that figure are not done yet** and are the next work in this block: the switch
+nodes should reach the inductor through a column of vias under the IC to an inner layer, rather than
+across the top; and the battery reservoir is still 13.2 mm out, where the list wants it close.
+
 ### The charger's power pins cannot be reached by track
 
 The charger is a 4 mm package on 0.4 mm pitch, and **every power connection it has arrives on a pad
