@@ -858,9 +858,36 @@ Limiting each pour to the pads within 7 mm of the converter it serves took them 
 to regions of 2–8 mm holding 3 to 19 mm2, which is the shape the reference figure shows: one compact
 region per net, radiating from the package in the direction its own pins face.
 
-**Two things from that figure are not done yet** and are the next work in this block: the switch
-nodes should reach the inductor through a column of vias under the IC to an inner layer, rather than
-across the top; and the battery reservoir is still 13.2 mm out, where the list wants it close.
+**The drawing was one capacitor short, and the reference layout is what showed it.** Item one asks
+for a 0.1 uF at the charger's SYS pin, on top of the IC. This board had one 0.1 uF on the system rail
+and two parts entitled to it -- the charger's SYS pin and the 3.3 V converter's input, different pins
+on different packages. One capacitor cannot sit on top of both, so **C97** was added to the drawing
+beside the rail's other decoupling. Each pin now has its own at 1.6 mm and 1.5 mm.
+
+**The switch nodes now leave through vias where the package allows it.** Item two, and it follows
+from item one: with the capacitors held against the package the inductor has nowhere near to go, so
+the switch pins take a column of vias to the back and the copper to the inductor runs there. It is
+on the back rather than an inner layer deliberately -- the inner layers here are a solid ground plane
+and the rails, and a switch node run between them would be a capacitor to both along its length,
+which is the opposite of "minimize parasitic capacitance from this area to any other trace or plane".
+On the back it faces ground on one side only.
+
+Three vias at the pin and two at the coil, per item six, which asks for via quantity sufficient for
+the current. **This works on the buck-boost and not on the other two**: a 0.6 mm via needs more room
+beside a pin than the charger's 0.4 mm pitch or the boost's package leaves, so those two still cross
+on the top layer. Going smaller would mean a via below the board's own minimum, which is not a trade
+worth making silently.
+
+| | the vendor's order | before | now |
+| --- | --- | --- | --- |
+| 1 | 0.1 uF at the charger's PMID pin | 8.9 mm | **1.6 mm** |
+| 1 | 0.1 uF at the charger's SYS pin | 15.0 mm | **1.6 mm** |
+| 1 | 0.1 uF at the 3.3 V converter's input | absent | **1.5 mm** |
+| 1 | 0.1 uF at the boost's bootstrap | — | **1.8 mm** |
+| 2 | the charger's inductor, *pushed out* | 5.5 mm | 5.8 mm |
+| 3 | the REGN decoupling capacitor | 8.7 mm | **2.2 mm** |
+| 4 | 0.1 uF at the charger's VBUS pin | 15.5 mm | **2.0 mm** |
+| 5 | the battery reservoir | 14.0 mm | **3.2 mm** |
 
 ### The charger's power pins cannot be reached by track
 
