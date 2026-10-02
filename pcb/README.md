@@ -673,6 +673,25 @@ behind them, and is expected to tighten once placement is real rather than guess
 3 mm until the outer two receptacles were placed: a 3 mm radius cuts across the corner far enough to
 reach their shield pads, so the radius is set by the parts nearest the corners rather than by taste.
 
+**The board is designed at the origin and placed on the sheet last**, and those are deliberately two
+different things. Designing at the origin is what makes every position here readable -- a part at
+(17, 50) is seventeen millimetres from the left edge of the *board*, which is a fact about the
+product. The sheet is not: its frame is inset ten millimetres from the paper and its title block
+takes the bottom right of that, so a board left at the paper origin sits across the frame line in the
+corner with the border running through it.
+
+The last pass moves the whole design -- every footprint, track, via, pour, graphic and the outline --
+as one rigid piece onto the sheet, centred across the page and clear of the title block. Nothing
+moves relative to anything else, so no placement and no clearance can change. The offset is measured
+from where the outline actually is rather than stored, so the pass can be run again without walking
+the board off the page.
+
+One real change came out of it. Refilling the pours at a new position left a few slivers of copper
+with no connection to their own net, which the check reported as isolated copper. The pours now have
+island removal turned on, which they should have had: floating metal is worse than no metal. It costs
+3.2% of the 3.3 V plane and nothing measurable on the others, and what it removes is copper that was
+carrying nothing.
+
 ### Placement
 
 **All four sockets were placed facing the wrong way, and it took a person to see it.** Every
