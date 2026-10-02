@@ -813,6 +813,42 @@ input and the output of a converter their own copper in the same square millimet
 are local: they join up on the surface and drop to their rail where the plane begins. Every system
 rail pad is over its own plane, and **no pad anywhere is over nothing**.
 
+### The charger's power pins cannot be reached by track
+
+The charger is a 4 mm package on 0.4 mm pitch, and **every power connection it has arrives on a pad
+0.20 mm wide**: two for the battery node, two for the input, one each for the system rail and the
+input reservoir. Those nets are in classes sized at one to two millimetres because that is what the
+current needs -- up to six amps between the cell, the charger and the system. A two-millimetre track
+cannot enter a 0.20 mm pad, and necking it down to fit is not a fix: it makes the width a fiction
+honoured everywhere except the one place the current is densest.
+
+It is worse than a width problem. Those pins are **mid-edge, flanked by signal pins**, so copper
+cannot pass either side of them: the gap between pads is 0.2 mm and two clearances do not fit in it.
+A pin can only be left straight out from the package edge, and then the copper has to get *around*
+the pin ring to reach the rest of its net. There is no path across the top layer at any width down to
+the minimum, which was tested rather than assumed.
+
+**So these are poured, not routed.** A pour is the right shape for a short, local, many-to-many
+connection -- a pin to the two capacitors beside it and the switch beyond them -- and it is safe in a
+way a track is not: a track drawn across a neighbouring pin shorts it, while a pour cannot, because
+the filler keeps every other net's clearance as it fills. That is what makes it possible to do the
+whole block at once without placing a segment by hand. The outlines are computed from where the pads
+actually are, so they do not care where the board sits on the sheet.
+
+Two details were measured rather than guessed. The outline is the **hull** of the pads rather than a
+box around them: the box reaches further, and a pour that reaches further outranks whatever it now
+covers, so using boxes throughout cost fifteen connections elsewhere and using one for the battery
+node alone cost ten on the rail beside it. And where a pin is still stranded against its own package,
+the fix is a **crossing to the back** -- the back under the charger carries nothing but ground pour,
+which is the one net on this board that can give up a few square millimetres locally, being poured on
+three layers and stitched between them.
+
+That connects the input, the reservoir, the battery rail and the system rail completely. **The
+battery node is the one left open**, and the reason is worth recording: its crossing and the input's
+want the same patch of the back, because both pins are on the same face of the same package, and the
+second one placed cuts the first in half. Which way each goes round the package is one decision, and
+it is a person's.
+
 ### Stitching
 
 A pour on its own connects nothing it cannot touch. Ground is the easy case, because the outer layers
