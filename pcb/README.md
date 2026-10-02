@@ -437,6 +437,32 @@ reset it, so recessing them is reasonable even though all three sit on the same 
 button has **no pull-up on the board** -- it relies on the processor's internal one being enabled,
 which is ordinary, but it means the pin reads as floating until firmware has configured it.
 
+**Four M3 mounting holes, plated and bonded to ground.** Bonded rather than bare because the
+asymmetry favours it: five connector shells on this board are already at ground, so if the enclosure
+is metal a screw into a metal standoff should join that system deliberately rather than through
+whatever it happens to touch, and if the enclosure is plastic the bond does nothing and costs
+nothing. The decision that cannot be undone without a new board is the one to leave the pads off.
+
+**Where they go was not a choice.** Three of the four corners are inside a part -- the bottom edge is
+four sockets on a fixed pitch spanning nearly the full width, and the top right is the radio's
+clearance, which a screw and its standoff have to respect as much as copper does. The usable
+positions are the point furthest from the middle of the board in each quarter where a fastener
+actually fits, taking 8 mm of clear diameter as the figure, because an M3 head is 5.5 mm and a washer
+7 mm and a hole only the drill clears is one that cannot be done up:
+
+| | position | |
+| --- | --- | --- |
+| H1 | 4.0, 6.5 | the one true corner |
+| H2 | 95.5, 14.5 | pushed down the right edge, clear of the antenna |
+| H3 | 36.5, 59.5 | as low and as far left as anything fits |
+| H4 | 81.5, 59.5 | |
+
+**Two consequences belong to the enclosure, not the board.** There is no hole position anywhere in
+the lower left, because the power section fills it. And nothing comes within 16 mm of the row of
+sockets, which is exactly where a plug is pushed in -- so the enclosure has to carry that row on a
+ledge rather than rely on these four screws to take the force. Both follow from the port pitch and
+the antenna, and neither can be fixed by moving a hole.
+
 **Each capacitor's package is chosen from how much of it has to survive its own bias**, which is
 the last thing a value and a rating leave undecided. The question is not how much capacitance is
 printed on the part, it is how much is there once the voltage is across it, and the answer differs
