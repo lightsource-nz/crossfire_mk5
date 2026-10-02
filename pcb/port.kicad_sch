@@ -1686,7 +1686,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "46a87f0a-79aa-4e1a-a0aa-cdb60560b025")
-		(property "Reference" "#PWR01"
+		(property "Reference" "#PWR042"
 			(at 173.99 80.01 0)
 			(hide yes)
 			(show_name no)
@@ -1743,19 +1743,19 @@
 		(instances
 			(project "crossfire"
 				(path "/4c5cdd13-4f54-43b0-affb-0ae4b9a4d279/1ec2d2db-5a93-44dc-ab43-bd5c3109edb6"
-					(reference "#PWR04")
+					(reference "#PWR042")
 					(unit 1)
 				)
 				(path "/4c5cdd13-4f54-43b0-affb-0ae4b9a4d279/5d450cbf-9176-48a8-abac-f4efc13cd215"
-					(reference "#PWR03")
+					(reference "#PWR043")
 					(unit 1)
 				)
 				(path "/4c5cdd13-4f54-43b0-affb-0ae4b9a4d279/970bba49-0501-4f56-a5bb-beb1a684622b"
-					(reference "#PWR01")
+					(reference "#PWR044")
 					(unit 1)
 				)
 				(path "/4c5cdd13-4f54-43b0-affb-0ae4b9a4d279/e01ae319-731b-4a6e-aad5-fb5dc353047a"
-					(reference "#PWR02")
+					(reference "#PWR045")
 					(unit 1)
 				)
 			)
@@ -1872,7 +1872,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "96648143-54fc-4828-ac9f-b8888c101f09")
-		(property "Reference" "#PWR01"
+		(property "Reference" "#PWR046"
 			(at 196.85 116.84 0)
 			(hide yes)
 			(show_name no)
@@ -1929,19 +1929,19 @@
 		(instances
 			(project "crossfire"
 				(path "/4c5cdd13-4f54-43b0-affb-0ae4b9a4d279/1ec2d2db-5a93-44dc-ab43-bd5c3109edb6"
-					(reference "#PWR04")
+					(reference "#PWR046")
 					(unit 1)
 				)
 				(path "/4c5cdd13-4f54-43b0-affb-0ae4b9a4d279/5d450cbf-9176-48a8-abac-f4efc13cd215"
-					(reference "#PWR03")
+					(reference "#PWR047")
 					(unit 1)
 				)
 				(path "/4c5cdd13-4f54-43b0-affb-0ae4b9a4d279/970bba49-0501-4f56-a5bb-beb1a684622b"
-					(reference "#PWR01")
+					(reference "#PWR048")
 					(unit 1)
 				)
 				(path "/4c5cdd13-4f54-43b0-affb-0ae4b9a4d279/e01ae319-731b-4a6e-aad5-fb5dc353047a"
-					(reference "#PWR02")
+					(reference "#PWR049")
 					(unit 1)
 				)
 			)
@@ -1958,7 +1958,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "9851d35d-729d-4ce5-a71c-ef70545577ce")
-		(property "Reference" "#PWR01"
+		(property "Reference" "#PWR050"
 			(at 111.76 88.9 0)
 			(hide yes)
 			(show_name no)
@@ -2015,19 +2015,19 @@
 		(instances
 			(project "crossfire"
 				(path "/4c5cdd13-4f54-43b0-affb-0ae4b9a4d279/1ec2d2db-5a93-44dc-ab43-bd5c3109edb6"
-					(reference "#PWR04")
+					(reference "#PWR050")
 					(unit 1)
 				)
 				(path "/4c5cdd13-4f54-43b0-affb-0ae4b9a4d279/5d450cbf-9176-48a8-abac-f4efc13cd215"
-					(reference "#PWR03")
+					(reference "#PWR051")
 					(unit 1)
 				)
 				(path "/4c5cdd13-4f54-43b0-affb-0ae4b9a4d279/970bba49-0501-4f56-a5bb-beb1a684622b"
-					(reference "#PWR01")
+					(reference "#PWR052")
 					(unit 1)
 				)
 				(path "/4c5cdd13-4f54-43b0-affb-0ae4b9a4d279/e01ae319-731b-4a6e-aad5-fb5dc353047a"
-					(reference "#PWR02")
+					(reference "#PWR053")
 					(unit 1)
 				)
 			)
