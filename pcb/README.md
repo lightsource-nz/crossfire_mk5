@@ -718,8 +718,73 @@ whatever the part does, because a board is read in one orientation. All 144 are 
 the board's own floor for printed text; the first attempt put the small parts at 0.7 and that is
 simply below what the process is asked to resolve.
 
-The board check is clear: **0 violations and 0 footprint errors**. The 409 unconnected pads are every
-net on the board, because nothing is routed yet.
+**Sixty of the 112 two-terminal parts were facing the wrong way**, which the placement pass had no
+opinion about: it turned each one so its length lay along the line to the pin it serves, but not
+which *end* pointed that way. A decoupling capacitor with its ground pad towards the supply pin it
+decouples is in the right place and the wrong way round -- the current has to run past the whole part
+to reach the end it needs, and the loop is bigger by the length of the capacitor at both ends. It is
+not only a matter of degree: it showed up as a hard failure, with a supply pin on the processor
+unable to reach its own capacitor at all, because the straight line between them crossed that
+capacitor's ground pad and the neighbouring pin. Each one is now turned so the pad carrying the net
+they share is the near one. Nothing moved; only the orientation changed.
+
+### Planes
+
+**The first inner layer is solid ground and is never divided.** It is the reference the signal pairs
+are routed over, and a return current follows its own signal rather than the shortest path, so a slot
+cut across it would push that return the long way round and turn a tidy pair into a loop. Nothing is
+worth cutting it for.
+
+**The second inner layer carries the rails, and the split follows the current rather than the pin
+count:**
+
+| | shape | why |
+| --- | --- | --- |
+| system rail | the left block, 2–34 x 20–62 | everything it touches -- the charger that makes it, the two converters that draw on it, the cell and the ship switch -- is one block. It carries the most current on the board, over twenty millimetres |
+| 5 V | the bottom band, stepping up beyond x 78 | made at the boost on the left, used at four port switches spread along the bottom edge seventy millimetres away. The step is for the fourth port's switch, which sits higher than the other three |
+| 3.3 V | the rest of the layer | fifty pads from the processor in the middle to the radio in the corner: a rail that goes everywhere and carries about an amp |
+
+The shapes are drawn to the pads, not guessed. A first attempt took the 5 V band up to y 52 across
+the whole width, which put it directly under the hub and left that part's six supply pins with no
+3.3 V plane beneath them at all.
+
+**Fourteen pads deliberately sit over a neighbouring rail's plane**, and that is the right answer
+rather than a defect. They are the two converters' own output clusters -- the boost's and the 3.3 V
+converter's -- which stand inside the block that feeds them. One inner layer cannot give both the
+input and the output of a converter their own copper in the same square millimetre, so those nodes
+are local: they join up on the surface and drop to their rail where the plane begins. Every system
+rail pad is over its own plane, and **no pad anywhere is over nothing**.
+
+### Stitching
+
+A pour on its own connects nothing it cannot touch. Ground is the easy case, because the outer layers
+are poured with it too, so every surface ground pad is already joined to the copper beside it and
+what is missing is the link down: 94 stitching vias on an 8 mm grid tie the two outer pours and the
+inner plane into one piece of metal, which is what keeps a return continuous when it has to change
+layer along with its signal.
+
+The rails each get a via at the pad, with a short stub to join them, because a surface pad has no
+other way to reach the second inner layer. **The direction of that stub is the whole problem.** A
+first attempt put the via at the nearest free position in any direction, which on a package with pads
+0.4 mm apart means leaving a pad sideways, straight across its two neighbours: one net shorted to
+another, two bridged under the mask and eight more too close to call. A pad escapes **outward along
+its own long axis**, which is the direction its neighbours are not in. Taking the line from the
+middle of the part instead is close but not the same, and the difference matters -- on a sixty-pin
+package a pin a third of the way along an edge points out at twenty degrees to that edge, which is
+enough to walk the via into the pad next door, and on a package with a pad under the middle of it
+that line points at that pad rather than away from anything.
+
+Three further things each had to be checked separately, because none implies the others: copper of a
+different net has to clear the stub **as a segment** rather than as its two endpoints; a hole has to
+clear every other **hole** whatever net it belongs to, since a drill knows nothing about nets; and a
+stitching via has to land on copper that is actually there, or it is not a connection but a hole.
+
+One more number was wrong and worth naming: the first pass used 0.25 mm clearance when the board's
+own rule is 0.15 mm. At 0.4 mm pitch that difference is the entire gap -- it is the reason 25 supply
+pins appeared impossible to connect when only two were.
+
+The board check is clear: **0 violations and 0 footprint errors**, with 207 unconnected pads left,
+down from 409. What remains is the signal routing.
 
 ## Sheets
 
