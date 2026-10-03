@@ -937,74 +937,27 @@ the filler keeps every other net's clearance as it fills. That is what makes it 
 whole block at once without placing a segment by hand. The outlines are computed from where the pads
 actually are, so they do not care where the board sits on the sheet.
 
-**Only two of the five regions were worth having, and the test is the obvious one nobody applied: a
-pour has to JOIN something.** Asked which parts each region'"'"'s copper actually touched, three of them
-reached one part and no other part on their own net -- copper around a single pin, which the pin
-already is. The battery node'"'"'s region touched one capacitor, the input'"'"'s touched one capacitor, the
-battery rail'"'"'s touched one transistor. They were not improving the board, they were decorating it,
-and a region that connects nothing is worse than no region because it reads as a connection in every
-picture of the board.
+**What this draws is a connection, not a region.** The case for pouring here is narrow and it is the
+only case: a pin on a 4 mm package at 0.4 mm pitch cannot be reached by track, because its neighbours
+seal both sides. Everything beyond that was mine rather than the circuit'"'"'s, and it took being told
+three times to strip it back to what the argument actually supports:
 
-What survives is the two that do the job the vendor'"'"'s figure shows -- a capacitor to a pin to another
-capacitor, with the copper between them BEING the connection: the input reservoir joining C63, C66
-and the charger, and the system rail joining C72, C76 and the charger. The three dropped nets need
-routing, which is the honest form of what they needed all along.
+* **The copper does not reach under the package.** The pad sits at the edge of the IC, so growing a
+  box around it put copper a millimetre inside the outline, under the part, where it does nothing at
+  all. The pad is grown OUTWARD only.
+* **It does not gather up the rest of the net.** The other capacitors on a rail already have their
+  own vias and traces; pouring out to them is a second path for parts that have one, and makes a
+  small connection look like a plane. The system rail reached three parts and needed to reach one.
+* **It does not pour where a track would do.** This is the rule the whole thing rests on and it was
+  written down and not applied -- the first attempt poured for every pin of all three converters,
+  feedback and enable and compensation included, none of which needs anything but a track. The
+  question is now asked for every pin, and where a track fits, a track is drawn.
 
-**A rail that has a plane keeps only the copper the plane cannot provide.** The system rail was
-questioned as redundant and the connectivity half of that is right: all three of its pads have a via
-within a millimetre with the plane underneath, so as a way of JOINING things the pour adds nothing.
-What it is not redundant for is inductance. Item one asks for the 0.1 uF to sit "on the same layer as
-and on top of the IC with short traces to the SYS and GND pins", and a pad-via-plane-via-pad path is
-not that.
-
-So where a rail has a plane, its pour is now the pin and its small capacitor and nothing else -- the
-fast loop, 3.1 x 4.9 mm. The reservoirs reach the rail through the plane, which is what the rest of
-the same item says to do with them, and the net stayed fully connected when they were dropped from
-it. The input reservoir rail keeps its larger region because it has no plane at all: there, the pour
-is the only connection its parts have.
-
-**The regions are cut apart rather than stacked.** Letting zone outlines overlap and leaving the
-priority number to sort it out is legal, and it reads as a mistake because it looks like one: the
-reservoir region contained all but half a square millimetre of the input region's twelve, so two
-pours sat one on top of the other and the only thing keeping them apart was a number that does not
-appear in the drawing. Each region is now subtracted from the ones below it with a 0.2 mm gap, so no
-two outlines overlap at all -- 12.2 mm2 of overlap before, **0.000 mm2** now -- and the priorities
-become redundant rather than load-bearing. That is also how the vendor's figure reads: distinct
-regions with bare gaps between them, one per net, radiating from the package.
-
-The **order** of that cutting is the vendor's, because whoever is cut first keeps what it wants. The
-input reservoir and the system rail are item one, the two that have to be on top of the IC; then the
-input at item four and the battery at item five. Ordering them the other way round left the system
-rail with a tenth of a square millimetre, every neighbour having already taken the ground beside the
-pin it is named in item one for.
-
-**The shape of the regions was wrong twice, and both times it took looking at the copper to see it.**
-Area and overlap can be measured and had been; neither says anything about what the board looks like.
-Rendering the front layer and looking at it showed a charger ringed with acute wedges and tapering
-spikes that correspond to nothing in the circuit -- the signature of a convex hull taken over
-scattered pad corners, which is an arbitrary polygon by construction. Laid-out copper is
-**rectilinear**: straight edges, square corners, gaps running parallel to the rows of parts, because
-that is what a person drawing it produces and what the vendor's figure shows.
-
-A single box per net is rectilinear and still wrong: it swallows whatever lies between the outermost
-two pads. Each region is now the **union of a box around each of its own pads**, so the copper
-follows the parts. A box was tried once before the regions were cut against each other and it stole
-from its neighbours, which is why the hull survived as long as it did; that objection is gone, since
-a region now stops where the next one begins.
-
-Two further details were measured rather than guessed. The outline is built from the pads rather than
-from a hull around them: the box reaches further, and a pour that reaches further outranks whatever it now
-covers, so using boxes throughout cost fifteen connections elsewhere and using one for the battery
-node alone cost ten on the rail beside it. And where a pin is still stranded against its own package,
-the fix is a **crossing to the back** -- the back under the charger carries nothing but ground pour,
-which is the one net on this board that can give up a few square millimetres locally, being poured on
-three layers and stitched between them.
-
-That connects the input, the reservoir, the battery rail and the system rail completely. **The
-battery node is the one left open**, and the reason is worth recording: its crossing and the input's
-want the same patch of the back, because both pins are on the same face of the same package, and the
-second one placed cuts the first in half. Which way each goes round the package is one decision, and
-it is a person's.
+So each piece is a chip pad, a neck, and the one thing that pad has to reach -- the via down to its
+plane where the rail has one, the bypass capacitor where it does not -- and then it stops. Nine
+pieces, **22.8 mm2 of local copper in total**, where the first version of this had better than a
+hundred. Eleven further pins turned out to take an ordinary track and have one, which is eleven
+connections that exist now and did not before.
 
 ### Stitching
 
