@@ -956,6 +956,29 @@ Two changes, and between them most of the pouring disappeared:
   first half-millimetre out of a pin is not, so the escape is the narrower of the class and the pad,
   and widens afterwards. That is what a person does by hand and it is what the class could never say.
 
+**Which of a converter's pins need copper and which need a wire is in its own pin table, in the
+column beside the names.** The boost is the worked example, and the answer is three pins out of
+eleven -- the ones its datasheet marks PWR:
+
+| pin | what the datasheet says | carries | how it is routed here |
+| --- | --- | --- | --- |
+| SW | PWR, the switching node | about 3 A average, more at each cycle peak | not on the top layer at all: the land pattern carries a via inside the pad, and the copper to the inductor runs on the back |
+| VOUT | PWR, converter output | 2 A | 1.00 mm, its class; the corridor there is 3.05 mm, so it fits easily |
+| GND | PWR, ground | the return of both | no track at all: the pad sits in the ground pour |
+| VIN | **I**, "IC power supply input" | milliamps | 0.20 mm |
+| FSW, VCC, FB, COMP, EN, ILIM, BOOT | I or O | microamps to milliamps | 0.20 mm |
+
+**VIN is the one that misleads, and on this board it is a trap.** It reads like the power input and is
+not: the power path is the system rail through the inductor into SW, so the inductor carries the three
+amps while the pin beside it takes milliamps. Both sit on the system rail, which is classed at
+2.00 mm -- correct for the inductor feed and ten times too wide for the pin next to it, on the same
+net. Necking at that pin is not a nicety there, it is the only thing that fits.
+
+The pad sizes corroborate all of it, and are worth reading when a datasheet is not to hand: this
+part's switching node is 1.10 x 1.10 mm and its output and ground are 0.45 x 1.10, while every signal
+pin is 0.55 x **0.25**. A vendor that gives a pin a quarter-millimetre pad is not expecting amps
+through it.
+
 **On a run of a few millimetres the width table is the wrong instrument, and resistance is the right
 one.** The figures above are read off the standard curve for a long trace in still air; over four or
 five millimetres with a pad or a pour at each end, the heat leaves through the ends and that curve is
