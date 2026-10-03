@@ -873,10 +873,36 @@ which is the opposite of "minimize parasitic capacitance from this area to any o
 On the back it faces ground on one side only.
 
 Three vias at the pin and two at the coil, per item six, which asks for via quantity sufficient for
-the current. **This works on the buck-boost and not on the other two**: a 0.6 mm via needs more room
-beside a pin than the charger's 0.4 mm pitch or the boost's package leaves, so those two still cross
-on the top layer. Going smaller would mean a via below the board's own minimum, which is not a trade
-worth making silently.
+the current. **All five switch nodes are now off the top layer**, and every via is 0.6 mm -- the full
+size, not a reduced one.
+
+That is worth recording because the first attempts failed on three of the five and the apparent
+answer was a smaller via. It was not. The vias were never too big; two things of mine were wrong, and
+both reported themselves as "no room":
+
+* **The wrong clearance.** This pass used 0.2 mm where the board's rule is 0.15. At 0.4 mm pitch that
+  difference puts the edge of a neighbouring pin's envelope exactly on the centreline of the escape,
+  so every position beside the pin was rejected and no via size made any difference.
+* **The wrong direction out.** The escape was taken along the line from the middle of the package
+  rather than along the pad's own long axis. The charger's switch pad is 0.20 by 1.00 mm on the top
+  edge of its package, and the line from the centre leaves it at fifteen degrees to that edge, which
+  walks the via into the ground pin 0.45 mm away.
+
+A third was a real conflict rather than a bug, and the vendor's figure resolves it by geometry. A
+bypass capacitor held hard against the pin *beside* a switch pin blocks the corridor that switch node
+needs, which is exactly what happened on the charger -- the input reservoir sat 1.6 mm off its own pin
+and directly across its neighbour's way out. In the reference figure the inductor is above the package
+with the switch vias between them and the reservoirs are to the **sides**. So the corridor outward
+from each switch pin is now reserved before any capacitor is placed, and the capacitors go around it.
+
+**The boost needed nothing at all**: its land pattern already carries a through-hole pad inside the
+switch pad -- the vendor's own via in pad, reaching both faces -- so that node was already off the top
+layer. Adding vias beside a pin ringed by its own thermal pad was both impossible and unnecessary,
+and the pass now recognises a footprint that has already done the job.
+
+The board's minimum via was briefly lowered to 0.45 mm to allow smaller ones and has been **put back
+to 0.5 mm**, because nothing on the board turned out to need less, and a rule looser than the design
+is a violation waiting to pass unnoticed.
 
 | | the vendor's order | before | now |
 | --- | --- | --- | --- |
