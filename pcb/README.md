@@ -952,8 +952,22 @@ input at item four and the battery at item five. Ordering them the other way rou
 rail with a tenth of a square millimetre, every neighbour having already taken the ground beside the
 pin it is named in item one for.
 
-Two further details were measured rather than guessed. The outline is the **hull** of the pads rather
-than a box around them: the box reaches further, and a pour that reaches further outranks whatever it now
+**The shape of the regions was wrong twice, and both times it took looking at the copper to see it.**
+Area and overlap can be measured and had been; neither says anything about what the board looks like.
+Rendering the front layer and looking at it showed a charger ringed with acute wedges and tapering
+spikes that correspond to nothing in the circuit -- the signature of a convex hull taken over
+scattered pad corners, which is an arbitrary polygon by construction. Laid-out copper is
+**rectilinear**: straight edges, square corners, gaps running parallel to the rows of parts, because
+that is what a person drawing it produces and what the vendor's figure shows.
+
+A single box per net is rectilinear and still wrong: it swallows whatever lies between the outermost
+two pads. Each region is now the **union of a box around each of its own pads**, so the copper
+follows the parts. A box was tried once before the regions were cut against each other and it stole
+from its neighbours, which is why the hull survived as long as it did; that objection is gone, since
+a region now stops where the next one begins.
+
+Two further details were measured rather than guessed. The outline is built from the pads rather than
+from a hull around them: the box reaches further, and a pour that reaches further outranks whatever it now
 covers, so using boxes throughout cost fifteen connections elsewhere and using one for the battery
 node alone cost ten on the rail beside it. And where a pin is still stranded against its own package,
 the fix is a **crossing to the back** -- the back under the charger carries nothing but ground pour,
