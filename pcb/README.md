@@ -968,6 +968,32 @@ eleven -- the ones its datasheet marks PWR:
 | VIN | **I**, "IC power supply input" | milliamps | 0.20 mm |
 | FSW, VCC, FB, COMP, EN, ILIM, BOOT | I or O | microamps to milliamps | 0.20 mm |
 
+**The charger is the harder case and its type column will not do the work.** The boost marks three
+pins PWR and means it. The charger marks BTST1, BTST2, REGN, BATP and SDRV as P as well, and those
+carry gate charge, tens of milliamps, a sense current through a 100 ohm resistor, and the output of a
+100 nA charge pump respectively. On this part the description has to be read, not the letter.
+
+Seven pins carry current:
+
+| pin | carries | how it leaves |
+| --- | --- | --- |
+| SW1, SW2 | up to 7 A, the inductor's worst case | not on the top layer: via columns to the back |
+| VBUS (two pins) | about 3 A at the 9 V contract | corridor 2.9-3.1 mm, so the width is free |
+| PMID | the same 3 A | corridor 1.50 mm, which a 1.4 mm track only just fits |
+| SYS | about 3.1 A at the worst-case system draw | corridor 1.80 mm |
+| BAT (two pins) | 3.5 A at peak discharge, 1.5 A charging | corridor 0.05 and 0.40 mm -- the pinch, and why this one was routed by hand |
+| GND | the return of all of it | no track: the pad sits in the ground pour |
+
+Everything else on the part is 0.20 mm: the bootstraps, REGN, the sense and detect pins, the ship
+FET's gate.
+
+**And the pad-size cross-check offered above does not survive this package.** On the boost it is
+reliable -- a 1.10 mm switching pad against 0.25 mm signal pads. Here SYS, SW1, SW2, GND and PMID are
+all 0.20 x 1.00 mm and VBUS and BAT are 0.60 x 0.20: on a 4 mm package at 0.4 mm pitch the power pins
+are no wider than the signal pins, because there is nowhere to put the copper. A vendor with room
+tells you what it expects through a pad. A vendor without room cannot, and then only the datasheet
+knows.
+
 **VIN is the one that misleads, and on this board it is a trap.** It reads like the power input and is
 not: the power path is the system rail through the inductor into SW, so the inductor carries the three
 amps while the pin beside it takes milliamps. Both sit on the system rail, which is classed at
