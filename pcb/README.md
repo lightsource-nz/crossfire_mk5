@@ -947,7 +947,7 @@ everything became a pour.
 
 Two changes, and between them most of the pouring disappeared:
 
-* **A  class at 0.20 mm** for the nineteen nets that live inside a converter block -- the
+* **A "Converter" class at 0.20 mm** for the nineteen nets that live inside a converter block -- the
   input reservoir, REGN, the battery node, the bootstraps, the switch nodes, and the local nets of
   the other two converters. Their current is bounded by the pads they start from whatever the copper
   beyond does, so 0.20 mm is the honest figure and not a compromise.
