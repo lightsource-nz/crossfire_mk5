@@ -1167,6 +1167,48 @@ routing them is what showed the switch nodes and crystals were four to fifteen m
 which is a placement fault that no routing can repair, and fixing it halved them. The copper between
 two parts is the easy part; which two millimetres of board they sit on is not.
 
+### The order: inductors first, signals round them
+
+**The converters' inductor connections are routed before any signal, and the signals work round
+them.** A switch node has the most current on the board and the least freedom -- two fixed ends a
+few millimetres apart and a width that is a requirement -- while a signal can go round anything.
+Routed in the other order, the signals spend the corridors the inductors need on nets that did not
+need them. That happened here: a clock via under the charger was standing exactly where the second
+switch node's via column had to go, and the switch node's only path to its inductor was through the
+bootstrap capacitor's pad and 4.4 mm of 0.20 mm track.
+
+What each run came to, sized by resistance as the rule above requires:
+
+| run | drawn as | resistance | at | drop, loss |
+| --- | --- | --- | --- | --- |
+| charger SW1 to its inductor | two 0.8/0.4 vias under the part, 1.0 mm on the back | 5.2 mOhm | 4.5 A | 24 mV, 106 mW |
+| charger SW2 to its inductor | the same, mirrored | 4.4 mOhm | 4.5 A | 20 mV, 90 mW |
+| 3.3 V converter L1 | 0.8 mm, doubled vias, on the back | 6.3 mOhm | 3 A | 19 mV, 57 mW |
+| 3.3 V converter L2 | 0.8 mm, doubled vias, on the back | 8.3 mOhm | 3 A | 25 mV, 75 mW |
+| boost SW | out through the via in its pad, 1.0 mm on the back | 8.3 mOhm | 3.5 A | 29 mV, 101 mW |
+| core regulator LX | 0.9 mm of 0.20 mm track | 2.2 mOhm | 0.5 A | 1 mV, 1 mW |
+
+Three things this settled:
+
+* **The charger's SW1, GND and SW2 pins are drawn as one piece.** They sit side by side at 0.45 mm
+  pitch and have one way out between them: inward, under the package, and down. Placed one at a
+  time, the first takes the room the other two needed. The space under the part holds two switch-node
+  via columns with the ground pin's two vias between them, and nothing else; no signal goes there.
+* **The ground pin goes in with the switch nodes, not after.** It carries the return of both
+  half-bridges and had no connection at all until this pass: the top pour cannot reach it between
+  its neighbours, and once the two columns are placed there is no room to add it.
+* **A pad with a via of its own net in it may be left on either side.** The boost's switch pad is
+  boxed in on the top layer by the bootstrap capacitor and the pin rows, and its land pattern carries
+  a via for exactly this. A search that starts only on the top of that pad concludes the long way
+  round is the only way -- 13.7 mm at 0.40 mm, against 9.3 mm at 1.00 mm from the hole.
+
+Above three amps every layer change is two barrels, not one. The boost's in-pad via is the exception
+and is single because the footprint has one: about 1.5 mOhm, 18 mW at 3.5 A.
+
+The price of the order is one signal: the clock's via under the charger was lifted, and the clock's
+connection to that pin is open again. It, the data line beside it and the enable pin share a 1.4 mm
+channel between the charger's bottom row and the inductor, and are routed there by hand.
+
 ## Sheets
 
 | sheet | contents |
