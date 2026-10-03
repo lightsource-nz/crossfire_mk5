@@ -661,7 +661,7 @@ copper at one ounce and a ten degree rise carries roughly an amp in 0.3 mm, two 
 | USB | 0.25 mm | the six pairs, as pairs |
 | Power | 0.50 mm | up to an amp: the logic rails, one port's output |
 | Power+ | 1.00 mm | two to three amps: the 5 V rail and the upstream feeds |
-| Battery | 2.00 mm | up to six amps between cell, charger and system |
+| Battery | 2.00 mm | the cell, the charger and the system: 3.5 A at peak discharge, which this table puts at about 1.7 mm, so the class carries margin |
 
 The heavy rails are expected to end up as poured copper rather than track, so those last two widths
 are the floor for any stub that *is* tracked, not a plan for how the current gets there. There is no
@@ -955,6 +955,15 @@ Two changes, and between them most of the pouring disappeared:
   the system rail, 5 V, 3.3 V, the input feeds -- because out there width is about current. But the
   first half-millimetre out of a pin is not, so the escape is the narrower of the class and the pad,
   and widens afterwards. That is what a person does by hand and it is what the class could never say.
+
+**A net class states what the net CARRIES, never what its pad can emit.** That distinction was got
+wrong once in the other direction and is worth stating plainly, because the mistake is tempting: the
+battery node was moved to a 0.20 mm class on the reasoning that its pad at the charger is 0.20 mm
+wide, so the current must be bounded by it anyway. It is not. A pad is a short joint with copper on
+either side to sink the heat, and it carries a current density that a track of the same width over
+any distance cannot -- 3.5 A through 0.20 mm is about 500 A/mm2, survivable for a fraction of a
+millimetre and not for one and a half. The class is back at 2.00 mm, which is what 3.5 A wants with
+margin, and the pad is dealt with by necking the escape and widening within a millimetre of the pin.
 
 **Sixteen of the 122 nets are classed wider than the narrowest pad they have to reach, and that is
 not an error in the classes.** The system rail carries up to six amps across the power block, so two

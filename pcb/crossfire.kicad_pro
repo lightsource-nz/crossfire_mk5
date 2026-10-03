@@ -71,14 +71,14 @@
       },
       "diff_pair_dimensions": [
         {
-          "width": 0.0,
           "gap": 0.0,
-          "via_gap": 0.0
+          "via_gap": 0.0,
+          "width": 0.0
         },
         {
-          "width": 0.25,
           "gap": 0.2,
-          "via_gap": 0.0
+          "via_gap": 0.0,
+          "width": 0.25
         }
       ],
       "drc_exclusions": [],
@@ -584,6 +584,25 @@
         "line_style": 0,
         "microvia_diameter": 0.3,
         "microvia_drill": 0.1,
+        "name": "Converter",
+        "pcb_color": "rgba(0, 0, 0, 0.000)",
+        "priority": 10,
+        "schematic_color": "rgba(0, 0, 0, 0.000)",
+        "track_width": 0.2,
+        "tuning_profile": "",
+        "via_diameter": 0.6,
+        "via_drill": 0.3,
+        "wire_width": 6
+      },
+      {
+        "bus_width": 12,
+        "clearance": 0.15,
+        "diff_pair_gap": 0.2,
+        "diff_pair_via_gap": 0.25,
+        "diff_pair_width": 0.25,
+        "line_style": 0,
+        "microvia_diameter": 0.3,
+        "microvia_drill": 0.1,
         "name": "Power",
         "pcb_color": "rgba(0, 0, 0, 0.000)",
         "priority": 2,
@@ -627,25 +646,6 @@
         "priority": 1,
         "schematic_color": "rgba(0, 0, 0, 0.000)",
         "track_width": 0.25,
-        "tuning_profile": "",
-        "via_diameter": 0.6,
-        "via_drill": 0.3,
-        "wire_width": 6
-      },
-      {
-        "bus_width": 12,
-        "clearance": 0.15,
-        "diff_pair_gap": 0.2,
-        "diff_pair_via_gap": 0.25,
-        "diff_pair_width": 0.25,
-        "line_style": 0,
-        "microvia_diameter": 0.3,
-        "microvia_drill": 0.1,
-        "name": "Converter",
-        "pcb_color": "rgba(0, 0, 0, 0.000)",
-        "priority": 10,
-        "schematic_color": "rgba(0, 0, 0, 0.000)",
-        "track_width": 0.2,
         "tuning_profile": "",
         "via_diameter": 0.6,
         "via_drill": 0.3,
@@ -816,10 +816,6 @@
       },
       {
         "netclass": "Converter",
-        "pattern": "/power/BATT_SW"
-      },
-      {
-        "netclass": "Converter",
         "pattern": "Net-(U13-BTST1)"
       },
       {
@@ -881,6 +877,10 @@
       {
         "netclass": "Converter",
         "pattern": "Net-(U15-FSW)"
+      },
+      {
+        "netclass": "Battery",
+        "pattern": "/power/BATT_SW"
       }
     ]
   },
