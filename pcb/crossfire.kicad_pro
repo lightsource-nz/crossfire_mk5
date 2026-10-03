@@ -587,6 +587,25 @@
         "via_diameter": 0.6,
         "via_drill": 0.3,
         "wire_width": 6
+      },
+      {
+        "bus_width": 12,
+        "clearance": 0.15,
+        "diff_pair_gap": 0.2,
+        "diff_pair_via_gap": 0.25,
+        "diff_pair_width": 0.25,
+        "line_style": 0,
+        "microvia_diameter": 0.3,
+        "microvia_drill": 0.1,
+        "name": "Converter",
+        "pcb_color": "rgba(0, 0, 0, 0.000)",
+        "priority": 10,
+        "schematic_color": "rgba(0, 0, 0, 0.000)",
+        "track_width": 0.2,
+        "tuning_profile": "",
+        "via_diameter": 0.6,
+        "via_drill": 0.3,
+        "wire_width": 6
       }
     ],
     "meta": {
@@ -602,10 +621,6 @@
       {
         "netclass": "Battery",
         "pattern": "/power/BATT"
-      },
-      {
-        "netclass": "Battery",
-        "pattern": "/power/BATT_SW"
       },
       {
         "netclass": "Power+",
@@ -624,10 +639,6 @@
         "pattern": "/power/VBUS_CHG"
       },
       {
-        "netclass": "Power+",
-        "pattern": "Net-(U13-PMID)"
-      },
-      {
         "netclass": "Power",
         "pattern": "+3V3"
       },
@@ -638,10 +649,6 @@
       {
         "netclass": "Power",
         "pattern": "+1V1"
-      },
-      {
-        "netclass": "Power",
-        "pattern": "/power/REGN"
       },
       {
         "netclass": "Power",
@@ -754,6 +761,82 @@
       {
         "netclass": "USB",
         "pattern": "Net-(U3-USBDM_UP)"
+      },
+      {
+        "netclass": "Converter",
+        "pattern": "Net-(U13-PMID)"
+      },
+      {
+        "netclass": "Converter",
+        "pattern": "/power/REGN"
+      },
+      {
+        "netclass": "Converter",
+        "pattern": "/power/BATT_SW"
+      },
+      {
+        "netclass": "Converter",
+        "pattern": "Net-(U13-BTST1)"
+      },
+      {
+        "netclass": "Converter",
+        "pattern": "Net-(U13-BTST2)"
+      },
+      {
+        "netclass": "Converter",
+        "pattern": "Net-(U13-SW1)"
+      },
+      {
+        "netclass": "Converter",
+        "pattern": "Net-(U13-SW2)"
+      },
+      {
+        "netclass": "Converter",
+        "pattern": "Net-(U14-L1)"
+      },
+      {
+        "netclass": "Converter",
+        "pattern": "Net-(U14-L2)"
+      },
+      {
+        "netclass": "Converter",
+        "pattern": "Net-(U14-FB)"
+      },
+      {
+        "netclass": "Converter",
+        "pattern": "Net-(U14-VAUX)"
+      },
+      {
+        "netclass": "Converter",
+        "pattern": "Net-(U15-SW)"
+      },
+      {
+        "netclass": "Converter",
+        "pattern": "Net-(U15-BOOT)"
+      },
+      {
+        "netclass": "Converter",
+        "pattern": "Net-(U15-FB)"
+      },
+      {
+        "netclass": "Converter",
+        "pattern": "Net-(U15-EN)"
+      },
+      {
+        "netclass": "Converter",
+        "pattern": "Net-(U15-COMP)"
+      },
+      {
+        "netclass": "Converter",
+        "pattern": "Net-(U15-VCC)"
+      },
+      {
+        "netclass": "Converter",
+        "pattern": "Net-(U15-ILIM)"
+      },
+      {
+        "netclass": "Converter",
+        "pattern": "Net-(U15-FSW)"
       }
     ]
   },

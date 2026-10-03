@@ -937,6 +937,29 @@ the filler keeps every other net's clearance as it fills. That is what makes it 
 whole block at once without placing a segment by hand. The outlines are computed from where the pads
 actually are, so they do not care where the board sits on the sheet.
 
+**Eleven nets were classed wider than the pad they start from, and that is why nothing here could be
+routed.** A class width states what a net carries across the board. It cannot state what a 0.20 mm
+pad on a 0.4 mm-pitch package is able to emit, and this board was asking the charger'"'"'s input
+reservoir for a 1.00 mm track and its battery node for 2.00 mm, each leaving a pad 0.20 mm wide. Not
+a conservative setting but a dead one: every "can this be routed" question was really asking whether
+a two-millimetre track fits through a fifth of a millimetre, and the answer was always no, so
+everything became a pour.
+
+Two changes, and between them most of the pouring disappeared:
+
+* **A  class at 0.20 mm** for the nineteen nets that live inside a converter block -- the
+  input reservoir, REGN, the battery node, the bootstraps, the switch nodes, and the local nets of
+  the other two converters. Their current is bounded by the pads they start from whatever the copper
+  beyond does, so 0.20 mm is the honest figure and not a compromise.
+* **The escape is necked to the pad.** The rails that cross the board keep their wide classes --
+  the system rail, 5 V, 3.3 V, the input feeds -- because out there width is about current. But the
+  first half-millimetre out of a pin is not, so the escape is the narrower of the class and the pad,
+  and widens afterwards. That is what a person does by hand and it is what the class could never say.
+
+With both, the system rail, the 5 V and 3.3 V rails and the charger input all route by ordinary track
+where before every one of them was poured. **Five pieces of poured copper remain, 12.3 mm2 in total**,
+against better than a hundred in the first version of this.
+
 **What this draws is a connection, not a region.** The case for pouring here is narrow and it is the
 only case: a pin on a 4 mm package at 0.4 mm pitch cannot be reached by track, because its neighbours
 seal both sides. Everything beyond that was mine rather than the circuit'"'"'s, and it took being told
