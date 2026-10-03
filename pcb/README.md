@@ -956,6 +956,27 @@ Two changes, and between them most of the pouring disappeared:
   first half-millimetre out of a pin is not, so the escape is the narrower of the class and the pad,
   and widens afterwards. That is what a person does by hand and it is what the class could never say.
 
+**Sixteen of the 122 nets are classed wider than the narrowest pad they have to reach, and that is
+not an error in the classes.** The system rail carries up to six amps across the power block, so two
+millimetres is what it needs; the pad it leaves on the charger is 0.20 mm wide, and no single figure
+is right for both. A class states what the RUN carries. The escape is necked by hand and widened a
+trace or two away from the pin, which is ordinary practice.
+
+| net | class | its narrowest pad |
+| --- | --- | --- |
+| system rail | 2.00 mm | 0.20 mm at the charger |
+| battery rail | 2.00 mm | 0.60 mm at the ship switch |
+| the input feeds | 1.00 mm | 0.15-0.20 mm at the charger |
+| 5 V | 1.00 mm | 0.45 mm at the boost |
+| 3.3 V, its analogue rail, the core rail | 0.50 mm | 0.23 mm at the processor |
+| the four data pairs | 0.25 mm | 0.23 mm at the processor |
+
+What was missing was the means to neck down. With an empty width list the interactive router offers
+the class width and nothing else, so a rail classed at 2 mm could not be started from a 0.2 mm pin
+without going into the board setup first. The project now carries a width list -- 0.15 through 2.00 --
+and a via list, with the net class still the default. The scripted passes already do this for the
+connections they draw: the escape they use is the narrower of the class and the pad.
+
 **And a track may turn a corner**, which the test did not allow it to. It tried the straight line
 from the pad to its target and nothing else, and on a fine-pitch package that line leaves the pad
 sideways and crosses the pin next door within the first tenth of its length -- which is exactly what
