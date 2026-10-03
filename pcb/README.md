@@ -956,7 +956,15 @@ Two changes, and between them most of the pouring disappeared:
   first half-millimetre out of a pin is not, so the escape is the narrower of the class and the pad,
   and widens afterwards. That is what a person does by hand and it is what the class could never say.
 
-With both, the system rail, the 5 V and 3.3 V rails and the charger input all route by ordinary track
+**And a track may turn a corner**, which the test did not allow it to. It tried the straight line
+from the pad to its target and nothing else, and on a fine-pitch package that line leaves the pad
+sideways and crosses the pin next door within the first tenth of its length -- which is exactly what
+it did for the input reservoir and for REGN, both blocked five to eight per cent along, and both then
+poured for want of a route a person would draw without thinking about it. A pin escapes outward and
+turns afterwards. The route now tried is the straight line if it serves and otherwise out along the
+pad'"'"'s own axis and then across, which routes both of them: 2.4 mm and 2.3 mm of track.
+
+With these, the system rail, the 5 V and 3.3 V rails and the charger input all route by ordinary track
 where before every one of them was poured. **Five pieces of poured copper remain, 12.3 mm2 in total**,
 against better than a hundred in the first version of this.
 
