@@ -937,8 +937,23 @@ the filler keeps every other net's clearance as it fills. That is what makes it 
 whole block at once without placing a segment by hand. The outlines are computed from where the pads
 actually are, so they do not care where the board sits on the sheet.
 
-Two details were measured rather than guessed. The outline is the **hull** of the pads rather than a
-box around them: the box reaches further, and a pour that reaches further outranks whatever it now
+**The regions are cut apart rather than stacked.** Letting zone outlines overlap and leaving the
+priority number to sort it out is legal, and it reads as a mistake because it looks like one: the
+reservoir region contained all but half a square millimetre of the input region's twelve, so two
+pours sat one on top of the other and the only thing keeping them apart was a number that does not
+appear in the drawing. Each region is now subtracted from the ones below it with a 0.2 mm gap, so no
+two outlines overlap at all -- 12.2 mm2 of overlap before, **0.000 mm2** now -- and the priorities
+become redundant rather than load-bearing. That is also how the vendor's figure reads: distinct
+regions with bare gaps between them, one per net, radiating from the package.
+
+The **order** of that cutting is the vendor's, because whoever is cut first keeps what it wants. The
+input reservoir and the system rail are item one, the two that have to be on top of the IC; then the
+input at item four and the battery at item five. Ordering them the other way round left the system
+rail with a tenth of a square millimetre, every neighbour having already taken the ground beside the
+pin it is named in item one for.
+
+Two further details were measured rather than guessed. The outline is the **hull** of the pads rather
+than a box around them: the box reaches further, and a pour that reaches further outranks whatever it now
 covers, so using boxes throughout cost fifteen connections elsewhere and using one for the battery
 node alone cost ten on the rail beside it. And where a pin is still stranded against its own package,
 the fix is a **crossing to the back** -- the back under the charger carries nothing but ground pour,
