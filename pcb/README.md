@@ -937,6 +937,19 @@ the filler keeps every other net's clearance as it fills. That is what makes it 
 whole block at once without placing a segment by hand. The outlines are computed from where the pads
 actually are, so they do not care where the board sits on the sheet.
 
+**Only two of the five regions were worth having, and the test is the obvious one nobody applied: a
+pour has to JOIN something.** Asked which parts each region'"'"'s copper actually touched, three of them
+reached one part and no other part on their own net -- copper around a single pin, which the pin
+already is. The battery node'"'"'s region touched one capacitor, the input'"'"'s touched one capacitor, the
+battery rail'"'"'s touched one transistor. They were not improving the board, they were decorating it,
+and a region that connects nothing is worse than no region because it reads as a connection in every
+picture of the board.
+
+What survives is the two that do the job the vendor'"'"'s figure shows -- a capacitor to a pin to another
+capacitor, with the copper between them BEING the connection: the input reservoir joining C63, C66
+and the charger, and the system rail joining C72, C76 and the charger. The three dropped nets need
+routing, which is the honest form of what they needed all along.
+
 **The regions are cut apart rather than stacked.** Letting zone outlines overlap and leaving the
 priority number to sort it out is legal, and it reads as a mistake because it looks like one: the
 reservoir region contained all but half a square millimetre of the input region's twelve, so two
