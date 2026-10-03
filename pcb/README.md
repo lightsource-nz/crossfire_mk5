@@ -953,6 +953,17 @@ three times to strip it back to what the argument actually supports:
   feedback and enable and compensation included, none of which needs anything but a track. The
   question is now asked for every pin, and where a track fits, a track is drawn.
 
+**Two connections wanting the same board is a conflict, not a priority question.** Pouring both and
+letting the filler arbitrate carves each one in half, so instead of one working connection and one
+left to think about, there are two broken ones -- and both pass the rules check, because split copper
+with correct clearance breaks no rule. Three of nine were in that state and none of the numbers being
+collected would have said so.
+
+Each piece now claims its corridor, is cut against what is already claimed, and then has to **prove
+it still joins its pin to its target in one piece of copper** or it is taken off. That test is the
+only one that matters here and it is not "is there copper" -- a region that fills in two parts has
+been carved around something and connects nothing while looking in every report like one that works.
+
 So each piece is a chip pad, a neck, and the one thing that pad has to reach -- the via down to its
 plane where the rail has one, the bypass capacitor where it does not -- and then it stops. Nine
 pieces, **22.8 mm2 of local copper in total**, where the first version of this had better than a
