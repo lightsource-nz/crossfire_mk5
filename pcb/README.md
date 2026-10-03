@@ -956,6 +956,20 @@ Two changes, and between them most of the pouring disappeared:
   first half-millimetre out of a pin is not, so the escape is the narrower of the class and the pad,
   and widens afterwards. That is what a person does by hand and it is what the class could never say.
 
+**On a run of a few millimetres the width table is the wrong instrument, and resistance is the right
+one.** The figures above are read off the standard curve for a long trace in still air; over four or
+five millimetres with a pad or a pour at each end, the heat leaves through the ends and that curve is
+conservative to the point of being misleading. The battery node is the case in point. Its corridor
+through the charger is 0.30 mm wide for the first millimetre, 0.85 in the middle and only reaches
+2.10 at the far end, so the 1.7 mm the table asks for at 3.5 A cannot be had and does not need to be:
+4.6 mm of 0.2 and 0.5 mm track comes to 6.0 milliohms, which is 21 mV and 73 mW at the recorded peak
+and 11 mV at the continuous draw -- six tenths of one per cent of a 3.7 V rail.
+
+So for a short run, size it by what it costs rather than by the table: compute the resistance, take
+the drop at the peak current, and widen where there is room because it is free rather than because a
+curve for a different situation says to. Where the corridor does allow it, widening this one to
+0.3/0.8/2.0 mm halves it to 3.3 milliohms, which is worth having and is not a correction.
+
 **A net class states what the net CARRIES, never what its pad can emit.** That distinction was got
 wrong once in the other direction and is worth stating plainly, because the mistake is tempting: the
 battery node was moved to a 0.20 mm class on the reasoning that its pad at the charger is 0.20 mm

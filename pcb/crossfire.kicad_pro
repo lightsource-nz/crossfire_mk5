@@ -816,6 +816,10 @@
       },
       {
         "netclass": "Converter",
+        "pattern": "/power/BATT_SW"
+      },
+      {
+        "netclass": "Converter",
         "pattern": "Net-(U13-BTST1)"
       },
       {
@@ -877,10 +881,6 @@
       {
         "netclass": "Converter",
         "pattern": "Net-(U15-FSW)"
-      },
-      {
-        "netclass": "Battery",
-        "pattern": "/power/BATT_SW"
       }
     ]
   },
