@@ -950,6 +950,19 @@ capacitor, with the copper between them BEING the connection: the input reservoi
 and the charger, and the system rail joining C72, C76 and the charger. The three dropped nets need
 routing, which is the honest form of what they needed all along.
 
+**A rail that has a plane keeps only the copper the plane cannot provide.** The system rail was
+questioned as redundant and the connectivity half of that is right: all three of its pads have a via
+within a millimetre with the plane underneath, so as a way of JOINING things the pour adds nothing.
+What it is not redundant for is inductance. Item one asks for the 0.1 uF to sit "on the same layer as
+and on top of the IC with short traces to the SYS and GND pins", and a pad-via-plane-via-pad path is
+not that.
+
+So where a rail has a plane, its pour is now the pin and its small capacitor and nothing else -- the
+fast loop, 3.1 x 4.9 mm. The reservoirs reach the rail through the plane, which is what the rest of
+the same item says to do with them, and the net stayed fully connected when they were dropped from
+it. The input reservoir rail keeps its larger region because it has no plane at all: there, the pour
+is the only connection its parts have.
+
 **The regions are cut apart rather than stacked.** Letting zone outlines overlap and leaving the
 priority number to sort it out is legal, and it reads as a mistake because it looks like one: the
 reservoir region contained all but half a square millimetre of the input region's twelve, so two
