@@ -1631,6 +1631,26 @@
 		)
 		(uuid "fa5d838b-08f9-461d-a1c3-9058d8640304")
 	)
+	(label "CONN_D-"
+		(at 172.72 111.76 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "1b384db7-1e42-4254-a17d-d94538c64a82")
+	)
+	(label "CONN_D+"
+		(at 172.72 109.22 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "f4489b81-719d-4b6e-b0c9-038030a40749")
+	)
 	(hierarchical_label "FAULT"
 		(shape output)
 		(at 149.86 101.6 0)
@@ -1642,7 +1662,7 @@
 		)
 		(uuid "5f05a75c-2aff-4f36-aefa-beef621e7e8d")
 	)
-	(hierarchical_label "DP"
+	(hierarchical_label "D+"
 		(shape bidirectional)
 		(at 139.7 109.22 180)
 		(effects
@@ -1653,7 +1673,7 @@
 		)
 		(uuid "7f3613cb-289e-488a-af76-daf51bcf84a4")
 	)
-	(hierarchical_label "DM"
+	(hierarchical_label "D-"
 		(shape bidirectional)
 		(at 139.7 111.76 180)
 		(effects
@@ -1686,7 +1706,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "46a87f0a-79aa-4e1a-a0aa-cdb60560b025")
-		(property "Reference" "#PWR042"
+		(property "Reference" "#PWR044"
 			(at 173.99 80.01 0)
 			(hide yes)
 			(show_name no)
@@ -1709,6 +1729,7 @@
 		)
 		(property "Footprint" ""
 			(at 173.99 87.63 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -1719,6 +1740,7 @@
 		)
 		(property "Datasheet" ""
 			(at 173.99 87.63 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -1729,6 +1751,7 @@
 		)
 		(property "Description" ""
 			(at 173.99 87.63 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -1794,6 +1817,7 @@
 		)
 		(property "Footprint" "Package_TO_SOT_SMD:SOT-23-6"
 			(at 160.02 109.22 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -1804,6 +1828,7 @@
 		)
 		(property "Datasheet" ""
 			(at 160.02 109.22 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -1814,6 +1839,7 @@
 		)
 		(property "Description" ""
 			(at 160.02 109.22 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -1872,7 +1898,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "96648143-54fc-4828-ac9f-b8888c101f09")
-		(property "Reference" "#PWR046"
+		(property "Reference" "#PWR048"
 			(at 196.85 116.84 0)
 			(hide yes)
 			(show_name no)
@@ -1895,6 +1921,7 @@
 		)
 		(property "Footprint" ""
 			(at 196.85 124.46 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -1905,6 +1932,7 @@
 		)
 		(property "Datasheet" ""
 			(at 196.85 124.46 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -1915,6 +1943,7 @@
 		)
 		(property "Description" ""
 			(at 196.85 124.46 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -1958,7 +1987,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "9851d35d-729d-4ce5-a71c-ef70545577ce")
-		(property "Reference" "#PWR050"
+		(property "Reference" "#PWR052"
 			(at 111.76 88.9 0)
 			(hide yes)
 			(show_name no)
@@ -1981,6 +2010,7 @@
 		)
 		(property "Footprint" ""
 			(at 111.76 96.52 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -1991,6 +2021,7 @@
 		)
 		(property "Datasheet" ""
 			(at 111.76 96.52 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -2001,6 +2032,7 @@
 		)
 		(property "Description" ""
 			(at 111.76 96.52 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -2067,6 +2099,7 @@
 		)
 		(property "Footprint" "Connector_USB:USB_A_Molex_67643_Horizontal"
 			(at 190.5 109.22 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -2077,6 +2110,7 @@
 		)
 		(property "Datasheet" ""
 			(at 190.5 109.22 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -2087,6 +2121,7 @@
 		)
 		(property "Description" ""
 			(at 190.5 109.22 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -2162,30 +2197,9 @@
 				)
 			)
 		)
-		(property "Voltage" "25V"
-			(at 171.958 93.726 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Dielectric" "X7R"
-			(at 171.958 93.726 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
 		(property "Footprint" "Capacitor_SMD:C_1210_3225Metric"
 			(at 168.91 91.44 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -2196,6 +2210,7 @@
 		)
 		(property "Datasheet" ""
 			(at 168.91 91.44 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -2206,6 +2221,29 @@
 		)
 		(property "Description" ""
 			(at 168.91 91.44 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Voltage" "25V"
+			(at 171.958 93.726 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Dielectric" "X7R"
+			(at 171.958 93.726 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -2274,6 +2312,7 @@
 		)
 		(property "Footprint" "Package_TO_SOT_SMD:SOT-23-5"
 			(at 127 99.06 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -2284,6 +2323,7 @@
 		)
 		(property "Datasheet" ""
 			(at 127 99.06 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -2294,6 +2334,7 @@
 		)
 		(property "Description" ""
 			(at 127 99.06 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects

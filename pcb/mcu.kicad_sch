@@ -5260,7 +5260,7 @@
 		)
 		(uuid "5e953b0a-a94c-44fd-af6b-10556d5f9e02")
 	)
-	(hierarchical_label "PIO_DM"
+	(hierarchical_label "PIO_D-"
 		(shape bidirectional)
 		(at 233.68 124.46 0)
 		(effects
@@ -5293,7 +5293,7 @@
 		)
 		(uuid "9df372db-b342-4bc0-aba9-caf3cd616f95")
 	)
-	(hierarchical_label "USB_DP"
+	(hierarchical_label "USB_D+"
 		(shape bidirectional)
 		(at 172.72 127 180)
 		(effects
@@ -5326,7 +5326,7 @@
 		)
 		(uuid "d0aa0b79-e441-4ef1-a4b3-89952c94192f")
 	)
-	(hierarchical_label "PIO_DP"
+	(hierarchical_label "PIO_D+"
 		(shape bidirectional)
 		(at 233.68 121.92 0)
 		(effects
@@ -5337,7 +5337,7 @@
 		)
 		(uuid "f3125ee7-ccf6-4bfe-a73a-f32faee072a0")
 	)
-	(hierarchical_label "USB_DM"
+	(hierarchical_label "USB_D-"
 		(shape bidirectional)
 		(at 172.72 124.46 180)
 		(effects
@@ -5358,51 +5358,33 @@
 		(on_board yes)
 		(in_pos_files yes)
 		(dnp no)
+		(fields_autoplaced yes)
 		(uuid "04fd4391-260d-47f5-a634-568c8501bcd6")
 		(property "Reference" "C8"
-			(at 118.618 71.12 0)
+			(at 124.46 69.8562 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
+				(justify left)
 			)
 		)
 		(property "Value" "100n"
-			(at 124.714 73.66 0)
+			(at 124.46 72.3962 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
-			)
-		)
-		(property "Voltage" "16V"
-			(at 124.714 73.66 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Dielectric" "X7R"
-			(at 124.714 73.66 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
+				(justify left)
 			)
 		)
 		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
 			(at 121.92 71.12 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -5413,6 +5395,7 @@
 		)
 		(property "Datasheet" ""
 			(at 121.92 71.12 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -5423,6 +5406,29 @@
 		)
 		(property "Description" ""
 			(at 121.92 71.12 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Voltage" "16V"
+			(at 124.714 73.66 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Dielectric" "X7R"
+			(at 124.714 73.66 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -5456,6 +5462,7 @@
 		(on_board yes)
 		(in_pos_files yes)
 		(dnp no)
+		(fields_autoplaced yes)
 		(uuid "0c3ebb16-91a0-4ec8-ab81-4cd32451039b")
 		(property "Reference" "#PWR013"
 			(at 189.23 53.34 0)
@@ -5469,17 +5476,19 @@
 			)
 		)
 		(property "Value" "+3.3VA"
-			(at 184.404 58.928 0)
+			(at 191.77 59.6899 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
+				(justify left)
 			)
 		)
 		(property "Footprint" ""
 			(at 189.23 60.96 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -5490,6 +5499,7 @@
 		)
 		(property "Datasheet" ""
 			(at 189.23 60.96 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -5500,6 +5510,7 @@
 		)
 		(property "Description" ""
 			(at 189.23 60.96 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -5530,29 +5541,33 @@
 		(on_board yes)
 		(in_pos_files yes)
 		(dnp no)
+		(fields_autoplaced yes)
 		(uuid "0c872dbd-dd71-4106-a811-da317f190ebe")
 		(property "Reference" "#PWR014"
-			(at 241.3 76.2 0)
+			(at 243.84 78.7399 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
+				(justify left)
 			)
 		)
 		(property "Value" "PWR_FLAG"
-			(at 248.666 79.502 0)
+			(at 243.84 81.2799 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
+				(justify left)
 			)
 		)
 		(property "Footprint" ""
 			(at 241.3 81.28 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -5563,6 +5578,7 @@
 		)
 		(property "Datasheet" ""
 			(at 241.3 81.28 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -5573,6 +5589,7 @@
 		)
 		(property "Description" ""
 			(at 241.3 81.28 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -5603,51 +5620,33 @@
 		(on_board yes)
 		(in_pos_files yes)
 		(dnp no)
+		(fields_autoplaced yes)
 		(uuid "1181eb81-0d3e-4552-a71e-a95ba033344b")
 		(property "Reference" "C5"
-			(at 88.138 71.12 0)
+			(at 93.98 69.8562 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
+				(justify left)
 			)
 		)
 		(property "Value" "100n"
-			(at 94.234 73.66 0)
+			(at 93.98 72.3962 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
-			)
-		)
-		(property "Voltage" "16V"
-			(at 94.234 73.66 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Dielectric" "X7R"
-			(at 94.234 73.66 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
+				(justify left)
 			)
 		)
 		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
 			(at 91.44 71.12 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -5658,6 +5657,7 @@
 		)
 		(property "Datasheet" ""
 			(at 91.44 71.12 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -5668,6 +5668,29 @@
 		)
 		(property "Description" ""
 			(at 91.44 71.12 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Voltage" "16V"
+			(at 94.234 73.66 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Dielectric" "X7R"
+			(at 94.234 73.66 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -5701,6 +5724,7 @@
 		(on_board yes)
 		(in_pos_files yes)
 		(dnp no)
+		(fields_autoplaced yes)
 		(uuid "14f4bb34-ec3a-43d5-a1cc-f60259c7fa27")
 		(property "Reference" "#PWR015"
 			(at 160.02 78.74 0)
@@ -5714,17 +5738,19 @@
 			)
 		)
 		(property "Value" "+3V3"
-			(at 159.766 82.296 0)
+			(at 162.56 85.0899 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
+				(justify left)
 			)
 		)
 		(property "Footprint" ""
 			(at 160.02 86.36 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -5735,6 +5761,7 @@
 		)
 		(property "Datasheet" ""
 			(at 160.02 86.36 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -5745,6 +5772,7 @@
 		)
 		(property "Description" ""
 			(at 160.02 86.36 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -5775,51 +5803,33 @@
 		(on_board yes)
 		(in_pos_files yes)
 		(dnp no)
+		(fields_autoplaced yes)
 		(uuid "16f218a7-87d6-4fb8-ac98-84099dbf0ff3")
 		(property "Reference" "C10"
-			(at 137.922 71.12 0)
+			(at 144.78 69.8562 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
+				(justify left)
 			)
 		)
 		(property "Value" "100n"
-			(at 145.034 73.66 0)
+			(at 144.78 72.3962 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
-			)
-		)
-		(property "Voltage" "16V"
-			(at 145.034 73.66 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Dielectric" "X7R"
-			(at 145.034 73.66 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
+				(justify left)
 			)
 		)
 		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
 			(at 142.24 71.12 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -5830,6 +5840,7 @@
 		)
 		(property "Datasheet" ""
 			(at 142.24 71.12 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -5840,6 +5851,29 @@
 		)
 		(property "Description" ""
 			(at 142.24 71.12 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Voltage" "16V"
+			(at 145.034 73.66 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Dielectric" "X7R"
+			(at 145.034 73.66 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -5873,9 +5907,10 @@
 		(on_board yes)
 		(in_pos_files yes)
 		(dnp no)
+		(fields_autoplaced yes)
 		(uuid "1870ce49-290a-4a21-aaa1-ac4b103e18b6")
 		(property "Reference" "SW1"
-			(at 135.89 115.824 0)
+			(at 135.89 113.03 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -5885,7 +5920,7 @@
 			)
 		)
 		(property "Value" "BOOT"
-			(at 135.89 123.444 0)
+			(at 135.89 115.57 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -5896,6 +5931,7 @@
 		)
 		(property "Footprint" "Button_Switch_SMD:SW_Push_1P1T_NO_CK_KSC6xxJ"
 			(at 135.89 120.65 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -5906,6 +5942,7 @@
 		)
 		(property "Datasheet" ""
 			(at 135.89 120.65 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -5916,6 +5953,7 @@
 		)
 		(property "Description" ""
 			(at 135.89 120.65 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -5949,6 +5987,7 @@
 		(on_board yes)
 		(in_pos_files yes)
 		(dnp no)
+		(fields_autoplaced yes)
 		(uuid "1924dcde-c584-4a1a-a256-105e7cdda5dc")
 		(property "Reference" "#PWR016"
 			(at 267.97 111.76 0)
@@ -5962,17 +6001,19 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 269.24 180.34 0)
+			(at 271.78 173.9899 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
+				(justify left)
 			)
 		)
 		(property "Footprint" ""
 			(at 269.24 172.72 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -5983,6 +6024,7 @@
 		)
 		(property "Datasheet" ""
 			(at 269.24 172.72 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -5993,6 +6035,7 @@
 		)
 		(property "Description" ""
 			(at 269.24 172.72 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -6023,6 +6066,7 @@
 		(on_board yes)
 		(in_pos_files yes)
 		(dnp no)
+		(fields_autoplaced yes)
 		(uuid "1977a077-bf39-451d-a894-8c29009ce40a")
 		(property "Reference" "#PWR017"
 			(at 110.49 152.4 0)
@@ -6036,17 +6080,19 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 110.49 167.64 0)
+			(at 113.03 161.2899 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
+				(justify left)
 			)
 		)
 		(property "Footprint" ""
 			(at 110.49 160.02 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -6057,6 +6103,7 @@
 		)
 		(property "Datasheet" ""
 			(at 110.49 160.02 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -6067,6 +6114,7 @@
 		)
 		(property "Description" ""
 			(at 110.49 160.02 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -6097,29 +6145,33 @@
 		(on_board yes)
 		(in_pos_files yes)
 		(dnp no)
+		(fields_autoplaced yes)
 		(uuid "19838be3-7fcf-4c58-a530-6f456f0b826a")
 		(property "Reference" "U1"
-			(at 203.2 132.08 0)
+			(at 205.3433 184.15 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
+				(justify left)
 			)
 		)
 		(property "Value" "RP2350A"
-			(at 203.2 147.32 0)
+			(at 205.3433 186.69 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
+				(justify left)
 			)
 		)
 		(property "Footprint" "crossfire:rpi_rp2350a_vias"
 			(at 203.2 139.7 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -6130,6 +6182,7 @@
 		)
 		(property "Datasheet" ""
 			(at 203.2 139.7 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -6140,6 +6193,7 @@
 		)
 		(property "Description" ""
 			(at 203.2 139.7 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -6350,6 +6404,7 @@
 		(on_board yes)
 		(in_pos_files yes)
 		(dnp no)
+		(fields_autoplaced yes)
 		(uuid "2010a892-01c1-470a-a105-76adf365fc91")
 		(property "Reference" "#PWR018"
 			(at 142.24 71.12 0)
@@ -6363,17 +6418,19 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 141.986 83.312 0)
+			(at 144.78 80.0099 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
+				(justify left)
 			)
 		)
 		(property "Footprint" ""
 			(at 142.24 78.74 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -6384,6 +6441,7 @@
 		)
 		(property "Datasheet" ""
 			(at 142.24 78.74 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -6394,6 +6452,7 @@
 		)
 		(property "Description" ""
 			(at 142.24 78.74 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -6424,6 +6483,7 @@
 		(on_board yes)
 		(in_pos_files yes)
 		(dnp no)
+		(fields_autoplaced yes)
 		(uuid "20e92bc4-206a-4ce5-a735-34758bf1f83e")
 		(property "Reference" "#PWR019"
 			(at 203.2 35.56 0)
@@ -6437,17 +6497,19 @@
 			)
 		)
 		(property "Value" "+3.3VA"
-			(at 203.2 39.37 0)
+			(at 205.74 41.9099 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
+				(justify left)
 			)
 		)
 		(property "Footprint" ""
 			(at 203.2 43.18 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -6458,6 +6520,7 @@
 		)
 		(property "Datasheet" ""
 			(at 203.2 43.18 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -6468,6 +6531,7 @@
 		)
 		(property "Description" ""
 			(at 203.2 43.18 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -6511,7 +6575,7 @@
 			)
 		)
 		(property "Value" "+3V3"
-			(at 198.12 85.09 0)
+			(at 198.374 84.582 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -6522,6 +6586,7 @@
 		)
 		(property "Footprint" ""
 			(at 198.12 88.9 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -6532,6 +6597,7 @@
 		)
 		(property "Datasheet" ""
 			(at 198.12 88.9 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -6542,6 +6608,7 @@
 		)
 		(property "Description" ""
 			(at 198.12 88.9 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -6572,6 +6639,7 @@
 		(on_board yes)
 		(in_pos_files yes)
 		(dnp no)
+		(fields_autoplaced yes)
 		(uuid "24cceb82-4e2a-4aeb-a5bb-19251e1c147d")
 		(property "Reference" "#PWR021"
 			(at 125.73 113.03 0)
@@ -6585,17 +6653,19 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 125.73 124.714 0)
+			(at 123.19 121.9199 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
+				(justify right)
 			)
 		)
 		(property "Footprint" ""
 			(at 125.73 120.65 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -6606,6 +6676,7 @@
 		)
 		(property "Datasheet" ""
 			(at 125.73 120.65 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -6616,6 +6687,7 @@
 		)
 		(property "Description" ""
 			(at 125.73 120.65 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -6646,6 +6718,7 @@
 		(on_board yes)
 		(in_pos_files yes)
 		(dnp no)
+		(fields_autoplaced yes)
 		(uuid "253735d5-74ef-491a-aba0-2ead5134026c")
 		(property "Reference" "#PWR022"
 			(at 203.2 182.88 0)
@@ -6659,17 +6732,19 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 203.2 198.12 0)
+			(at 205.74 191.7699 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
+				(justify left)
 			)
 		)
 		(property "Footprint" ""
 			(at 203.2 190.5 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -6680,6 +6755,7 @@
 		)
 		(property "Datasheet" ""
 			(at 203.2 190.5 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -6690,6 +6766,7 @@
 		)
 		(property "Description" ""
 			(at 203.2 190.5 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -6733,17 +6810,19 @@
 			)
 		)
 		(property "Value" "+3.3VA"
-			(at 192.024 85.09 0)
+			(at 188.468 84.836 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
+				(justify left)
 			)
 		)
 		(property "Footprint" ""
 			(at 193.04 88.9 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -6754,6 +6833,7 @@
 		)
 		(property "Datasheet" ""
 			(at 193.04 88.9 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -6764,6 +6844,7 @@
 		)
 		(property "Description" ""
 			(at 193.04 88.9 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -6794,51 +6875,33 @@
 		(on_board yes)
 		(in_pos_files yes)
 		(dnp no)
+		(fields_autoplaced yes)
 		(uuid "2cfdb583-0ebb-42ba-a939-6ca680d15039")
 		(property "Reference" "C9"
-			(at 128.778 71.12 0)
+			(at 134.62 69.8562 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
+				(justify left)
 			)
 		)
 		(property "Value" "100n"
-			(at 134.874 73.66 0)
+			(at 134.62 72.3962 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
-			)
-		)
-		(property "Voltage" "16V"
-			(at 134.874 73.66 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Dielectric" "X7R"
-			(at 134.874 73.66 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
+				(justify left)
 			)
 		)
 		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
 			(at 132.08 71.12 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -6849,6 +6912,7 @@
 		)
 		(property "Datasheet" ""
 			(at 132.08 71.12 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -6859,6 +6923,29 @@
 		)
 		(property "Description" ""
 			(at 132.08 71.12 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Voltage" "16V"
+			(at 134.874 73.66 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Dielectric" "X7R"
+			(at 134.874 73.66 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -6892,6 +6979,7 @@
 		(on_board yes)
 		(in_pos_files yes)
 		(dnp no)
+		(fields_autoplaced yes)
 		(uuid "2e3b74b2-57cf-4351-abe4-c1d4a6263e7d")
 		(property "Reference" "#PWR024"
 			(at 280.67 152.4 0)
@@ -6905,17 +6993,19 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 280.67 167.64 0)
+			(at 283.21 161.2899 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
+				(justify left)
 			)
 		)
 		(property "Footprint" ""
 			(at 280.67 160.02 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -6926,6 +7016,7 @@
 		)
 		(property "Datasheet" ""
 			(at 280.67 160.02 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -6936,6 +7027,7 @@
 		)
 		(property "Description" ""
 			(at 280.67 160.02 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -6966,29 +7058,33 @@
 		(on_board yes)
 		(in_pos_files yes)
 		(dnp no)
+		(fields_autoplaced yes)
 		(uuid "3222ddde-3d51-4d20-a823-c7285915dc6c")
 		(property "Reference" "#PWR025"
-			(at 219.71 43.688 0)
+			(at 222.25 46.9899 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
+				(justify left)
 			)
 		)
 		(property "Value" "PWR_FLAG"
-			(at 226.568 47.498 0)
+			(at 222.25 49.5299 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
+				(justify left)
 			)
 		)
 		(property "Footprint" ""
 			(at 219.71 49.53 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -6999,6 +7095,7 @@
 		)
 		(property "Datasheet" ""
 			(at 219.71 49.53 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -7009,6 +7106,7 @@
 		)
 		(property "Description" ""
 			(at 219.71 49.53 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -7039,40 +7137,33 @@
 		(on_board yes)
 		(in_pos_files yes)
 		(dnp no)
+		(fields_autoplaced yes)
 		(uuid "343ca9a3-b761-4de1-a74a-b0b2f654cea5")
 		(property "Reference" "R4"
-			(at 251.206 154.94 0)
+			(at 256.54 153.6699 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
+				(justify left)
 			)
 		)
 		(property "Value" "1k"
-			(at 256.286 154.94 0)
+			(at 256.54 156.2099 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
-			)
-		)
-		(property "Tolerance" "5%"
-			(at 256.286 154.94 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
+				(justify left)
 			)
 		)
 		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
 			(at 254 154.94 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -7083,6 +7174,7 @@
 		)
 		(property "Datasheet" ""
 			(at 254 154.94 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -7093,6 +7185,18 @@
 		)
 		(property "Description" ""
 			(at 254 154.94 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Tolerance" "5%"
+			(at 256.286 154.94 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -7126,51 +7230,33 @@
 		(on_board yes)
 		(in_pos_files yes)
 		(dnp no)
+		(fields_autoplaced yes)
 		(uuid "36f3e663-4d6e-4a74-ad36-400dfbcfc13f")
 		(property "Reference" "C7"
-			(at 108.458 71.12 0)
+			(at 114.3 69.8562 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
+				(justify left)
 			)
 		)
 		(property "Value" "100n"
-			(at 114.554 73.66 0)
+			(at 114.3 72.3962 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
-			)
-		)
-		(property "Voltage" "16V"
-			(at 114.554 73.66 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Dielectric" "X7R"
-			(at 114.554 73.66 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
+				(justify left)
 			)
 		)
 		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
 			(at 111.76 71.12 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -7181,6 +7267,7 @@
 		)
 		(property "Datasheet" ""
 			(at 111.76 71.12 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -7191,6 +7278,29 @@
 		)
 		(property "Description" ""
 			(at 111.76 71.12 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Voltage" "16V"
+			(at 114.554 73.66 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Dielectric" "X7R"
+			(at 114.554 73.66 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -7224,6 +7334,7 @@
 		(on_board yes)
 		(in_pos_files yes)
 		(dnp no)
+		(fields_autoplaced yes)
 		(uuid "44c66f91-1a0c-4b11-ab71-3e38dcce6a20")
 		(property "Reference" "#PWR026"
 			(at 271.78 181.61 0)
@@ -7237,17 +7348,19 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 271.78 196.85 0)
+			(at 274.32 190.4999 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
+				(justify left)
 			)
 		)
 		(property "Footprint" ""
 			(at 271.78 189.23 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -7258,6 +7371,7 @@
 		)
 		(property "Datasheet" ""
 			(at 271.78 189.23 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -7268,6 +7382,7 @@
 		)
 		(property "Description" ""
 			(at 271.78 189.23 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -7298,9 +7413,10 @@
 		(on_board yes)
 		(in_pos_files yes)
 		(dnp no)
+		(fields_autoplaced yes)
 		(uuid "47453499-0c4a-4e96-ae83-8d396a5245b7")
 		(property "Reference" "SW2"
-			(at 147.32 93.98 0)
+			(at 147.32 91.44 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -7310,7 +7426,7 @@
 			)
 		)
 		(property "Value" "RESET"
-			(at 147.32 101.854 0)
+			(at 147.32 93.98 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -7321,6 +7437,7 @@
 		)
 		(property "Footprint" "Button_Switch_SMD:SW_Push_1P1T_NO_CK_KSC6xxJ"
 			(at 147.32 99.06 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -7331,6 +7448,7 @@
 		)
 		(property "Datasheet" ""
 			(at 147.32 99.06 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -7341,6 +7459,7 @@
 		)
 		(property "Description" ""
 			(at 147.32 99.06 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -7374,6 +7493,7 @@
 		(on_board yes)
 		(in_pos_files yes)
 		(dnp no)
+		(fields_autoplaced yes)
 		(uuid "51f7706a-f78a-43c4-af6d-93ac7e5218b7")
 		(property "Reference" "#PWR027"
 			(at 147.32 165.1 0)
@@ -7387,17 +7507,19 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 147.32 180.34 0)
+			(at 149.86 173.9899 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
+				(justify left)
 			)
 		)
 		(property "Footprint" ""
 			(at 147.32 172.72 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -7408,6 +7530,7 @@
 		)
 		(property "Datasheet" ""
 			(at 147.32 172.72 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -7418,6 +7541,7 @@
 		)
 		(property "Description" ""
 			(at 147.32 172.72 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -7448,73 +7572,33 @@
 		(on_board yes)
 		(in_pos_files yes)
 		(dnp no)
+		(fields_autoplaced yes)
 		(uuid "567d142b-ec07-4fb8-ab66-7bf639162a08")
 		(property "Reference" "L1"
-			(at 208.28 76.2 0)
+			(at 207.01 82.5499 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
+				(justify right)
 			)
 		)
 		(property "Value" "3u3"
-			(at 208.28 91.44 0)
+			(at 207.01 85.0899 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
-			)
-		)
-		(property "MPN" "Abracon AOTA-B201610S3R3-101-T"
-			(at 208.28 91.44 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Tolerance" "20%"
-			(at 208.28 91.44 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Isat" "1.5A"
-			(at 208.28 91.44 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Shielding" "fully shielded, polarity marked"
-			(at 208.28 91.44 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
+				(justify right)
 			)
 		)
 		(property "Footprint" "crossfire:abracon_aota-b201610s3r3-101-t"
 			(at 208.28 83.82 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -7525,6 +7609,7 @@
 		)
 		(property "Datasheet" ""
 			(at 208.28 83.82 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -7535,6 +7620,51 @@
 		)
 		(property "Description" ""
 			(at 208.28 83.82 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "Abracon AOTA-B201610S3R3-101-T"
+			(at 208.28 91.44 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Tolerance" "20%"
+			(at 208.28 91.44 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Isat" "1.5A"
+			(at 208.28 91.44 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Shielding" "fully shielded, polarity marked"
+			(at 208.28 91.44 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -7568,51 +7698,33 @@
 		(on_board yes)
 		(in_pos_files yes)
 		(dnp no)
+		(fields_autoplaced yes)
 		(uuid "59829a46-b4ac-40f1-ad04-ad28830b5908")
 		(property "Reference" "C13"
-			(at 160.02 170.18 0)
+			(at 162.56 176.5362 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
+				(justify left)
 			)
 		)
 		(property "Value" "15p"
-			(at 160.02 185.42 0)
+			(at 162.56 179.0762 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
-			)
-		)
-		(property "Voltage" "50V"
-			(at 160.02 185.42 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Dielectric" "C0G"
-			(at 160.02 185.42 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
+				(justify left)
 			)
 		)
 		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
 			(at 160.02 177.8 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -7623,6 +7735,7 @@
 		)
 		(property "Datasheet" ""
 			(at 160.02 177.8 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -7633,6 +7746,29 @@
 		)
 		(property "Description" ""
 			(at 160.02 177.8 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Voltage" "50V"
+			(at 160.02 185.42 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Dielectric" "C0G"
+			(at 160.02 185.42 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -7666,6 +7802,7 @@
 		(on_board yes)
 		(in_pos_files yes)
 		(dnp no)
+		(fields_autoplaced yes)
 		(uuid "5fb6af78-cd7f-4270-afbb-cdc9f40c01be")
 		(property "Reference" "#PWR028"
 			(at 219.71 46.99 0)
@@ -7679,17 +7816,19 @@
 			)
 		)
 		(property "Value" "+3.3VA"
-			(at 219.456 57.404 0)
+			(at 222.25 53.3399 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
+				(justify left)
 			)
 		)
 		(property "Footprint" ""
 			(at 219.71 54.61 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -7700,6 +7839,7 @@
 		)
 		(property "Datasheet" ""
 			(at 219.71 54.61 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -7710,6 +7850,7 @@
 		)
 		(property "Description" ""
 			(at 219.71 54.61 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -7740,40 +7881,33 @@
 		(on_board yes)
 		(in_pos_files yes)
 		(dnp no)
+		(fields_autoplaced yes)
 		(uuid "6228fdb1-fe59-439d-ae24-3fc54bb3cde7")
 		(property "Reference" "R1"
-			(at 148.59 119.38 0)
+			(at 151.13 125.7299 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
+				(justify left)
 			)
 		)
 		(property "Value" "1k"
-			(at 148.59 134.62 0)
+			(at 151.13 128.2699 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
-			)
-		)
-		(property "Tolerance" "5%"
-			(at 148.59 134.62 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
+				(justify left)
 			)
 		)
 		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
 			(at 148.59 127 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -7784,6 +7918,7 @@
 		)
 		(property "Datasheet" ""
 			(at 148.59 127 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -7794,6 +7929,18 @@
 		)
 		(property "Description" ""
 			(at 148.59 127 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Tolerance" "5%"
+			(at 148.59 134.62 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -7827,51 +7974,33 @@
 		(on_board yes)
 		(in_pos_files yes)
 		(dnp no)
+		(fields_autoplaced yes)
 		(uuid "66599fb5-234b-4c3a-a6a8-0e52fc471317")
 		(property "Reference" "C11"
-			(at 207.264 50.8 0)
+			(at 205.74 49.5362 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
+				(justify left)
 			)
 		)
 		(property "Value" "100n"
-			(at 198.882 50.8 0)
+			(at 205.74 52.0762 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
-			)
-		)
-		(property "Voltage" "16V"
-			(at 198.882 50.8 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Dielectric" "X7R"
-			(at 198.882 50.8 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
+				(justify left)
 			)
 		)
 		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
 			(at 203.2 50.8 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -7882,6 +8011,7 @@
 		)
 		(property "Datasheet" ""
 			(at 203.2 50.8 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -7892,6 +8022,29 @@
 		)
 		(property "Description" ""
 			(at 203.2 50.8 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Voltage" "16V"
+			(at 198.882 50.8 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Dielectric" "X7R"
+			(at 198.882 50.8 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -7926,9 +8079,10 @@
 		(on_board yes)
 		(in_pos_files yes)
 		(dnp no)
+		(fields_autoplaced yes)
 		(uuid "668e0b0d-221a-45ac-a588-0fb6aea3b2b4")
 		(property "Reference" "J1"
-			(at 147.32 187.96 0)
+			(at 147.32 184.15 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -7938,7 +8092,7 @@
 			)
 		)
 		(property "Value" "SWD+UART"
-			(at 147.32 203.2 0)
+			(at 147.32 186.69 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -7949,6 +8103,7 @@
 		)
 		(property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_1x05_P2.54mm_Vertical"
 			(at 147.32 195.58 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -7959,6 +8114,7 @@
 		)
 		(property "Datasheet" ""
 			(at 147.32 195.58 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -7969,6 +8125,7 @@
 		)
 		(property "Description" ""
 			(at 147.32 195.58 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -8011,51 +8168,33 @@
 		(on_board yes)
 		(in_pos_files yes)
 		(dnp no)
+		(fields_autoplaced yes)
 		(uuid "740c7e76-30e0-421a-af16-92a44a5ab8a2")
 		(property "Reference" "C12"
-			(at 133.35 170.18 0)
+			(at 135.89 176.5362 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
+				(justify left)
 			)
 		)
 		(property "Value" "15p"
-			(at 133.35 185.42 0)
+			(at 135.89 179.0762 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
-			)
-		)
-		(property "Voltage" "50V"
-			(at 133.35 185.42 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Dielectric" "C0G"
-			(at 133.35 185.42 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
+				(justify left)
 			)
 		)
 		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
 			(at 133.35 177.8 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -8066,6 +8205,7 @@
 		)
 		(property "Datasheet" ""
 			(at 133.35 177.8 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -8076,6 +8216,29 @@
 		)
 		(property "Description" ""
 			(at 133.35 177.8 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Voltage" "50V"
+			(at 133.35 185.42 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Dielectric" "C0G"
+			(at 133.35 185.42 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -8109,6 +8272,7 @@
 		(on_board yes)
 		(in_pos_files yes)
 		(dnp no)
+		(fields_autoplaced yes)
 		(uuid "78042357-1a58-475f-afcb-541e9c2be8c2")
 		(property "Reference" "#PWR029"
 			(at 160.02 177.8 0)
@@ -8122,17 +8286,19 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 160.02 193.04 0)
+			(at 162.56 186.6899 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
+				(justify left)
 			)
 		)
 		(property "Footprint" ""
 			(at 160.02 185.42 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -8143,6 +8309,7 @@
 		)
 		(property "Datasheet" ""
 			(at 160.02 185.42 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -8153,6 +8320,7 @@
 		)
 		(property "Description" ""
 			(at 160.02 185.42 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -8183,6 +8351,7 @@
 		(on_board yes)
 		(in_pos_files yes)
 		(dnp no)
+		(fields_autoplaced yes)
 		(uuid "86532f71-67e9-4b8c-a428-62245ebf11e4")
 		(property "Reference" "#PWR030"
 			(at 71.12 55.88 0)
@@ -8196,17 +8365,19 @@
 			)
 		)
 		(property "Value" "+3V3"
-			(at 70.866 59.436 0)
+			(at 73.66 62.2299 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
+				(justify left)
 			)
 		)
 		(property "Footprint" ""
 			(at 71.12 63.5 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -8217,6 +8388,7 @@
 		)
 		(property "Datasheet" ""
 			(at 71.12 63.5 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -8227,6 +8399,7 @@
 		)
 		(property "Description" ""
 			(at 71.12 63.5 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -8257,6 +8430,7 @@
 		(on_board yes)
 		(in_pos_files yes)
 		(dnp no)
+		(fields_autoplaced yes)
 		(uuid "889fdea9-0fc8-40b3-a7fa-f6a47e527d59")
 		(property "Reference" "#PWR031"
 			(at 167.64 100.33 0)
@@ -8270,17 +8444,19 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 167.64 112.268 0)
+			(at 165.1 109.2199 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
+				(justify right)
 			)
 		)
 		(property "Footprint" ""
 			(at 167.64 107.95 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -8291,6 +8467,7 @@
 		)
 		(property "Datasheet" ""
 			(at 167.64 107.95 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -8301,6 +8478,7 @@
 		)
 		(property "Description" ""
 			(at 167.64 107.95 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -8331,51 +8509,33 @@
 		(on_board yes)
 		(in_pos_files yes)
 		(dnp no)
+		(fields_autoplaced yes)
 		(uuid "8a72422b-82b9-406a-a30f-a564c3b327ec")
 		(property "Reference" "C1"
-			(at 226.822 84.328 0)
+			(at 226.06 85.0962 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
+				(justify left)
 			)
 		)
 		(property "Value" "4u7"
-			(at 226.822 89.408 0)
+			(at 226.06 87.6362 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
-			)
-		)
-		(property "Voltage" "16V"
-			(at 226.822 89.408 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Dielectric" "X7R"
-			(at 226.822 89.408 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
+				(justify left)
 			)
 		)
 		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
 			(at 223.52 86.36 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -8386,6 +8546,7 @@
 		)
 		(property "Datasheet" ""
 			(at 223.52 86.36 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -8396,6 +8557,29 @@
 		)
 		(property "Description" ""
 			(at 223.52 86.36 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Voltage" "16V"
+			(at 226.822 89.408 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Dielectric" "X7R"
+			(at 226.822 89.408 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -8429,51 +8613,33 @@
 		(on_board yes)
 		(in_pos_files yes)
 		(dnp no)
+		(fields_autoplaced yes)
 		(uuid "8aaedced-5200-4141-abb3-a1c935599133")
 		(property "Reference" "FB1"
-			(at 189.23 45.72 0)
+			(at 186.69 52.0318 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
+				(justify right)
 			)
 		)
 		(property "Value" "600R"
-			(at 189.23 60.96 0)
+			(at 186.69 54.5718 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
-			)
-		)
-		(property "Tolerance" "25%"
-			(at 189.23 60.96 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Current" "100mA"
-			(at 189.23 60.96 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
+				(justify right)
 			)
 		)
 		(property "Footprint" "Inductor_SMD:L_0603_1608Metric"
 			(at 189.23 53.34 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -8484,6 +8650,7 @@
 		)
 		(property "Datasheet" ""
 			(at 189.23 53.34 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -8494,6 +8661,29 @@
 		)
 		(property "Description" ""
 			(at 189.23 53.34 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Tolerance" "25%"
+			(at 189.23 60.96 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Current" "100mA"
+			(at 189.23 60.96 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -8527,51 +8717,33 @@
 		(on_board yes)
 		(in_pos_files yes)
 		(dnp no)
+		(fields_autoplaced yes)
 		(uuid "8f520d46-6fc8-4b9f-af78-40341bd4ac60")
 		(property "Reference" "C6"
-			(at 98.298 71.12 0)
+			(at 104.14 69.8562 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
+				(justify left)
 			)
 		)
 		(property "Value" "100n"
-			(at 104.394 73.66 0)
+			(at 104.14 72.3962 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
-			)
-		)
-		(property "Voltage" "16V"
-			(at 104.394 73.66 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Dielectric" "X7R"
-			(at 104.394 73.66 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
+				(justify left)
 			)
 		)
 		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
 			(at 101.6 71.12 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -8582,6 +8754,7 @@
 		)
 		(property "Datasheet" ""
 			(at 101.6 71.12 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -8592,6 +8765,29 @@
 		)
 		(property "Description" ""
 			(at 101.6 71.12 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Voltage" "16V"
+			(at 104.394 73.66 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Dielectric" "X7R"
+			(at 104.394 73.66 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -8625,40 +8821,33 @@
 		(on_board yes)
 		(in_pos_files yes)
 		(dnp no)
+		(fields_autoplaced yes)
 		(uuid "8fb0c920-9b67-4f40-a69d-97d9d54b6a14")
 		(property "Reference" "R3"
-			(at 262.89 149.606 0)
+			(at 267.97 148.5899 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
+				(justify left)
 			)
 		)
 		(property "Value" "1k"
-			(at 267.97 149.86 0)
+			(at 267.97 151.1299 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
-			)
-		)
-		(property "Tolerance" "5%"
-			(at 267.97 149.86 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
+				(justify left)
 			)
 		)
 		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
 			(at 265.43 149.86 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -8669,6 +8858,7 @@
 		)
 		(property "Datasheet" ""
 			(at 265.43 149.86 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -8679,6 +8869,18 @@
 		)
 		(property "Description" ""
 			(at 265.43 149.86 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Tolerance" "5%"
+			(at 267.97 149.86 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -8712,9 +8914,10 @@
 		(on_board yes)
 		(in_pos_files yes)
 		(dnp no)
+		(fields_autoplaced yes)
 		(uuid "93114f69-c628-4a0c-a842-587cc0799c7b")
 		(property "Reference" "SW3"
-			(at 261.62 183.896 0)
+			(at 261.62 181.61 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -8724,7 +8927,7 @@
 			)
 		)
 		(property "Value" "USER"
-			(at 261.366 193.294 0)
+			(at 261.62 184.15 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -8735,6 +8938,7 @@
 		)
 		(property "Footprint" "Button_Switch_SMD:SW_Push_1P1T_NO_CK_KSC6xxJ"
 			(at 261.62 189.23 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -8745,6 +8949,7 @@
 		)
 		(property "Datasheet" ""
 			(at 261.62 189.23 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -8755,6 +8960,7 @@
 		)
 		(property "Description" ""
 			(at 261.62 189.23 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -8788,6 +8994,7 @@
 		(on_board yes)
 		(in_pos_files yes)
 		(dnp no)
+		(fields_autoplaced yes)
 		(uuid "9962e1dd-3f89-4c1f-acf4-a27096f05936")
 		(property "Reference" "#PWR032"
 			(at 157.48 187.96 0)
@@ -8801,17 +9008,19 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 157.48 203.2 0)
+			(at 160.02 196.8499 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
+				(justify left)
 			)
 		)
 		(property "Footprint" ""
 			(at 157.48 195.58 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -8822,6 +9031,7 @@
 		)
 		(property "Datasheet" ""
 			(at 157.48 195.58 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -8832,6 +9042,7 @@
 		)
 		(property "Description" ""
 			(at 157.48 195.58 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -8862,40 +9073,33 @@
 		(on_board yes)
 		(in_pos_files yes)
 		(dnp no)
+		(fields_autoplaced yes)
 		(uuid "a7519f51-d38e-41a8-a24b-c01360dafc3f")
 		(property "Reference" "R2"
-			(at 156.718 94.234 0)
+			(at 162.56 92.7099 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
+				(justify left)
 			)
 		)
 		(property "Value" "10k"
-			(at 163.576 93.726 0)
+			(at 162.56 95.2499 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
-			)
-		)
-		(property "Tolerance" "5%"
-			(at 163.576 93.726 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
+				(justify left)
 			)
 		)
 		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
 			(at 160.02 93.98 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -8906,6 +9110,7 @@
 		)
 		(property "Datasheet" ""
 			(at 160.02 93.98 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -8916,6 +9121,18 @@
 		)
 		(property "Description" ""
 			(at 160.02 93.98 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Tolerance" "5%"
+			(at 163.576 93.726 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -8950,29 +9167,33 @@
 		(on_board yes)
 		(in_pos_files yes)
 		(dnp no)
+		(fields_autoplaced yes)
 		(uuid "a9b17b85-49d3-4ab4-a81e-289f1c79ec51")
 		(property "Reference" "U2"
-			(at 103.378 134.62 0)
+			(at 96.52 141.6049 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
+				(justify left)
 			)
 		)
 		(property "Value" "W25Q128JVS"
-			(at 106.68 137.922 0)
+			(at 96.52 144.1449 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
+				(justify left)
 			)
 		)
 		(property "Footprint" "Package_SO:SOIC-8_5.3x5.3mm_P1.27mm"
 			(at 110.49 142.24 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -8983,6 +9204,7 @@
 		)
 		(property "Datasheet" ""
 			(at 110.49 142.24 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -8993,6 +9215,7 @@
 		)
 		(property "Description" ""
 			(at 110.49 142.24 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -9044,9 +9267,10 @@
 		(on_board yes)
 		(in_pos_files yes)
 		(dnp no)
+		(fields_autoplaced yes)
 		(uuid "ac8a4df9-6f14-4321-a834-792e11037b21")
 		(property "Reference" "Y1"
-			(at 147.066 160.274 0)
+			(at 147.32 158.75 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -9056,39 +9280,18 @@
 			)
 		)
 		(property "Value" "12MHz"
-			(at 147.32 172.72 0)
+			(at 147.32 161.29 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
-			)
-		)
-		(property "Tolerance" "30ppm"
-			(at 147.32 172.72 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Load" "10pF"
-			(at 147.32 172.72 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
 			)
 		)
 		(property "Footprint" "Crystal:Crystal_SMD_3225-4Pin_3.2x2.5mm"
 			(at 147.32 165.1 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -9099,6 +9302,7 @@
 		)
 		(property "Datasheet" ""
 			(at 147.32 165.1 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -9109,6 +9313,29 @@
 		)
 		(property "Description" ""
 			(at 147.32 165.1 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Tolerance" "30ppm"
+			(at 147.32 172.72 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Load" "10pF"
+			(at 147.32 172.72 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -9148,6 +9375,7 @@
 		(on_board yes)
 		(in_pos_files yes)
 		(dnp no)
+		(fields_autoplaced yes)
 		(uuid "b888b6db-f6ad-4b19-a08b-107b5726127c")
 		(property "Reference" "#PWR033"
 			(at 110.49 116.84 0)
@@ -9161,17 +9389,19 @@
 			)
 		)
 		(property "Value" "+3V3"
-			(at 109.982 120.396 0)
+			(at 113.03 123.1899 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
+				(justify left)
 			)
 		)
 		(property "Footprint" ""
 			(at 110.49 124.46 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -9182,6 +9412,7 @@
 		)
 		(property "Datasheet" ""
 			(at 110.49 124.46 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -9192,6 +9423,7 @@
 		)
 		(property "Description" ""
 			(at 110.49 124.46 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -9222,6 +9454,7 @@
 		(on_board yes)
 		(in_pos_files yes)
 		(dnp no)
+		(fields_autoplaced yes)
 		(uuid "b970043e-d12c-4987-a354-9bbbe77c8e77")
 		(property "Reference" "#PWR034"
 			(at 200.66 182.88 0)
@@ -9235,17 +9468,19 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 200.66 198.12 0)
+			(at 198.12 191.7699 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
+				(justify right)
 			)
 		)
 		(property "Footprint" ""
 			(at 200.66 190.5 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -9256,6 +9491,7 @@
 		)
 		(property "Datasheet" ""
 			(at 200.66 190.5 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -9266,6 +9502,7 @@
 		)
 		(property "Description" ""
 			(at 200.66 190.5 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -9297,9 +9534,10 @@
 		(on_board yes)
 		(in_pos_files yes)
 		(dnp no)
+		(fields_autoplaced yes)
 		(uuid "bba6ffdc-b4c6-4032-ac44-a3df8b87f330")
 		(property "Reference" "D1"
-			(at 273.304 155.448 0)
+			(at 272.9865 153.67 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -9309,7 +9547,7 @@
 			)
 		)
 		(property "Value" "red"
-			(at 273.05 163.068 0)
+			(at 272.9865 156.21 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -9320,6 +9558,7 @@
 		)
 		(property "Footprint" "LED_SMD:LED_0603_1608Metric"
 			(at 273.05 160.02 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -9330,6 +9569,7 @@
 		)
 		(property "Datasheet" ""
 			(at 273.05 160.02 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -9340,6 +9580,7 @@
 		)
 		(property "Description" ""
 			(at 273.05 160.02 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -9373,6 +9614,7 @@
 		(on_board yes)
 		(in_pos_files yes)
 		(dnp no)
+		(fields_autoplaced yes)
 		(uuid "c6ab9f7c-6116-4f69-ab17-57d572b77f25")
 		(property "Reference" "#PWR035"
 			(at 189.23 38.1 0)
@@ -9386,17 +9628,19 @@
 			)
 		)
 		(property "Value" "+3V3"
-			(at 188.976 41.656 0)
+			(at 191.77 44.4499 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
+				(justify left)
 			)
 		)
 		(property "Footprint" ""
 			(at 189.23 45.72 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -9407,6 +9651,7 @@
 		)
 		(property "Datasheet" ""
 			(at 189.23 45.72 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -9417,6 +9662,7 @@
 		)
 		(property "Description" ""
 			(at 189.23 45.72 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -9447,51 +9693,33 @@
 		(on_board yes)
 		(in_pos_files yes)
 		(dnp no)
+		(fields_autoplaced yes)
 		(uuid "ca125423-191d-4f51-a4f2-98733d4306c5")
 		(property "Reference" "C3"
-			(at 67.818 71.12 0)
+			(at 68.58 69.8562 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
+				(justify right)
 			)
 		)
 		(property "Value" "10u"
-			(at 73.914 73.66 0)
+			(at 68.58 72.3962 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
-			)
-		)
-		(property "Voltage" "16V"
-			(at 73.914 73.66 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Dielectric" "X7R"
-			(at 73.914 73.66 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
+				(justify right)
 			)
 		)
 		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
 			(at 71.12 71.12 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -9502,6 +9730,7 @@
 		)
 		(property "Datasheet" ""
 			(at 71.12 71.12 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -9512,6 +9741,29 @@
 		)
 		(property "Description" ""
 			(at 71.12 71.12 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Voltage" "16V"
+			(at 73.914 73.66 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Dielectric" "X7R"
+			(at 73.914 73.66 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -9545,6 +9797,7 @@
 		(on_board yes)
 		(in_pos_files yes)
 		(dnp no)
+		(fields_autoplaced yes)
 		(uuid "cdcb0b17-056e-4060-a88e-7f7998252636")
 		(property "Reference" "#PWR036"
 			(at 137.16 91.44 0)
@@ -9558,17 +9811,19 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 137.16 106.68 0)
+			(at 134.62 100.3299 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
+				(justify right)
 			)
 		)
 		(property "Footprint" ""
 			(at 137.16 99.06 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -9579,6 +9834,7 @@
 		)
 		(property "Datasheet" ""
 			(at 137.16 99.06 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -9589,6 +9845,7 @@
 		)
 		(property "Description" ""
 			(at 137.16 99.06 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -9619,51 +9876,33 @@
 		(on_board yes)
 		(in_pos_files yes)
 		(dnp no)
+		(fields_autoplaced yes)
 		(uuid "d53adb8d-7cd3-4961-ac0e-2b2cf172111d")
 		(property "Reference" "C14"
-			(at 163.83 104.14 0)
+			(at 165.1 102.8762 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
+				(justify right)
 			)
 		)
 		(property "Value" "100n"
-			(at 173.482 104.14 0)
+			(at 165.1 105.4162 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
-			)
-		)
-		(property "Voltage" "16V"
-			(at 173.482 104.14 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Dielectric" "X7R"
-			(at 173.482 104.14 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
+				(justify right)
 			)
 		)
 		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
 			(at 167.64 104.14 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -9674,6 +9913,7 @@
 		)
 		(property "Datasheet" ""
 			(at 167.64 104.14 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -9684,6 +9924,29 @@
 		)
 		(property "Description" ""
 			(at 167.64 104.14 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Voltage" "16V"
+			(at 173.482 104.14 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Dielectric" "X7R"
+			(at 173.482 104.14 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -9717,6 +9980,7 @@
 		(on_board yes)
 		(in_pos_files yes)
 		(dnp no)
+		(fields_autoplaced yes)
 		(uuid "d7144a16-53c3-424c-a110-9c683a40c9e9")
 		(property "Reference" "#PWR037"
 			(at 133.35 177.8 0)
@@ -9730,17 +9994,19 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 133.35 193.04 0)
+			(at 135.89 186.6899 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
+				(justify left)
 			)
 		)
 		(property "Footprint" ""
 			(at 133.35 185.42 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -9751,6 +10017,7 @@
 		)
 		(property "Datasheet" ""
 			(at 133.35 185.42 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -9761,6 +10028,7 @@
 		)
 		(property "Description" ""
 			(at 133.35 185.42 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -9791,51 +10059,33 @@
 		(on_board yes)
 		(in_pos_files yes)
 		(dnp no)
+		(fields_autoplaced yes)
 		(uuid "d81fa5a2-363d-4068-a6bb-83e36c098079")
 		(property "Reference" "C4"
-			(at 77.978 71.12 0)
+			(at 78.74 69.8562 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
+				(justify right)
 			)
 		)
 		(property "Value" "100n"
-			(at 84.074 73.66 0)
+			(at 78.74 72.3962 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
-			)
-		)
-		(property "Voltage" "16V"
-			(at 84.074 73.66 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Dielectric" "X7R"
-			(at 84.074 73.66 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
+				(justify right)
 			)
 		)
 		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
 			(at 81.28 71.12 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -9846,6 +10096,7 @@
 		)
 		(property "Datasheet" ""
 			(at 81.28 71.12 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -9856,6 +10107,29 @@
 		)
 		(property "Description" ""
 			(at 81.28 71.12 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Voltage" "16V"
+			(at 84.074 73.66 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Dielectric" "X7R"
+			(at 84.074 73.66 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -9889,6 +10163,7 @@
 		(on_board yes)
 		(in_pos_files yes)
 		(dnp no)
+		(fields_autoplaced yes)
 		(uuid "d9271990-efcd-4137-a2d3-4e64e33d14c2")
 		(property "Reference" "#PWR038"
 			(at 233.68 86.36 0)
@@ -9902,17 +10177,19 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 238.252 95.504 0)
+			(at 236.22 95.2499 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
+				(justify left)
 			)
 		)
 		(property "Footprint" ""
 			(at 233.68 93.98 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -9923,6 +10200,7 @@
 		)
 		(property "Datasheet" ""
 			(at 233.68 93.98 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -9933,6 +10211,7 @@
 		)
 		(property "Description" ""
 			(at 233.68 93.98 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -9963,6 +10242,7 @@
 		(on_board yes)
 		(in_pos_files yes)
 		(dnp no)
+		(fields_autoplaced yes)
 		(uuid "dbfb4d0b-636b-4d77-a44a-64b2fcb44fa3")
 		(property "Reference" "#PWR039"
 			(at 203.2 50.8 0)
@@ -9976,17 +10256,19 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 203.2 66.04 0)
+			(at 205.74 59.6899 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
+				(justify left)
 			)
 		)
 		(property "Footprint" ""
 			(at 203.2 58.42 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -9997,6 +10279,7 @@
 		)
 		(property "Datasheet" ""
 			(at 203.2 58.42 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -10007,6 +10290,7 @@
 		)
 		(property "Description" ""
 			(at 203.2 58.42 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -10037,51 +10321,33 @@
 		(on_board yes)
 		(in_pos_files yes)
 		(dnp no)
+		(fields_autoplaced yes)
 		(uuid "dc1b2ba9-ebf3-4da2-ae8d-b57363b1f3f3")
 		(property "Reference" "C2"
-			(at 237.49 85.344 0)
+			(at 236.22 85.0962 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
+				(justify left)
 			)
 		)
 		(property "Value" "100n"
-			(at 237.236 89.154 0)
+			(at 236.22 87.6362 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
-			)
-		)
-		(property "Voltage" "16V"
-			(at 237.236 89.154 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Dielectric" "X7R"
-			(at 237.236 89.154 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
+				(justify left)
 			)
 		)
 		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
 			(at 233.68 86.36 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -10092,6 +10358,7 @@
 		)
 		(property "Datasheet" ""
 			(at 233.68 86.36 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -10102,6 +10369,29 @@
 		)
 		(property "Description" ""
 			(at 233.68 86.36 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Voltage" "16V"
+			(at 237.236 89.154 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Dielectric" "X7R"
+			(at 237.236 89.154 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -10148,17 +10438,19 @@
 			)
 		)
 		(property "Value" "+3V3"
-			(at 185.42 85.09 0)
+			(at 182.372 84.836 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
+				(justify left)
 			)
 		)
 		(property "Footprint" ""
 			(at 185.42 88.9 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -10169,6 +10461,7 @@
 		)
 		(property "Datasheet" ""
 			(at 185.42 88.9 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -10179,6 +10472,7 @@
 		)
 		(property "Description" ""
 			(at 185.42 88.9 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -10210,9 +10504,10 @@
 		(on_board yes)
 		(in_pos_files yes)
 		(dnp no)
+		(fields_autoplaced yes)
 		(uuid "efa05c75-511b-48e7-a82e-8245c398fad4")
 		(property "Reference" "D2"
-			(at 261.62 168.402 0)
+			(at 261.5565 166.37 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -10222,7 +10517,7 @@
 			)
 		)
 		(property "Value" "green"
-			(at 261.874 176.022 0)
+			(at 261.5565 168.91 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -10233,6 +10528,7 @@
 		)
 		(property "Footprint" "LED_SMD:LED_0603_1608Metric"
 			(at 261.62 172.72 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -10243,6 +10539,7 @@
 		)
 		(property "Datasheet" ""
 			(at 261.62 172.72 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -10253,6 +10550,7 @@
 		)
 		(property "Description" ""
 			(at 261.62 172.72 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -10286,6 +10584,7 @@
 		(on_board yes)
 		(in_pos_files yes)
 		(dnp no)
+		(fields_autoplaced yes)
 		(uuid "fdac3340-3fed-49d0-a5e2-5539dc2cd13c")
 		(property "Reference" "#PWR041"
 			(at 228.6 68.58 0)
@@ -10299,17 +10598,19 @@
 			)
 		)
 		(property "Value" "+1V1"
-			(at 228.6 71.12 0)
+			(at 231.14 74.9299 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
+				(justify left)
 			)
 		)
 		(property "Footprint" ""
 			(at 228.6 76.2 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -10320,6 +10621,7 @@
 		)
 		(property "Datasheet" ""
 			(at 228.6 76.2 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -10330,6 +10632,7 @@
 		)
 		(property "Description" ""
 			(at 228.6 76.2 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects

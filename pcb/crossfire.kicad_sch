@@ -312,6 +312,16 @@
 	)
 	(wire
 		(pts
+			(xy 95.25 167.64) (xy 95.25 170.18)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "1cf557d2-088c-40a9-b008-822fe3c0fd52")
+	)
+	(wire
+		(pts
 			(xy 71.12 68.58) (xy 76.2 68.58)
 		)
 		(stroke
@@ -602,6 +612,16 @@
 	)
 	(wire
 		(pts
+			(xy 38.1 167.64) (xy 38.1 170.18)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "8d17e31d-1f6e-45e8-982b-cad86d009988")
+	)
+	(wire
+		(pts
 			(xy 325.12 106.68) (xy 330.2 106.68)
 		)
 		(stroke
@@ -719,6 +739,16 @@
 			(type solid)
 		)
 		(uuid "ce4785e4-214e-4435-ad66-75f64fc6036f")
+	)
+	(wire
+		(pts
+			(xy 76.2 167.64) (xy 76.2 170.18)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "d07f9b43-a300-4ad5-aef8-3c6442cab37e")
 	)
 	(wire
 		(pts
@@ -872,6 +902,16 @@
 	)
 	(wire
 		(pts
+			(xy 57.15 167.64) (xy 57.15 170.18)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "f0cf06e8-c7e7-4a72-9fcd-ed721f8cb6fb")
+	)
+	(wire
+		(pts
 			(xy 233.68 25.4) (xy 238.76 25.4)
 		)
 		(stroke
@@ -920,7 +960,7 @@
 		)
 		(uuid "07a9710d-6642-4101-ab44-630000e66640")
 	)
-	(label "P4_DM"
+	(label "P4_D-"
 		(at 157.48 144.78 0)
 		(effects
 			(font
@@ -940,7 +980,7 @@
 		)
 		(uuid "09dd671d-2327-44e2-ae1c-3eceaa53e8b2")
 	)
-	(label "P4_DP"
+	(label "P4_D+"
 		(at 157.48 142.24 0)
 		(effects
 			(font
@@ -950,7 +990,7 @@
 		)
 		(uuid "0d7e9c3d-7082-4487-a2ba-64c63b06e29e")
 	)
-	(label "P1_DM"
+	(label "P1_D-"
 		(at 259.08 106.68 0)
 		(effects
 			(font
@@ -960,7 +1000,7 @@
 		)
 		(uuid "0ecdbeaf-fc0c-4597-a77b-2b0f7896dc1b")
 	)
-	(label "P2_DM"
+	(label "P2_D-"
 		(at 157.48 124.46 0)
 		(effects
 			(font
@@ -990,7 +1030,7 @@
 		)
 		(uuid "1340e5a4-75ce-47fc-a818-30c4b20d428c")
 	)
-	(label "USB_DM"
+	(label "USB_D-"
 		(at 76.2 66.04 0)
 		(effects
 			(font
@@ -1040,7 +1080,7 @@
 		)
 		(uuid "215a49d8-96fb-4b6b-a474-fb9b46cff5c8")
 	)
-	(label "P1_DM"
+	(label "P1_D-"
 		(at 157.48 114.3 0)
 		(effects
 			(font
@@ -1120,7 +1160,7 @@
 		)
 		(uuid "400e4e30-928f-4700-a4bf-334a6517a88f")
 	)
-	(label "PIO_DP"
+	(label "PIO_D+"
 		(at 157.48 27.94 0)
 		(effects
 			(font
@@ -1160,7 +1200,7 @@
 		)
 		(uuid "4b593fd7-70c6-43a0-aa97-815272af0613")
 	)
-	(label "P4_DP"
+	(label "P4_D+"
 		(at 330.2 144.78 0)
 		(effects
 			(font
@@ -1170,7 +1210,7 @@
 		)
 		(uuid "4cecb033-d258-4b44-ab7b-eb93d0ecf3dd")
 	)
-	(label "P4_DM"
+	(label "P4_D-"
 		(at 330.2 147.32 0)
 		(effects
 			(font
@@ -1190,7 +1230,7 @@
 		)
 		(uuid "56fc1a13-bfa9-4fdb-bd81-b4e1e9158ef1")
 	)
-	(label "USB_DP"
+	(label "USB_D+"
 		(at 157.48 22.86 0)
 		(effects
 			(font
@@ -1220,7 +1260,7 @@
 		)
 		(uuid "5ae4a316-a99c-40e8-a553-cc61937eec5c")
 	)
-	(label "USB_DP"
+	(label "USB_D+"
 		(at 76.2 63.5 0)
 		(effects
 			(font
@@ -1230,7 +1270,7 @@
 		)
 		(uuid "601de3e0-36bf-47fb-a356-11f0c0afb7d0")
 	)
-	(label "P2_DP"
+	(label "P2_D+"
 		(at 330.2 104.14 0)
 		(effects
 			(font
@@ -1250,7 +1290,7 @@
 		)
 		(uuid "63394abc-27a5-4be5-aeec-77a357918da5")
 	)
-	(label "P3_DP"
+	(label "P3_D+"
 		(at 259.08 144.78 0)
 		(effects
 			(font
@@ -1260,7 +1300,7 @@
 		)
 		(uuid "6743d217-3398-4e21-a308-d02a547f8cb7")
 	)
-	(label "P2_DP"
+	(label "P2_D+"
 		(at 157.48 121.92 0)
 		(effects
 			(font
@@ -1340,7 +1380,7 @@
 		)
 		(uuid "7b9473a3-ac7a-4626-a61c-d35cb85293c0")
 	)
-	(label "PIO_DM"
+	(label "PIO_D-"
 		(at 157.48 30.48 0)
 		(effects
 			(font
@@ -1370,7 +1410,7 @@
 		)
 		(uuid "91517699-33b5-41ec-abef-1bf4f2729931")
 	)
-	(label "PIO_DP"
+	(label "PIO_D+"
 		(at 157.48 104.14 0)
 		(effects
 			(font
@@ -1390,7 +1430,7 @@
 		)
 		(uuid "98553995-25ea-4746-a980-2c87dee6af58")
 	)
-	(label "P3_DM"
+	(label "P3_D-"
 		(at 157.48 134.62 0)
 		(effects
 			(font
@@ -1440,7 +1480,7 @@
 		)
 		(uuid "cac4759d-cb3b-4237-af73-7fd7522b3960")
 	)
-	(label "USB_DM"
+	(label "USB_D-"
 		(at 157.48 25.4 0)
 		(effects
 			(font
@@ -1460,7 +1500,7 @@
 		)
 		(uuid "d29aed5f-15cb-45ae-aed8-90e7cf8cf874")
 	)
-	(label "PIO_DM"
+	(label "PIO_D-"
 		(at 157.48 106.68 0)
 		(effects
 			(font
@@ -1500,7 +1540,7 @@
 		)
 		(uuid "d9e8c1e3-6f73-4efd-ab29-97baafe4e20d")
 	)
-	(label "P2_DM"
+	(label "P2_D-"
 		(at 330.2 106.68 0)
 		(effects
 			(font
@@ -1510,7 +1550,7 @@
 		)
 		(uuid "dc138fcf-c2f0-41c4-ab2f-2c9a6ed1cd8b")
 	)
-	(label "P1_DP"
+	(label "P1_D+"
 		(at 157.48 111.76 0)
 		(effects
 			(font
@@ -1520,7 +1560,7 @@
 		)
 		(uuid "e5b4190d-408a-410f-a24a-96cde1b028bf")
 	)
-	(label "P1_DP"
+	(label "P1_D+"
 		(at 259.08 104.14 0)
 		(effects
 			(font
@@ -1540,7 +1580,7 @@
 		)
 		(uuid "eab6e55e-39c2-4dab-a48a-9917a482b24f")
 	)
-	(label "P3_DP"
+	(label "P3_D+"
 		(at 157.48 132.08 0)
 		(effects
 			(font
@@ -1560,7 +1600,7 @@
 		)
 		(uuid "fc9c200c-4423-4bfa-a77b-c11923255990")
 	)
-	(label "P3_DM"
+	(label "P3_D-"
 		(at 259.08 147.32 0)
 		(effects
 			(font
@@ -1569,6 +1609,630 @@
 			(justify left bottom)
 		)
 		(uuid "fe71097a-4332-4a69-a926-8f0e0cdd6d42")
+	)
+	(symbol
+		(lib_id "Mechanical:MountingHole_Pad")
+		(at 95.25 165.1 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "1b15afdd-15ac-48c8-ab2c-6a8f65d9bfa9")
+		(property "Reference" "H4"
+			(at 95.25 171.45 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "MountingHole_Pad"
+			(at 95.25 169.54 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "MountingHole:MountingHole_3.2mm_M3_Pad"
+			(at 95.25 165.1 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 95.25 165.1 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" ""
+			(at 95.25 165.1 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "d3e3ef4f-bddc-48df-a4cd-35242bbb0755")
+		)
+		(instances
+			(project "crossfire"
+				(path "/4c5cdd13-4f54-43b0-affb-0ae4b9a4d279"
+					(reference "H4")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 76.2 170.18 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "4a84fae7-16b0-4d02-a303-9bf3346f393d")
+		(property "Reference" "#PWR117"
+			(at 76.2 173.99 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "GND"
+			(at 76.2 166.37 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" ""
+			(at 76.2 170.18 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 76.2 170.18 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" ""
+			(at 76.2 170.18 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "255449f2-bb66-47ab-8c79-20883173c176")
+		)
+		(instances
+			(project "crossfire"
+				(path "/4c5cdd13-4f54-43b0-affb-0ae4b9a4d279"
+					(reference "#PWR117")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Mechanical:MountingHole_Pad")
+		(at 76.2 165.1 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "93911851-95f2-4df9-90b0-9c62a6613897")
+		(property "Reference" "H3"
+			(at 76.2 171.45 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "MountingHole_Pad"
+			(at 76.2 169.54 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "MountingHole:MountingHole_3.2mm_M3_Pad"
+			(at 76.2 165.1 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 76.2 165.1 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" ""
+			(at 76.2 165.1 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "2e2d361a-6b97-4d38-9801-26e2ae478c6d")
+		)
+		(instances
+			(project "crossfire"
+				(path "/4c5cdd13-4f54-43b0-affb-0ae4b9a4d279"
+					(reference "H3")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 38.1 170.18 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "a4e00396-d8ad-45f0-8fb8-cbf90bebadc6")
+		(property "Reference" "#PWR115"
+			(at 38.1 173.99 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "GND"
+			(at 38.1 166.37 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" ""
+			(at 38.1 170.18 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 38.1 170.18 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" ""
+			(at 38.1 170.18 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "6aa6708f-7c9e-4f1d-b7ae-5c515d6e01f0")
+		)
+		(instances
+			(project "crossfire"
+				(path "/4c5cdd13-4f54-43b0-affb-0ae4b9a4d279"
+					(reference "#PWR115")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 57.15 170.18 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "d4dff260-24ce-4977-94d5-8dfcd62e7b83")
+		(property "Reference" "#PWR116"
+			(at 57.15 173.99 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "GND"
+			(at 57.15 166.37 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" ""
+			(at 57.15 170.18 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 57.15 170.18 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" ""
+			(at 57.15 170.18 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "25a962aa-bddf-4db5-b0b9-43789e87b231")
+		)
+		(instances
+			(project "crossfire"
+				(path "/4c5cdd13-4f54-43b0-affb-0ae4b9a4d279"
+					(reference "#PWR116")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Mechanical:MountingHole_Pad")
+		(at 38.1 165.1 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "deb4feb9-50b1-4848-8da6-90ea59f3f223")
+		(property "Reference" "H1"
+			(at 38.1 171.45 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "MountingHole_Pad"
+			(at 38.1 169.54 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "MountingHole:MountingHole_3.2mm_M3_Pad"
+			(at 38.1 165.1 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 38.1 165.1 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" ""
+			(at 38.1 165.1 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "0eece83c-6e00-4ef4-a2e6-d52ec5f81642")
+		)
+		(instances
+			(project "crossfire"
+				(path "/4c5cdd13-4f54-43b0-affb-0ae4b9a4d279"
+					(reference "H1")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 95.25 170.18 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "e97dce5d-afe6-4cdb-b830-f017598dac35")
+		(property "Reference" "#PWR118"
+			(at 95.25 173.99 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "GND"
+			(at 95.25 166.37 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" ""
+			(at 95.25 170.18 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 95.25 170.18 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" ""
+			(at 95.25 170.18 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "43c1de1e-8c48-492a-9f3a-40e79968cc32")
+		)
+		(instances
+			(project "crossfire"
+				(path "/4c5cdd13-4f54-43b0-affb-0ae4b9a4d279"
+					(reference "#PWR118")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Mechanical:MountingHole_Pad")
+		(at 57.15 165.1 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "f4967c7e-7de6-48e4-ad83-9e9c0b386a92")
+		(property "Reference" "H2"
+			(at 57.15 171.45 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "MountingHole_Pad"
+			(at 57.15 169.54 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "MountingHole:MountingHole_3.2mm_M3_Pad"
+			(at 57.15 165.1 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 57.15 165.1 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" ""
+			(at 57.15 165.1 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "df5111fb-30cd-4914-b886-82c96643eae1")
+		)
+		(instances
+			(project "crossfire"
+				(path "/4c5cdd13-4f54-43b0-affb-0ae4b9a4d279"
+					(reference "H2")
+					(unit 1)
+				)
+			)
+		)
 	)
 	(sheet
 		(at 274.32 142.24)
@@ -1610,7 +2274,7 @@
 				(justify left top)
 			)
 		)
-		(pin "DP" bidirectional
+		(pin "D+" bidirectional
 			(at 325.12 144.78 0)
 			(uuid "b87f7528-c12d-48ee-acf4-8b40ed7b3933")
 			(effects
@@ -1620,7 +2284,7 @@
 				(justify right)
 			)
 		)
-		(pin "DM" bidirectional
+		(pin "D-" bidirectional
 			(at 325.12 147.32 0)
 			(uuid "7c35b39f-9b98-402f-ade2-8ad3570e57d6")
 			(effects
@@ -1796,7 +2460,7 @@
 				(justify left top)
 			)
 		)
-		(pin "USB_DP" bidirectional
+		(pin "USB_D+" bidirectional
 			(at 152.4 22.86 0)
 			(uuid "b195d282-21af-435b-a62e-1c981ccb68b2")
 			(effects
@@ -1806,7 +2470,7 @@
 				(justify right)
 			)
 		)
-		(pin "USB_DM" bidirectional
+		(pin "USB_D-" bidirectional
 			(at 152.4 25.4 0)
 			(uuid "fc1aa5a3-e5ae-4653-a2af-dffcde79f9ff")
 			(effects
@@ -1816,7 +2480,7 @@
 				(justify right)
 			)
 		)
-		(pin "PIO_DP" bidirectional
+		(pin "PIO_D+" bidirectional
 			(at 152.4 27.94 0)
 			(uuid "090316e1-72aa-4e3d-aaf5-891a5c825f1c")
 			(effects
@@ -1826,7 +2490,7 @@
 				(justify right)
 			)
 		)
-		(pin "PIO_DM" bidirectional
+		(pin "PIO_D-" bidirectional
 			(at 152.4 30.48 0)
 			(uuid "0b67232a-0098-48d1-ad11-bdca82a3d9e3")
 			(effects
@@ -1984,7 +2648,7 @@
 				(justify left top)
 			)
 		)
-		(pin "DP" bidirectional
+		(pin "D+" bidirectional
 			(at 254 144.78 0)
 			(uuid "40abc72b-35aa-40e6-a6cb-55ada78234e8")
 			(effects
@@ -1994,7 +2658,7 @@
 				(justify right)
 			)
 		)
-		(pin "DM" bidirectional
+		(pin "D-" bidirectional
 			(at 254 147.32 0)
 			(uuid "7092099f-32ea-427f-a4fa-e7a87f957575")
 			(effects
@@ -2072,7 +2736,7 @@
 				(justify left top)
 			)
 		)
-		(pin "PIO_DP" bidirectional
+		(pin "PIO_D+" bidirectional
 			(at 152.4 104.14 0)
 			(uuid "d9726b30-4ac6-4b20-ac13-612a4eb75f34")
 			(effects
@@ -2082,7 +2746,7 @@
 				(justify right)
 			)
 		)
-		(pin "PIO_DM" bidirectional
+		(pin "PIO_D-" bidirectional
 			(at 152.4 106.68 0)
 			(uuid "e7189672-910a-4fdf-aa2f-ecbd47ec4d52")
 			(effects
@@ -2102,7 +2766,7 @@
 				(justify right)
 			)
 		)
-		(pin "P1_DP" bidirectional
+		(pin "P1_D+" bidirectional
 			(at 152.4 111.76 0)
 			(uuid "37411208-5e4c-4f80-a044-dd14c6e8c677")
 			(effects
@@ -2112,7 +2776,7 @@
 				(justify right)
 			)
 		)
-		(pin "P1_DM" bidirectional
+		(pin "P1_D-" bidirectional
 			(at 152.4 114.3 0)
 			(uuid "505e0515-bbec-4d68-aa75-2f3b57ead246")
 			(effects
@@ -2142,7 +2806,7 @@
 				(justify right)
 			)
 		)
-		(pin "P2_DP" bidirectional
+		(pin "P2_D+" bidirectional
 			(at 152.4 121.92 0)
 			(uuid "33a8e191-588b-4529-af7e-f6e60d0aee17")
 			(effects
@@ -2152,7 +2816,7 @@
 				(justify right)
 			)
 		)
-		(pin "P2_DM" bidirectional
+		(pin "P2_D-" bidirectional
 			(at 152.4 124.46 0)
 			(uuid "414ba876-8316-453e-af3b-06a57b0b5b60")
 			(effects
@@ -2182,7 +2846,7 @@
 				(justify right)
 			)
 		)
-		(pin "P3_DP" bidirectional
+		(pin "P3_D+" bidirectional
 			(at 152.4 132.08 0)
 			(uuid "240fedce-3788-479c-abef-75fdd833eda6")
 			(effects
@@ -2192,7 +2856,7 @@
 				(justify right)
 			)
 		)
-		(pin "P3_DM" bidirectional
+		(pin "P3_D-" bidirectional
 			(at 152.4 134.62 0)
 			(uuid "92d6ea67-f497-4dee-a137-b8d62722cba9")
 			(effects
@@ -2222,7 +2886,7 @@
 				(justify right)
 			)
 		)
-		(pin "P4_DP" bidirectional
+		(pin "P4_D+" bidirectional
 			(at 152.4 142.24 0)
 			(uuid "1d34b1b9-1a8e-4a0e-a1c7-5e3ca0fd96fb")
 			(effects
@@ -2232,7 +2896,7 @@
 				(justify right)
 			)
 		)
-		(pin "P4_DM" bidirectional
+		(pin "P4_D-" bidirectional
 			(at 152.4 144.78 0)
 			(uuid "afff2f59-02b6-4993-a46a-3a572901115a")
 			(effects
@@ -2398,7 +3062,7 @@
 				(justify left top)
 			)
 		)
-		(pin "DP" bidirectional
+		(pin "D+" bidirectional
 			(at 254 104.14 0)
 			(uuid "dae82648-b7f2-428d-a389-9af5e57f71be")
 			(effects
@@ -2408,7 +3072,7 @@
 				(justify right)
 			)
 		)
-		(pin "DM" bidirectional
+		(pin "D-" bidirectional
 			(at 254 106.68 0)
 			(uuid "22a0274a-eeb7-4db1-a5be-014abb4908e5")
 			(effects
@@ -2486,7 +3150,7 @@
 				(justify left top)
 			)
 		)
-		(pin "USB_DP" bidirectional
+		(pin "USB_D+" bidirectional
 			(at 71.12 63.5 0)
 			(uuid "db7f1b6d-87e1-489f-a890-36763e7dcffb")
 			(effects
@@ -2496,7 +3160,7 @@
 				(justify right)
 			)
 		)
-		(pin "USB_DM" bidirectional
+		(pin "USB_D-" bidirectional
 			(at 71.12 66.04 0)
 			(uuid "17e20c51-e697-4bd9-a162-02f44c9bd102")
 			(effects
@@ -2662,7 +3326,7 @@
 				(justify left top)
 			)
 		)
-		(pin "DP" bidirectional
+		(pin "D+" bidirectional
 			(at 325.12 104.14 0)
 			(uuid "5329df0e-007f-493f-a316-745cac4b74d6")
 			(effects
@@ -2672,7 +3336,7 @@
 				(justify right)
 			)
 		)
-		(pin "DM" bidirectional
+		(pin "D-" bidirectional
 			(at 325.12 106.68 0)
 			(uuid "4e398832-1ee0-4765-a184-a7ce1bc89ccd")
 			(effects
@@ -2709,670 +3373,6 @@
 				)
 			)
 		)
-	)
-	(symbol
-		(lib_id "Mechanical:MountingHole_Pad")
-		(at 38.10 165.10 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(uuid "deb4feb9-50b1-4848-8da6-90ea59f3f223")
-		(property "Reference" "H1"
-			(at 38.10 171.45 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "MountingHole_Pad"
-			(at 38.10 169.54 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "MountingHole:MountingHole_3.2mm_M3_Pad"
-			(at 38.10 165.10 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 38.10 165.10 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 38.10 165.10 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "0eece83c-6e00-4ef4-a2e6-d52ec5f81642")
-		)
-		(instances
-			(project "crossfire"
-				(path "/4c5cdd13-4f54-43b0-affb-0ae4b9a4d279"
-					(reference "H1")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "power:GND")
-		(at 38.10 170.18 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(uuid "a4e00396-d8ad-45f0-8fb8-cbf90bebadc6")
-		(property "Reference" "#PWR115"
-			(at 38.10 173.99 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "GND"
-			(at 38.10 166.37 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" ""
-			(at 38.10 170.18 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 38.10 170.18 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 38.10 170.18 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "6aa6708f-7c9e-4f1d-b7ae-5c515d6e01f0")
-		)
-		(instances
-			(project "crossfire"
-				(path "/4c5cdd13-4f54-43b0-affb-0ae4b9a4d279"
-					(reference "#PWR115")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(wire
-		(pts
-			(xy 38.10 167.64) (xy 38.10 170.18)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "8d17e31d-1f6e-45e8-982b-cad86d009988")
-	)
-	(symbol
-		(lib_id "Mechanical:MountingHole_Pad")
-		(at 57.15 165.10 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(uuid "f4967c7e-7de6-48e4-ad83-9e9c0b386a92")
-		(property "Reference" "H2"
-			(at 57.15 171.45 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "MountingHole_Pad"
-			(at 57.15 169.54 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "MountingHole:MountingHole_3.2mm_M3_Pad"
-			(at 57.15 165.10 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 57.15 165.10 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 57.15 165.10 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "df5111fb-30cd-4914-b886-82c96643eae1")
-		)
-		(instances
-			(project "crossfire"
-				(path "/4c5cdd13-4f54-43b0-affb-0ae4b9a4d279"
-					(reference "H2")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "power:GND")
-		(at 57.15 170.18 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(uuid "d4dff260-24ce-4977-94d5-8dfcd62e7b83")
-		(property "Reference" "#PWR116"
-			(at 57.15 173.99 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "GND"
-			(at 57.15 166.37 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" ""
-			(at 57.15 170.18 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 57.15 170.18 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 57.15 170.18 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "25a962aa-bddf-4db5-b0b9-43789e87b231")
-		)
-		(instances
-			(project "crossfire"
-				(path "/4c5cdd13-4f54-43b0-affb-0ae4b9a4d279"
-					(reference "#PWR116")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(wire
-		(pts
-			(xy 57.15 167.64) (xy 57.15 170.18)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "f0cf06e8-c7e7-4a72-9fcd-ed721f8cb6fb")
-	)
-	(symbol
-		(lib_id "Mechanical:MountingHole_Pad")
-		(at 76.20 165.10 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(uuid "93911851-95f2-4df9-90b0-9c62a6613897")
-		(property "Reference" "H3"
-			(at 76.20 171.45 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "MountingHole_Pad"
-			(at 76.20 169.54 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "MountingHole:MountingHole_3.2mm_M3_Pad"
-			(at 76.20 165.10 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 76.20 165.10 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 76.20 165.10 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "2e2d361a-6b97-4d38-9801-26e2ae478c6d")
-		)
-		(instances
-			(project "crossfire"
-				(path "/4c5cdd13-4f54-43b0-affb-0ae4b9a4d279"
-					(reference "H3")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "power:GND")
-		(at 76.20 170.18 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(uuid "4a84fae7-16b0-4d02-a303-9bf3346f393d")
-		(property "Reference" "#PWR117"
-			(at 76.20 173.99 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "GND"
-			(at 76.20 166.37 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" ""
-			(at 76.20 170.18 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 76.20 170.18 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 76.20 170.18 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "255449f2-bb66-47ab-8c79-20883173c176")
-		)
-		(instances
-			(project "crossfire"
-				(path "/4c5cdd13-4f54-43b0-affb-0ae4b9a4d279"
-					(reference "#PWR117")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(wire
-		(pts
-			(xy 76.20 167.64) (xy 76.20 170.18)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "d07f9b43-a300-4ad5-aef8-3c6442cab37e")
-	)
-	(symbol
-		(lib_id "Mechanical:MountingHole_Pad")
-		(at 95.25 165.10 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(uuid "1b15afdd-15ac-48c8-ab2c-6a8f65d9bfa9")
-		(property "Reference" "H4"
-			(at 95.25 171.45 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "MountingHole_Pad"
-			(at 95.25 169.54 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "MountingHole:MountingHole_3.2mm_M3_Pad"
-			(at 95.25 165.10 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 95.25 165.10 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 95.25 165.10 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "d3e3ef4f-bddc-48df-a4cd-35242bbb0755")
-		)
-		(instances
-			(project "crossfire"
-				(path "/4c5cdd13-4f54-43b0-affb-0ae4b9a4d279"
-					(reference "H4")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "power:GND")
-		(at 95.25 170.18 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(uuid "e97dce5d-afe6-4cdb-b830-f017598dac35")
-		(property "Reference" "#PWR118"
-			(at 95.25 173.99 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "GND"
-			(at 95.25 166.37 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" ""
-			(at 95.25 170.18 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 95.25 170.18 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 95.25 170.18 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "43c1de1e-8c48-492a-9f3a-40e79968cc32")
-		)
-		(instances
-			(project "crossfire"
-				(path "/4c5cdd13-4f54-43b0-affb-0ae4b9a4d279"
-					(reference "#PWR118")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(wire
-		(pts
-			(xy 95.25 167.64) (xy 95.25 170.18)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "1cf557d2-088c-40a9-b008-822fe3c0fd52")
 	)
 	(sheet_instances
 		(path "/"
