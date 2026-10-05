@@ -377,12 +377,20 @@ is metal a screw into a metal standoff should join that system deliberately rath
 whatever it happens to touch, and if the enclosure is plastic the bond does nothing and costs
 nothing. The decision that cannot be undone without a new board is the one to leave the pads off.
 
-**Where they go is open again.** The four positions were derived around a power section and a
-radio that are no longer on the board, so they are to be re-derived with the new placement. The
-figure that fixed them still stands: 8 mm of clear diameter for each, because an M3 head is 5.5 mm
-and a washer 7 mm, and a hole only the drill clears is one that cannot be done up. So does the
-consequence for the enclosure: nothing can come within about 16 mm of the row of sockets, which is
-exactly where a plug is pushed in, so the enclosure has to carry that row on a ledge.
+**Two go in the back corners and two go between the sockets.** Each needs about 7 mm of clear
+diameter, because an M3 head is 5.5 mm and a washer 7 mm, and a hole only the drill clears is one
+that cannot be done up. The gap between one socket's body and the next is 8.1 mm, which takes a hole
+with half a millimetre to spare each side -- so the front pair sit in the first and third gaps,
+4.5 mm from the front edge, right where a plug is pushed in. That is better than the earlier
+arrangement could manage, where nothing came within 16 mm of the socket row and the enclosure had to
+carry it on a ledge.
+
+| | position | |
+| --- | --- | --- |
+| H1 | 4.0, 4.0 | back left corner |
+| H2 | 96.2, 3.8 | back right corner, beside the buttons |
+| H3 | 24.6, 39.5 | between the first and second sockets |
+| H4 | 75.4, 39.5 | between the third and fourth |
 
 **Each capacitor's package is chosen from how much of it has to survive its own bias.** The
 question is not how much capacitance is printed on the part but how much is there once the voltage
@@ -498,11 +506,13 @@ The heavy rails are expected to end up as poured copper rather than track, so th
 is the floor for any stub that *is* tracked, not a plan for how the current gets there. There is no
 separate signal class: the default *is* the signal class, which is one fewer thing to keep in step.
 
-**The outline is 100 x 80 mm** with 1.5 mm corners. The 100 is not a choice -- it is what four
-receptacles at 25.4 mm centres plus edge margin come to. The 80 is an estimate from what has to fit
-behind them, and is expected to tighten once placement is real rather than guessed. The corners were
-3 mm until the outer two receptacles were placed: a 3 mm radius cuts across the corner far enough to
-reach their shield pads, so the radius is set by the parts nearest the corners rather than by taste.
+**The outline is 100 x 44 mm** with 1.5 mm corners. The 100 is not a choice -- it is what four
+receptacles at 25.4 mm centres plus edge margin come to. The 44 is what is left once the power
+section has gone: 22 mm for the sockets with their switches behind them, and one row of everything
+else behind that. It was 80 with the charger, the cell's connector and the radio on board. The
+corners were 3 mm until the outer two receptacles were placed: a 3 mm radius cuts across the corner
+far enough to reach their shield pads, so the radius is set by the parts nearest the corners rather
+than by taste.
 
 **The board is designed at the origin and placed on the sheet last**, and those are deliberately two
 different things. Designing at the origin is what makes every position here readable -- a part at
@@ -525,14 +535,41 @@ carrying nothing.
 
 ### Layout
 
-**The layout is to be redone for this design.** The board file is in step with the schematic --
-every part that went has gone from it with its copper, every part that stayed is on its new net, and
-the new parts are loaded -- but the area the power section occupied is empty, the new converter and
-the sense parts are not placed, and the 5 V rail has no path yet from the upstream connector to the
-port switches.
+**Every part is placed, and each passive's own connections are drawn. The signals between the big
+parts are not.** That is the state of the board, and it is a deliberate stopping point: what is done
+is what a rule decides, and what is left is the pairs and the buses, which want a person.
 
-The first layout taught a method, and the method carries over even though the parts it was learned
-on do not. The record of how each rule was arrived at is in the history with that design; the rules
+The floor plan is one row behind the sockets, read left to right in the order the signals flow:
+
+| | what | why there |
+| --- | --- | --- |
+| left edge | the upstream connector, facing left, with its protection array behind it | one cable out of the side, away from the four at the front |
+| top left | the 3.3 V converter, its inductor and capacitors | beside the connector whose 5 V it takes |
+| centre left | the flash, then the processor **turned a quarter turn** | turned, its USB, flash and regulator pins face the connector and the flash, and its host pair faces the hub |
+| centre right | the hub, also turned a quarter turn | turned, its upstream pins and crystal face the processor and its four downstream pairs face the sockets |
+| top right | three buttons along the back edge, the debug header below them, the indicators at the right edge | where a hand reaches them on a bare board |
+| front | four sockets, each with its switch, its bypass and its bulk capacitor directly behind it, and its protection array on the back under its pins | |
+
+**The quarter turns are the plan.** Each part's pins are grouped by function along its four sides,
+and with both parts square to the board every important group faced the wrong neighbour. Turned,
+the upstream pair runs straight from the connector to the processor, the host pair is a few
+millimetres from processor to hub, and the four downstream pairs leave the hub already pointing at
+the sockets. Two strips are kept empty of parts for them: one from the connector to the processor,
+and one across the full width between the hub and the socket row.
+
+**The second inner layer is split where the current runs.** 5 V takes a strip down the left edge,
+under the connector and the converter's input, and the whole band under the sockets, so the 3 A
+from the connector to the port switches is carried by a plane and no track. 3.3 V takes the rest.
+
+Sixty-two passives were then placed one at a time in order of importance, each at the nearest
+position from which its own connections could actually be drawn, and drawn there: crystals and the
+core regulator first, then the converter's loop, the input and port bypasses, one decoupling
+capacitor to each supply pin, and last the parts that carry no current. Eight of the last group are
+placed but not connected -- the hub's bias, strap and series resistors among them -- because by
+then the space beside a 0.5 mm pitch part is spoken for. They are short hand routes.
+
+The first layout taught the method, and it carries over even though the parts it was learned on do
+not. The record of how each rule was arrived at is in the history with that design; the rules
 themselves:
 
 * **Place and route in order of importance.** A part is not placed until everything more important
@@ -705,9 +742,9 @@ source is required to have one.
   and that the processor's pad draws nothing from it with its digital input disabled.
 - **What the ports do at the bottom of the input range**: the lowest VBUS at which the instruments
   that matter still run, since the board no longer regulates what it passes on.
-- **The layout**, which is to be redone: where the upstream connector sits now that it is the only
-  one, how 3 A reaches the far edge, where the four mounting holes go, and whether the outline can
-  shrink from 100 x 80 mm now that half of what was behind the sockets has gone.
+- **The routing between the big parts**: the six pairs, the flash bus, the port power and fault
+  lines, the debug header, and the eight small parts that are placed but not yet connected. Ground
+  stitching follows the routing, since a stitching via placed first is in a track's way.
 
 The largest piece of work this board creates is not on the board: **a full-speed USB host in PIO**,
 carrying the existing host stack on a new transport. Its shape is known — eight methods, with the
