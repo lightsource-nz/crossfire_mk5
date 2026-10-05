@@ -663,28 +663,8 @@
     "netclass_assignments": null,
     "netclass_patterns": [
       {
-        "netclass": "Battery",
-        "pattern": "/power/VSYS"
-      },
-      {
-        "netclass": "Battery",
-        "pattern": "/power/BATT"
-      },
-      {
         "netclass": "Power+",
         "pattern": "+5V"
-      },
-      {
-        "netclass": "Power+",
-        "pattern": "/VBUS_PD"
-      },
-      {
-        "netclass": "Power+",
-        "pattern": "/VBUS_DATA"
-      },
-      {
-        "netclass": "Power+",
-        "pattern": "/power/VBUS_CHG"
       },
       {
         "netclass": "Power",
@@ -715,176 +695,108 @@
         "pattern": "Net-(J5-VBUS)"
       },
       {
-        "netclass": "USB",
-        "pattern": "/P1_DP"
-      },
-      {
-        "netclass": "USB",
-        "pattern": "/P1_DM"
-      },
-      {
-        "netclass": "USB",
-        "pattern": "/P2_DP"
-      },
-      {
-        "netclass": "USB",
-        "pattern": "/P2_DM"
-      },
-      {
-        "netclass": "USB",
-        "pattern": "/P3_DP"
-      },
-      {
-        "netclass": "USB",
-        "pattern": "/P3_DM"
-      },
-      {
-        "netclass": "USB",
-        "pattern": "/P4_DP"
-      },
-      {
-        "netclass": "USB",
-        "pattern": "/P4_DM"
-      },
-      {
-        "netclass": "USB",
-        "pattern": "/PIO_DP"
-      },
-      {
-        "netclass": "USB",
-        "pattern": "/PIO_DM"
-      },
-      {
-        "netclass": "USB",
-        "pattern": "/USB_DP"
-      },
-      {
-        "netclass": "USB",
-        "pattern": "/USB_DM"
-      },
-      {
-        "netclass": "USB",
-        "pattern": "Net-(J2-D+)"
-      },
-      {
-        "netclass": "USB",
-        "pattern": "Net-(J2-D-)"
-      },
-      {
-        "netclass": "USB",
-        "pattern": "Net-(J3-D+)"
-      },
-      {
-        "netclass": "USB",
-        "pattern": "Net-(J3-D-)"
-      },
-      {
-        "netclass": "USB",
-        "pattern": "Net-(J4-D+)"
-      },
-      {
-        "netclass": "USB",
-        "pattern": "Net-(J4-D-)"
-      },
-      {
-        "netclass": "USB",
-        "pattern": "Net-(J5-D+)"
-      },
-      {
-        "netclass": "USB",
-        "pattern": "Net-(J5-D-)"
-      },
-      {
-        "netclass": "USB",
-        "pattern": "Net-(J6-D+-PadA6)"
-      },
-      {
-        "netclass": "USB",
-        "pattern": "Net-(J6-D--PadA7)"
-      },
-      {
-        "netclass": "USB",
-        "pattern": "Net-(U3-USBDP_UP)"
-      },
-      {
-        "netclass": "USB",
-        "pattern": "Net-(U3-USBDM_UP)"
+        "netclass": "Converter",
+        "pattern": "Net-(U14-SW)"
       },
       {
         "netclass": "Converter",
-        "pattern": "Net-(U13-PMID)"
+        "pattern": "Net-(U14-BST)"
       },
       {
-        "netclass": "Converter",
-        "pattern": "/power/REGN"
+        "netclass": "USB",
+        "pattern": "/P1_D+"
       },
       {
-        "netclass": "Converter",
-        "pattern": "/power/BATT_SW"
+        "netclass": "USB",
+        "pattern": "/P1_D-"
       },
       {
-        "netclass": "Converter",
-        "pattern": "Net-(U13-BTST1)"
+        "netclass": "USB",
+        "pattern": "/P2_D+"
       },
       {
-        "netclass": "Converter",
-        "pattern": "Net-(U13-BTST2)"
+        "netclass": "USB",
+        "pattern": "/P2_D-"
       },
       {
-        "netclass": "Converter",
-        "pattern": "Net-(U13-SW1)"
+        "netclass": "USB",
+        "pattern": "/P3_D+"
       },
       {
-        "netclass": "Converter",
-        "pattern": "Net-(U13-SW2)"
+        "netclass": "USB",
+        "pattern": "/P3_D-"
       },
       {
-        "netclass": "Converter",
-        "pattern": "Net-(U14-L1)"
+        "netclass": "USB",
+        "pattern": "/P4_D+"
       },
       {
-        "netclass": "Converter",
-        "pattern": "Net-(U14-L2)"
+        "netclass": "USB",
+        "pattern": "/P4_D-"
       },
       {
-        "netclass": "Converter",
-        "pattern": "Net-(U14-FB)"
+        "netclass": "USB",
+        "pattern": "/PIO_D+"
       },
       {
-        "netclass": "Converter",
-        "pattern": "Net-(U14-VAUX)"
+        "netclass": "USB",
+        "pattern": "/PIO_D-"
       },
       {
-        "netclass": "Converter",
-        "pattern": "Net-(U15-SW)"
+        "netclass": "USB",
+        "pattern": "/USB_D+"
       },
       {
-        "netclass": "Converter",
-        "pattern": "Net-(U15-BOOT)"
+        "netclass": "USB",
+        "pattern": "/USB_D-"
       },
       {
-        "netclass": "Converter",
-        "pattern": "Net-(U15-FB)"
+        "netclass": "USB",
+        "pattern": "/hub/UP_D+"
       },
       {
-        "netclass": "Converter",
-        "pattern": "Net-(U15-EN)"
+        "netclass": "USB",
+        "pattern": "/hub/UP_D-"
       },
       {
-        "netclass": "Converter",
-        "pattern": "Net-(U15-COMP)"
+        "netclass": "USB",
+        "pattern": "/port1/CONN_D+"
       },
       {
-        "netclass": "Converter",
-        "pattern": "Net-(U15-VCC)"
+        "netclass": "USB",
+        "pattern": "/port1/CONN_D-"
       },
       {
-        "netclass": "Converter",
-        "pattern": "Net-(U15-ILIM)"
+        "netclass": "USB",
+        "pattern": "/port2/CONN_D+"
       },
       {
-        "netclass": "Converter",
-        "pattern": "Net-(U15-FSW)"
+        "netclass": "USB",
+        "pattern": "/port2/CONN_D-"
+      },
+      {
+        "netclass": "USB",
+        "pattern": "/port3/CONN_D+"
+      },
+      {
+        "netclass": "USB",
+        "pattern": "/port3/CONN_D-"
+      },
+      {
+        "netclass": "USB",
+        "pattern": "/port4/CONN_D+"
+      },
+      {
+        "netclass": "USB",
+        "pattern": "/port4/CONN_D-"
+      },
+      {
+        "netclass": "USB",
+        "pattern": "/upstream_data/J6_D+"
+      },
+      {
+        "netclass": "USB",
+        "pattern": "/upstream_data/J6_D-"
       }
     ]
   },
