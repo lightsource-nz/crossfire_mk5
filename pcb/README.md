@@ -403,9 +403,11 @@ to the pin matters more than the package.
 ### Footprints
 
 **Every part carries a footprint.** Most are decided the moment the part is -- a SOT-23-5 is a
-SOT-23-5 -- and the capacitors' came out of the reasoning above. The resistors are all 0603 rather
-than 0402: the board has room, the first one runs bare on a bench, and a part you can get a probe or
-an iron onto is worth more there than the millimetre it saves.
+SOT-23-5 -- and the capacitors' came out of the reasoning above. The resistors are all 0402. They
+were 0603, on the argument that the first board runs bare on a bench and a part you can get a probe
+or an iron onto is worth the millimetre; beside two fine-pitch parts the millimetre turned out to be
+worth more. Nothing electrical changes: the largest dissipation in any of them is a few milliwatts
+against a sixteenth of a watt. The two indicators stay 0603, since they are there to be seen.
 
 **A footprint chosen by body size and pin count is not checked.** The hub's was wrong by 0.2 mm in
 each direction when it was picked that way. Its datasheet tabulates a **recommended** land pattern,
