@@ -545,17 +545,19 @@ The floor plan is one row behind the sockets, read left to right in the order th
 | --- | --- | --- |
 | left edge | the upstream connector, facing left, with its protection array behind it | one cable out of the side, away from the four at the front |
 | top left | the 3.3 V converter, its inductor and capacitors | beside the connector whose 5 V it takes |
-| centre left | the flash, then the processor **turned a quarter turn** | turned, its USB, flash and regulator pins face the connector and the flash, and its host pair faces the hub |
-| centre right | the hub, also turned a quarter turn | turned, its upstream pins and crystal face the processor and its four downstream pairs face the sockets |
+| centre left | the processor **turned a half turn**, its crystal above it and its flash below it | turned, its flash and USB pins face down to the flash and the connector's pair, its host pair faces the hub, its crystal and the debug, reset, button and indicator pins face the back edge, and its two ADC pins face the connector's CC senses |
+| centre right | the hub, turned a quarter turn, **level with the processor's host pair** | turned, its upstream pins and crystal face the processor and its four downstream pairs face the sockets; raised so the host pair is one straight run across the gap |
 | top right | three buttons along the back edge, the debug header below them, the indicators at the right edge | where a hand reaches them on a bare board |
 | front | four sockets, each with its switch, its bypass and its bulk capacitor directly behind it, and its protection array on the back under its pins | |
 
-**The quarter turns are the plan.** Each part's pins are grouped by function along its four sides,
-and with both parts square to the board every important group faced the wrong neighbour. Turned,
-the upstream pair runs straight from the connector to the processor, the host pair is a few
-millimetres from processor to hub, and the four downstream pairs leave the hub already pointing at
-the sockets. Two strips are kept empty of parts for them: one from the connector to the processor,
-and one across the full width between the hub and the socket row.
+**The turns are the plan.** Each part's pins are grouped by function along its four sides, and
+with both parts square to the board every important group faced the wrong neighbour. Turned, the
+host pair is one straight run across the gap from processor to hub with nothing in it, the flash
+sits under the pins that talk to it, the crystal under its own, the upstream pair drops off the
+bottom row and runs left to the connector, and the four downstream pairs leave the hub already
+pointing at the sockets. The cost is the back edge: the crystal sits where the debug, reset, button
+and indicator pins come out, so those slow lines go under it on the back layer for their first few
+millimetres.
 
 **The second inner layer is split where the current runs.** 5 V takes a strip down the left edge,
 under the connector and the converter's input, and the whole band under the sockets, so the 3 A
