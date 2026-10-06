@@ -600,6 +600,14 @@ themselves:
 * **Ground goes down through a via at the pad.** A ground track is drawn only where a loop is being
   closed on the surface; anywhere else it is copper the pour would have supplied, except that the
   pour gives way to a signal and a track does not.
+* **And the via is *in* the pad, both pads, wherever the pad is 0.5 mm or more across** -- which is
+  every capacitor on the board. A via beside a pad costs a stub and the width of the via on both
+  faces, so a capacitor with two of them takes three times its own room; one inside each pad takes
+  none, and the loop through it is the shortest there is. It is 0.4 mm on a 0.2 mm hole, and it
+  puts one question to the fabricator: an open hole in a reflowed pad draws solder down the barrel,
+  so the vias want filling and capping, or the risk of a starved joint on a 0402 is accepted.
+  Blind vias would free a little of the back face as well and are not worth a second lamination
+  for it; buried vias free nothing on the surface at all.
 * **A pour must join at least two things**, and a track is used wherever a track fits.
 * **A short run is sized by its resistance**, not by a width table: a class width states what the
   run carries, and the escape from a narrow pin is necked to the pin.
@@ -752,6 +760,8 @@ source is required to have one.
   4.7 uH inductor and the bootstrap capacitor are the usual figures for this part at this output and
   were entered from memory of its application circuit, not read off it for this design. The
   inductor's part number and saturation current want settling at the same time.
+- **The fabricator's answer on vias in pads**: filled and capped, at what cost, or open 0.2 mm
+  holes with the wicking risk accepted. Every capacitor's plane connection depends on it.
 - **The capacitance on VBUS at attach**, measured against the 10 µF USB allows, with the bias curve
   of the 10 µF part actually bought.
 - **The CC reading on real sources.** The thresholds are the specification's; what wants seeing is
