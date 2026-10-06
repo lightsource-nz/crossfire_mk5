@@ -573,10 +573,14 @@ to go. So every used signal pin on the part a capacitor serves owns the strip of
 from it, two millimetres or so, far enough for a track to get clear of the pin field. A position is
 charged for each strip the capacitor's body would cross, more the closer to the pin, and the
 capacitor settles where that charge is least: beside an unused pin, at a corner, or a little further
-out. The decoupling capacitors ended up 1.1 to 3 mm from their pins instead of 0.4 to 1.1, which is
-still a short loop, and the signal pass that followed reached eleven more connections than it had
-before. Four small parts are placed but not connected: the hub's bias resistor, one of its straps,
-one of its upstream series resistors, and the VBUS sense divider.
+out. That alone was not enough -- half of them still sat against the package, beside pins that
+happened to be unused -- so each fine-pitch part also keeps a ring 0.9 mm wide round its body that
+no other part may enter, and every group of signals has a strip of its own that no part may enter:
+the upstream pair, the CC senses, the flash bus, the host pair, the debug and button lines up to the
+back edge, and the four downstream pairs down to their sockets. The decoupling capacitors ended up
+1.6 to 6 mm from their pins, joined at 0.4 mm rather than at the rail's width, since a wide track
+beside a pin row is a wall of its own. Two small parts are placed but not connected: the hub's bias
+resistor and the VBUS sense divider.
 
 The first layout taught the method, and it carries over even though the parts it was learned on do
 not. The record of how each rule was arrived at is in the history with that design; the rules
