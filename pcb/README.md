@@ -579,7 +579,10 @@ charged for each strip the capacitor's body would cross, more the closer to the 
 capacitor settles where that charge is least: beside an unused pin, at a corner, or a little further
 out. That alone was not enough -- half of them still sat against the package, beside pins that
 happened to be unused -- so each fine-pitch part also keeps a ring 0.9 mm wide round its body that
-no other part may enter, and every group of signals has a strip of its own that no part may enter:
+no other part may enter. The exception is a part that exists to sit at one pin -- the hub's bias
+resistor and its two filter capacitors -- which goes inside the ring and goes down first, before the
+crystal; kept out, those three landed five millimetres away and could not get back in. And every
+group of signals has a strip of its own that no part may enter:
 the upstream pair, the CC senses, the flash bus, the host pair, the debug and button lines up to the
 back edge, and the four downstream pairs down to their sockets. The decoupling capacitors ended up
 1.6 to 6 mm from their pins, joined at 0.4 mm rather than at the rail's width, since a wide track
