@@ -564,9 +564,19 @@ from the connector to the port switches is carried by a plane and no track. 3.3 
 Sixty-two passives were then placed one at a time in order of importance, each at the nearest
 position from which its own connections could actually be drawn, and drawn there: crystals and the
 core regulator first, then the converter's loop, the input and port bypasses, one decoupling
-capacitor to each supply pin, and last the parts that carry no current. Eight of the last group are
-placed but not connected -- the hub's bias, strap and series resistors among them -- because by
-then the space beside a 0.5 mm pitch part is spoken for. They are short hand routes.
+capacitor to each supply pin, and last the parts that carry no current.
+
+**"Nearest" is not nearest to the pin; it is nearest without standing in a neighbour's way.** The
+first attempt put every decoupling capacitor hard against its pin, which is what every layout note
+says to do, and walled both fine-pitch parts in: the signal pins between the capacitors had nowhere
+to go. So every used signal pin on the part a capacitor serves owns the strip of board straight out
+from it, two millimetres or so, far enough for a track to get clear of the pin field. A position is
+charged for each strip the capacitor's body would cross, more the closer to the pin, and the
+capacitor settles where that charge is least: beside an unused pin, at a corner, or a little further
+out. The decoupling capacitors ended up 1.1 to 3 mm from their pins instead of 0.4 to 1.1, which is
+still a short loop, and the signal pass that followed reached eleven more connections than it had
+before. Four small parts are placed but not connected: the hub's bias resistor, one of its straps,
+one of its upstream series resistors, and the VBUS sense divider.
 
 The first layout taught the method, and it carries over even though the parts it was learned on do
 not. The record of how each rule was arrived at is in the history with that design; the rules
@@ -578,8 +588,9 @@ themselves:
 * **A converter's loop capacitors go down before its inductor**, against the pins, and the inductor
   before any signal. The loops that matter run capacitor to switch and back; the inductor is in
   neither, and can give way.
-* **Every signal pin on a fine-pitch part gets its escape before anything is allowed near it.**
-  Capacitors placed with only body clearance wall the signal pins in.
+* **Every signal pin on a fine-pitch part keeps its escape, and the capacitors go round it.**
+  Capacitors placed with only body clearance wall the signal pins in; a capacitor a millimetre
+  further out costs the loop almost nothing and the signals everything.
 * **Ground goes down through a via at the pad.** A ground track is drawn only where a loop is being
   closed on the surface; anywhere else it is copper the pour would have supplied, except that the
   pour gives way to a signal and a track does not.
