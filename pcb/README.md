@@ -389,8 +389,8 @@ carry it on a ledge.
 | --- | --- | --- |
 | H1 | 4.0, 4.0 | back left corner |
 | H2 | 96.2, 3.8 | back right corner, beside the buttons |
-| H3 | 24.6, 39.5 | between the first and second sockets |
-| H4 | 75.4, 39.5 | between the third and fourth |
+| H3 | 24.6, 49.5 | between the first and second sockets |
+| H4 | 75.4, 49.5 | between the third and fourth |
 
 **Each capacitor's package is chosen from how much of it has to survive its own bias.** The
 question is not how much capacitance is printed on the part but how much is there once the voltage
@@ -508,10 +508,11 @@ The heavy rails are expected to end up as poured copper rather than track, so th
 is the floor for any stub that *is* tracked, not a plan for how the current gets there. There is no
 separate signal class: the default *is* the signal class, which is one fewer thing to keep in step.
 
-**The outline is 100 x 44 mm** with 1.5 mm corners. The 100 is not a choice -- it is what four
-receptacles at 25.4 mm centres plus edge margin come to. The 44 is what is left once the power
-section has gone: 22 mm for the sockets with their switches behind them, and one row of everything
-else behind that. It was 80 with the charger, the cell's connector and the radio on board. The
+**The outline is 100 x 54 mm** with 1.5 mm corners. The 100 is not a choice -- it is what four
+receptacles at 25.4 mm centres plus edge margin come to. The 54 is 22 mm for the sockets with their
+switches behind them, one row of everything else behind that, and ten millimetres behind *that* for
+the signals to run in: the board was 44 for a while, every part fitted, and the lines between the
+parts did not. It was 80 with the charger, the cell's connector and the radio on board. The
 corners were 3 mm until the outer two receptacles were placed: a 3 mm radius cuts across the corner
 far enough to reach their shield pads, so the radius is set by the parts nearest the corners rather
 than by taste.
