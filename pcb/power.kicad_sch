@@ -1464,7 +1464,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_1206_3216Metric"
+		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
 			(at 205.74 101.6 0)
 			(hide yes)
 			(show_name no)
@@ -1497,7 +1497,7 @@
 				)
 			)
 		)
-		(property "Voltage" "16V"
+		(property "Voltage" "6.3V"
 			(at 205.74 109.22 0)
 			(hide yes)
 			(show_name no)
@@ -1508,7 +1508,7 @@
 				)
 			)
 		)
-		(property "Dielectric" "X7R"
+		(property "Dielectric" "X5R"
 			(at 205.74 109.22 0)
 			(hide yes)
 			(show_name no)
@@ -2569,7 +2569,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
+		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
 			(at 116.84 101.6 0)
 			(hide yes)
 			(show_name no)
@@ -2602,7 +2602,7 @@
 				)
 			)
 		)
-		(property "Voltage" "25V"
+		(property "Voltage" "10V"
 			(at 116.84 109.22 0)
 			(hide yes)
 			(show_name no)
@@ -2613,7 +2613,7 @@
 				)
 			)
 		)
-		(property "Dielectric" "X7R"
+		(property "Dielectric" "X5R"
 			(at 116.84 109.22 0)
 			(hide yes)
 			(show_name no)
@@ -3273,7 +3273,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_1206_3216Metric"
+		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
 			(at 198.12 101.6 0)
 			(hide yes)
 			(show_name no)
@@ -3306,7 +3306,7 @@
 				)
 			)
 		)
-		(property "Voltage" "16V"
+		(property "Voltage" "6.3V"
 			(at 198.12 109.22 0)
 			(hide yes)
 			(show_name no)
@@ -3317,7 +3317,7 @@
 				)
 			)
 		)
-		(property "Dielectric" "X7R"
+		(property "Dielectric" "X5R"
 			(at 198.12 109.22 0)
 			(hide yes)
 			(show_name no)

@@ -268,7 +268,8 @@ reach is able to present.
 
 | what it decouples | rating | dielectric |
 | --- | --- | --- |
-| the core rail, 3.3 V, the bootstrap and the internal filter nodes | 16 V | X7R |
+| 3.3 V, the bootstrap and the internal filter nodes | 16 V | X7R |
+| the core rail and the regulator's own capacitors (1.1 V and 3.3 V, 4.7 uF in 0402) | **6.3 V** | X5R |
 | the 5 V rail and each port's own output | 25 V | X7R |
 | the connector side — the capacitor at the receptacle and the two on the CC senses | **50 V** | X7R |
 | crystal loads | 50 V | **C0G** |
@@ -395,10 +396,20 @@ carry it on a ledge.
 **Each capacitor's package is chosen from how much of it has to survive its own bias.** The
 question is not how much capacitance is printed on the part but how much is there once the voltage
 is across it. On this board the question has an upper bound as well as a lower one: the 10 uF at the
-buck's input is in 0805, which keeps enough of itself at 5 V for the converter and loses enough to
-stay inside what USB allows a device to present at attach. The 22 uF parts at the 3.3 V output and
-at each port are in 1206, a long way up their own curves. Decoupling goes to 0402, where being close
-to the pin matters more than the package.
+buck's input is in 0603, which keeps enough of itself at 5 V for the converter and loses enough to
+stay inside what USB allows a device to present at attach. The 22 uF parts at the 3.3 V output are
+in 0603 too, on a 3.3 V rail they are a long way up their own curves; the ones at each port are
+1206. Decoupling goes to 0402, where being close to the pin matters more than the package.
+
+**The processor's regulator takes the vendor's parts, not ours.** Its own hardware design guide
+puts 4.7 uF in **0402** on the regulator's input (`VREG_VIN`), on its output (the core rail), and
+on its analogue supply -- and the analogue supply is fed through **33 ohms** from 3.3 V, because
+"the VREG_AVDD supply is very sensitive to noise, and therefore needs to be filtered" and draws
+only about 200 uA. This board had the input and output capacitors as 10 uF and 4.7 uF in 0805, and
+no filter at all. All three are now as the vendor has them (C3, C1, and R5 with C16), which also
+takes two parts from 3.5 x 2 mm down to 1.9 x 1 mm beside the pin field, which is where there was
+no room. The same guide accepts one 100 nF shared between `USB_OTP_VDD` and `QSPI_IOVDD` for the
+same reason, and places the boot button's resistor at the flash.
 
 ### Footprints
 
