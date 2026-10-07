@@ -941,7 +941,7 @@
         "uuid": "4c5cdd13-4f54-43b0-affb-0ae4b9a4d279"
       }
     ],
-    "used_designators": "",
+    "used_designators": "C15",
     "variants": []
   },
   "sheets": [
@@ -950,20 +950,12 @@
       "crossfire"
     ],
     [
-      "642c224c-a7f8-48f8-a755-d35ebfb11807",
-      "upstream_power"
-    ],
-    [
       "9de577d2-4349-45dc-ab43-167b038179a9",
       "upstream_data"
     ],
     [
       "4cdbbf45-e559-4c12-a33c-465c1e579944",
       "mcu"
-    ],
-    [
-      "c356c4a8-f574-471d-abef-beeac4495940",
-      "radio"
     ],
     [
       "3a0d800d-f868-47e5-a520-4703480651cc",

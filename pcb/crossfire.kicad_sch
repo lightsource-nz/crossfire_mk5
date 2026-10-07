@@ -422,6 +422,16 @@
 	)
 	(wire
 		(pts
+			(xy 71.12 68.58) (xy 76.2 68.58)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "64eb6815-9d11-419b-bf54-684d0ae8910b")
+	)
+	(wire
+		(pts
 			(xy 152.4 63.5) (xy 157.48 63.5)
 		)
 		(stroke
@@ -482,6 +492,26 @@
 	)
 	(wire
 		(pts
+			(xy 152.4 35.56) (xy 157.48 35.56)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "88cef47a-a614-43a0-a5d2-18b77f86bec0")
+	)
+	(wire
+		(pts
+			(xy 152.4 38.1) (xy 157.48 38.1)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "8901260a-29c1-4aae-8dd7-f5e99f563601")
+	)
+	(wire
+		(pts
 			(xy 152.4 106.68) (xy 157.48 106.68)
 		)
 		(stroke
@@ -499,6 +529,16 @@
 			(type default)
 		)
 		(uuid "8d17e31d-1f6e-45e8-982b-cad86d009988")
+	)
+	(wire
+		(pts
+			(xy 71.12 73.66) (xy 76.2 73.66)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "8e9f7d6c-7fa6-4ebd-b02e-950866bfb1b4")
 	)
 	(wire
 		(pts
@@ -940,6 +980,16 @@
 		)
 		(uuid "56fc1a13-bfa9-4fdb-bd81-b4e1e9158ef1")
 	)
+	(label "CC2_SENSE"
+		(at 76.2 73.66 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "57c8b7dc-0a94-4ad4-a3e2-ff69e0d2d3e1")
+	)
 	(label "USB_D+"
 		(at 157.48 22.86 0)
 		(effects
@@ -999,6 +1049,16 @@
 			(justify left bottom)
 		)
 		(uuid "6743d217-3398-4e21-a308-d02a547f8cb7")
+	)
+	(label "CC2_SENSE"
+		(at 157.48 38.1 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "69207d34-aa7b-4ac9-bdde-1b9056b98e0e")
 	)
 	(label "P2_D+"
 		(at 157.48 121.92 0)
@@ -1089,6 +1149,16 @@
 			(justify left bottom)
 		)
 		(uuid "a383860e-f901-4eea-a163-d20f67e56ed7")
+	)
+	(label "CC1_SENSE"
+		(at 76.2 68.58 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "b3c20966-5a23-4e0e-a848-f81ff86a6cd4")
 	)
 	(label "P1_PWR"
 		(at 157.48 116.84 0)
@@ -1200,26 +1270,6 @@
 		)
 		(uuid "f91f4488-3d2a-47a1-a826-1b08ddc144c4")
 	)
-	(label "P3_D-"
-		(at 259.08 147.32 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "fe71097a-4332-4a69-a926-8f0e0cdd6d42")
-	)
-	(wire
-		(pts
-			(xy 152.4 35.56) (xy 157.48 35.56)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "88cef47a-a614-43a0-a5d2-18b77f86bec0")
-	)
 	(label "CC1_SENSE"
 		(at 157.48 35.56 0)
 		(effects
@@ -1230,65 +1280,15 @@
 		)
 		(uuid "fb87b656-d6da-41c5-a2d9-6cf4db6c8b2d")
 	)
-	(wire
-		(pts
-			(xy 152.4 38.1) (xy 157.48 38.1)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "8901260a-29c1-4aae-8dd7-f5e99f563601")
-	)
-	(label "CC2_SENSE"
-		(at 157.48 38.1 0)
+	(label "P3_D-"
+		(at 259.08 147.32 0)
 		(effects
 			(font
 				(size 1.27 1.27)
 			)
 			(justify left bottom)
 		)
-		(uuid "69207d34-aa7b-4ac9-bdde-1b9056b98e0e")
-	)
-	(wire
-		(pts
-			(xy 71.12 68.58) (xy 76.2 68.58)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "64eb6815-9d11-419b-bf54-684d0ae8910b")
-	)
-	(label "CC1_SENSE"
-		(at 76.2 68.58 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "b3c20966-5a23-4e0e-a848-f81ff86a6cd4")
-	)
-	(wire
-		(pts
-			(xy 71.12 73.66) (xy 76.2 73.66)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "8e9f7d6c-7fa6-4ebd-b02e-950866bfb1b4")
-	)
-	(label "CC2_SENSE"
-		(at 76.2 73.66 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "57c8b7dc-0a94-4ad4-a3e2-ff69e0d2d3e1")
+		(uuid "fe71097a-4332-4a69-a926-8f0e0cdd6d42")
 	)
 	(symbol
 		(lib_id "Mechanical:MountingHole_Pad")
