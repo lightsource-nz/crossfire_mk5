@@ -2097,7 +2097,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Connector_USB:USB_A_Molex_67643_Horizontal"
+		(property "Footprint" "crossfire:USB_A_Molex_67643_Horizontal_Overhang"
 			(at 190.5 109.22 0)
 			(hide yes)
 			(show_name no)

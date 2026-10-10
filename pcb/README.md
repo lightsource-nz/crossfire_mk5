@@ -382,7 +382,7 @@ nothing. The decision that cannot be undone without a new board is the one to le
 diameter, because an M3 head is 5.5 mm and a washer 7 mm, and a hole only the drill clears is one
 that cannot be done up. The gap between one socket's body and the next is 8.1 mm, which takes a hole
 with half a millimetre to spare each side -- so the front pair sit in the first and third gaps,
-4.5 mm from the front edge, right where a plug is pushed in. That is better than the earlier
+under 4 mm from the front edge, right where a plug is pushed in. That is better than the earlier
 arrangement could manage, where nothing came within 16 mm of the socket row and the enclosure had to
 carry it on a ledge.
 
@@ -440,6 +440,11 @@ under that part is the pattern its maker lays out, not a guess at the nearest li
 | --- | --- | --- |
 | core regulator inductor | Abracon AOTA-B201610S3R3-101-T | the processor's vendor names it, and publishes a layout built around it |
 | 3.3 V buck inductor | a 4.7 uH part in the 4 mm shielded family already on the board | the land pattern was already in the project; the exact part number is still to be confirmed against its saturation figure |
+
+**The socket's footprint is a project copy of the library's**, differing only in its silkscreen.
+The library draws the whole body, including the 3.7 mm that stands beyond the board edge, and the
+rules check reports every silk line that crosses the edge. The copy stops its silkscreen 0.4 mm
+inside the edge marking; pads, courtyard and fabrication drawing are the library's.
 
 ### GPIO budget
 
@@ -522,14 +527,17 @@ The heavy rails are expected to end up as poured copper rather than track, so th
 is the floor for any stub that *is* tracked, not a plan for how the current gets there. There is no
 separate signal class: the default *is* the signal class, which is one fewer thing to keep in step.
 
-**The outline is 100 x 54 mm** with 1.5 mm corners. The 100 is not a choice -- it is what four
-receptacles at 25.4 mm centres plus edge margin come to. The 54 is 22 mm for the sockets with their
-switches behind them, one row of everything else behind that, and ten millimetres behind *that* for
-the signals to run in: the board was 44 for a while, every part fitted, and the lines between the
-parts did not. It was 80 with the charger, the cell's connector and the radio on board. The
-corners were 3 mm until the outer two receptacles were placed: a 3 mm radius cuts across the corner
-far enough to reach their shield pads, so the radius is set by the parts nearest the corners rather
-than by taste.
+**The outline is 100 x 49.8 mm** with 1.5 mm corners. The 100 is not a choice -- it is what four
+receptacles at 25.4 mm centres plus edge margin come to. The depth is 18 mm for the sockets with
+their switches behind them, one row of everything else behind that, and ten millimetres behind
+*that* for the signals to run in: the board was 44 for a while, every part fitted, and the lines
+between the parts did not. It was 80 with the charger, the cell's connector and the radio on board,
+and 54 until the sockets were set to overhang. **The sockets overhang the front edge by 3.7 mm**:
+the receptacle's footprint carries a line marking where the board edge belongs, with the plug
+opening standing proud of it so a panel can sit flush against the socket face, and the edge is cut
+exactly on that line. The corners were 3 mm until the outer two receptacles were placed: a 3 mm
+radius cuts across the corner far enough to reach their shield pads, so the radius is set by the
+parts nearest the corners rather than by taste.
 
 **The board is designed at the origin and placed on the sheet last**, and those are deliberately two
 different things. Designing at the origin is what makes every position here readable -- a part at
@@ -703,6 +711,12 @@ has no way to recognise. The fifth is a note that the flash's embedded symbol di
 library's current copy.
 
 ## Settled since
+
+**The sockets overhang the front edge.** The receptacle footprint marks where the board edge
+belongs, 3.7 mm behind the socket face, and the board was cut flush with the socket face instead,
+so a panel could never sit against the sockets. Every part was moved behind the marking and the
+front edge trimmed to it: the board is 49.8 mm deep now, not 54, and the bottom row of stitching
+vias went with the strip.
 
 **The board is reduced to one USB-C input.** The Power Delivery sink and its connector, the charger
 and the cell, the two input switches and the ship switch, the 5 V boost, the 3.3 V buck-boost and

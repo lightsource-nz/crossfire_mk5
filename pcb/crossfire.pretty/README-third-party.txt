@@ -21,3 +21,9 @@ Raspberry Pi RP2350A minimal reference design, which is published under the MIT 
 
 rpi_rmc20452t.kicad_mod is Raspberry Pi's published footprint for Radio Module 2, from their
 product information portal, and carries the same licence.
+
+USB_A_Molex_67643_Horizontal_Overhang.kicad_mod is the KiCad footprint library's
+Connector_USB:USB_A_Molex_67643_Horizontal with its silkscreen stopped short of the board-edge
+marking, for a socket that overhangs the edge. The KiCad libraries are published under
+CC-BY-SA 4.0 with the KiCad library exception, which permits their use in a design without the
+design itself being bound by the licence.
