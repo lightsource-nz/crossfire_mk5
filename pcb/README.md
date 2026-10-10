@@ -406,9 +406,12 @@ puts 4.7 uF in **0402** on the regulator's input (`VREG_VIN`), on its output (th
 on its analogue supply -- and the analogue supply is fed through **33 ohms** from 3.3 V, because
 "the VREG_AVDD supply is very sensitive to noise, and therefore needs to be filtered" and draws
 only about 200 uA. This board had the input and output capacitors as 10 uF and 4.7 uF in 0805, and
-no filter at all. All three are now as the vendor has them (C3, C1, and R5 with C16), which also
+no filter at all. All three are now as the vendor has them (C4, C17, and R9 with C15), which also
 takes two parts from 3.5 x 2 mm down to 1.9 x 1 mm beside the pin field, which is where there was
-no room. The same guide accepts one 100 nF shared between `USB_OTP_VDD` and `QSPI_IOVDD` for the
+no room. The filter is 100 ohms and 1 uF rather than the vendor's 33 ohms and 4.7 uF: the same
+corner frequency, 20 mV of drop at 200 uA, and a capacitor that exists in 0402 at 6.3 V -- and it
+sits outside the regulator's loop, because at 200 uA the few millimetres of track from the pin to
+the filter cost nothing. The same guide accepts one 100 nF shared between `USB_OTP_VDD` and `QSPI_IOVDD` for the
 same reason, and places the boot button's resistor at the flash.
 
 ### Footprints
