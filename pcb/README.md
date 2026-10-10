@@ -552,9 +552,10 @@ carrying nothing.
 
 ### Layout
 
-**Every part is placed, and each passive's own connections are drawn. The signals between the big
-parts are not.** That is the state of the board, and it is a deliberate stopping point: what is done
-is what a rule decides, and what is left is the pairs and the buses, which want a person.
+**Every part is placed and every net is routed.** The passives were placed and their own
+connections drawn by rule; the pairs, the buses and the rest were routed by hand afterwards, and the
+ground stitching went down last. The division is deliberate: what a rule decides is done by the
+rule, and what wants a person is done by one.
 
 The floor plan is one row behind the sockets, read left to right in the order the signals flow:
 
@@ -629,6 +630,11 @@ themselves:
   Blind vias would free a little of the back face as well and are not worth a second lamination
   for it; buried vias free nothing on the surface at all.
 * **A pour must join at least two things**, and a track is used wherever a track fits.
+* **Stitching comes after routing, and on a grid.** A stitching via placed first is in a track's
+  way, so the two outer pours are tied to the plane only once every net is in: a 0.6 mm via on a
+  6 mm grid wherever both faces have pour at that point, placed only where the fill actually is and
+  clear of every other net. Then every piece of pour that would still float gets a via of its own,
+  and where that piece is nothing but a ground pad's own copper, the via goes in the pad.
 * **A short run is sized by its resistance**, not by a width table: a class width states what the
   run carries, and the escape from a narrow pin is necked to the pin.
 * **A connector is checked for which way it faces**, by a person, because no rule check tests
@@ -789,10 +795,6 @@ source is required to have one.
   and that the processor's pad draws nothing from it with its digital input disabled.
 - **What the ports do at the bottom of the input range**: the lowest VBUS at which the instruments
   that matter still run, since the board no longer regulates what it passes on.
-- **The routing between the big parts**: the six pairs, the flash bus, the port power and fault
-  lines, the debug header, and the eight small parts that are placed but not yet connected. Ground
-  stitching follows the routing, since a stitching via placed first is in a track's way.
-
 The largest piece of work this board creates is not on the board: **a full-speed USB host in PIO**,
 carrying the existing host stack on a new transport. Its shape is known — eight methods, with the
 frame cadence and the bit-level protocol to supply in software — but none of it is written. It is
