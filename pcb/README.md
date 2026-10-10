@@ -712,6 +712,23 @@ library's current copy.
 
 ## Settled since
 
+**Four things the reference documents asked for that the schematic did not have.** A pre-fab pass
+against the processor vendor's hardware design guide and the hub vendor's design checklists, read
+rather than remembered, found them; no rules check could. The processor's hardware USB pair
+"require 27 Ω series termination resistors, placed close to the chip" -- the only 27 Ω pair on the
+board was on the PIO host lines -- so R21 and R22 now sit between pins 51 and 52 and the
+protection array, and the chip-side stubs are named `MCU_D+`/`MCU_D-` so the layout tool routes
+them as a pair. The guide's crystal circuit has a 1 kΩ in series with XOUT to keep the crystal from
+being over-driven at 3.3 V, and says any deviation "will require extensive testing"; R23 is that
+resistor, on the chip side of the crystal node. The hub's two non-removable straps were left
+unconnected, and its checklist says they "have no internal terminations and must be terminated":
+R24 and R25 pull them to ground, which reads as four removable ports. And the hub checklist wants a
+capacitor at each of its four analogue supply pins where one had none, so C45 joins the hub's
+3.3 V row, with C43 and C44 added for the processor's third DVDD pin and sixth IOVDD pin, which
+had been sharing. What the same reading confirmed is recorded above: the straps select the default
+self-powered mode with per-port switching, the over-current inputs have internal pull-ups, the
+filter pins want no more than 100 nF, and 150 µF on a port is a ceiling, not a floor.
+
 **The sockets overhang the front edge.** The receptacle footprint marks where the board edge
 belongs, 3.7 mm behind the socket face, and the board was cut flush with the socket face instead,
 so a panel could never sit against the sockets. Every part was moved behind the marking and the

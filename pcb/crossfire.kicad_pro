@@ -680,7 +680,7 @@
       },
       {
         "netclass": "Power",
-        "pattern": "Net-(J2-VBUS)"
+        "pattern": "Net-(J6-VBUS)"
       },
       {
         "netclass": "Power",
@@ -696,11 +696,11 @@
       },
       {
         "netclass": "Converter",
-        "pattern": "Net-(U14-SW)"
+        "pattern": "Net-(U4-SW)"
       },
       {
         "netclass": "Converter",
-        "pattern": "Net-(U14-BST)"
+        "pattern": "Net-(U4-BST)"
       },
       {
         "netclass": "USB",
@@ -749,6 +749,14 @@
       {
         "netclass": "USB",
         "pattern": "/USB_D-"
+      },
+      {
+        "netclass": "USB",
+        "pattern": "/mcu/MCU_D+"
+      },
+      {
+        "netclass": "USB",
+        "pattern": "/mcu/MCU_D-"
       },
       {
         "netclass": "USB",
