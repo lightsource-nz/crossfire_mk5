@@ -22037,6 +22037,7 @@
 		(property "Reference" "R12"
 			(at 0 1.17 0)
 			(layer "B.SilkS")
+			(hide yes)
 			(uuid "710650d3-b5d9-4676-85d7-5a754b8e4d45")
 			(effects
 				(font
@@ -23031,6 +23032,7 @@
 		(property "Reference" "C37"
 			(at -3.373871 0.931129 90)
 			(layer "B.SilkS")
+			(hide yes)
 			(uuid "f8b69c75-1b2a-49da-b84e-9f41e58b22c2")
 			(effects
 				(font
