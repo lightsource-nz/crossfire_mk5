@@ -929,6 +929,7 @@
 		(property "Reference" "SW3"
 			(at 0.05 5.25 0)
 			(layer "F.SilkS")
+			(hide yes)
 			(uuid "51aa3786-2203-4621-b843-b326f4710b8c")
 			(effects
 				(font
@@ -978,12 +979,6 @@
 		(path "/4cdbbf45-e559-4c12-a33c-465c1e579944/93114f69-c628-4a0c-a842-587cc0799c7b")
 		(sheetname "/mcu/")
 		(sheetfile "mcu.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "2")
-			)
-		)
 		(attr smd)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
@@ -1098,6 +1093,20 @@
 			(fill no)
 			(layer "F.Fab")
 			(uuid "12b3efb0-b3a7-4724-aab9-02d6a96aff1d")
+		)
+		(fp_text user "USER"
+			(at 0 5.8 0)
+			(unlocked yes)
+			(layer "F.SilkS")
+			(uuid "6a0e7e9d-bc97-4851-a8c8-93ce2111e540")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.2)
+					(bold yes)
+				)
+				(justify bottom)
+			)
 		)
 		(fp_text user "${REFERENCE}"
 			(at 0 0 0)
@@ -1913,7 +1922,7 @@
 		(descr "SOT, 6 Pin (JEDEC MO-178 Var AB https://www.jedec.org/document_search?search_api_views_fulltext=MO-178)")
 		(tags "SOT TO_SOT_SMD")
 		(property "Reference" "U7"
-			(at 0 -2.5 0)
+			(at 0 -2.4 0)
 			(layer "F.SilkS")
 			(uuid "15fa0020-0fb6-45ab-85ca-575f62242f45")
 			(effects
@@ -18421,7 +18430,7 @@
 		(descr "SOT, 6 Pin (JEDEC MO-178 Var AB https://www.jedec.org/document_search?search_api_views_fulltext=MO-178)")
 		(tags "SOT TO_SOT_SMD")
 		(property "Reference" "U9"
-			(at -0.5 -2.5 0)
+			(at 0 -2.4 0)
 			(layer "F.SilkS")
 			(uuid "bc8f945a-e706-4579-94ae-07157c0580f3")
 			(effects
@@ -19314,7 +19323,7 @@
 		(descr "SOT, 6 Pin (JEDEC MO-178 Var AB https://www.jedec.org/document_search?search_api_views_fulltext=MO-178)")
 		(tags "SOT TO_SOT_SMD")
 		(property "Reference" "U13"
-			(at -2.708221 -0.477532 0)
+			(at 0 -2.8 0)
 			(layer "F.SilkS")
 			(uuid "9558f0da-64da-4e54-ba43-62f7498de3e9")
 			(effects
