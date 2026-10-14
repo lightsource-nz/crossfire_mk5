@@ -6392,6 +6392,30 @@
 				(justify left)
 			)
 		)
+		(property "MPN" "RP2350A"
+			(at 205.3433 186.69 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "LCSC" "C42411118"
+			(at 205.3433 186.69 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
 		(property "Footprint" "crossfire:rpi_rp2350a_vias"
 			(at 203.2 139.7 0)
 			(hide yes)
@@ -7906,6 +7930,18 @@
 			(at 207.01 85.0899 0)
 			(show_name no)
 			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "LCSC" "C42411119"
+			(at 207.01 85.0899 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
 			(effects
 				(font
 					(size 1.27 1.27)

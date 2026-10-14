@@ -807,25 +807,85 @@ enforced above, by the hub's port power control and the firmware's policy, and i
 four misbehaving devices at once. It does make **the source's own limit the backstop**, and a USB-C
 source is required to have one.
 
-## Still to settle
+## Fabrication
+
+**The board goes to JLCPCB, assembled.** The choice is made on four facts, each read off the
+fabricator's own capability pages rather than assumed. A four-layer board with 0.2 mm holes in
+0.4 mm vias is its standard process, not a premium one. It fills and caps vias with epoxy and
+plates over them, for holes up to 0.55 mm, which covers the 118 vias in capacitor pads and the nine
+0.25 mm holes under the processor; it is a paid option on four layers, free from six. It assembles
+both faces, surface-mount and through-hole, which this board needs: the sockets and the header are
+through-hole and the protection arrays sit on the back. And the four chips that matter are in its
+catalogue, so they are not sourced and shipped separately.
+
+| what | this board | the fabricator's limit |
+| --- | --- | --- |
+| track and gap | 0.15 mm minimum, 0.2 mm in use | 0.09 mm |
+| via | 0.4 mm on a 0.2 mm hole | 0.25 mm on 0.15 mm; 0.4 on 0.2 preferred |
+| via to via | 0.2 mm between holes | 0.2 mm |
+| copper to routed edge | 0.3 mm | 0.2 mm |
+| via filling | 0.2 and 0.25 mm holes in pads | epoxy filled and capped up to 0.55 mm |
+| silkscreen line | 0.12 mm | 0.15 mm, below which it "may be unreadable" |
+
+The silkscreen line is the one figure under the limit. What remains of the silkscreen is the
+socket outlines and a few reference labels, drawn at the library's 0.12 mm; if they print faint,
+nothing is lost.
+
+**What the order says.** Four layers, 1.6 mm, the default stackup (1 oz outside, 0.5 oz inside),
+ENIG, because a fine-pitch QFN and vias in pads both want a flat finish. Via covering: epoxy filled
+and capped, all vias, with the order note naming the 0.2 mm and 0.25 mm holes. Assembly on both
+sides, with a stencil. Two boards is the smallest run it takes; five is the sensible number for a
+first build, since one will be sacrificed to the bench.
+
+**Parts.** Catalogue numbers are carried in the schematic as an `LCSC` field and come out in the
+bill of materials: the processor (C42411118), the hub (C16251, the reeled part; the loose one is
+nearly out of stock), the port switch (C353882) and the buck (C780769). The buck is marked **not
+recommended for new designs** at the distributor, with six thousand in stock: fine for prototypes,
+and a part to replace before any production run. The two connectors, the USB-C receptacle and the
+Molex sockets, are not in the catalogue and go in as globally sourced or consigned parts; the
+fabricator's tool matches the passives by value and package at order time, and the flash, the
+protection arrays, the crystals and the buttons are matched there too.
+
+**The files** come from one script, `scripts/export-fab.ps1`, which runs the rules check with
+schematic parity first and writes nothing if it reports anything: the Gerbers and drill files
+zipped for upload, the bill of materials with the catalogue column, and the placement file in the
+uploader's column names. They land in `pcb/fab/`, which is not tracked, because every byte of it
+is derived from the board.
+
+## Settled by reading, before the order
+
+- **The flash at 120 MHz.** Its datasheet rates every instruction but the plain 03h read at 133 MHz
+  from 3.0 V to 3.6 V, and the boot ROM's 03h probe runs at about 1 MHz. The QSPI divider of 2 at
+  240 MHz lands on 120 MHz with margin.
+- **The buck's values, against its datasheet.** The application table for the 3.3 V part names
+  3.9 µH, 10 µF in, 2 × 22 µF out and 100 nF bootstrap, and its text allows 2.2 to 10 µH, "a
+  ceramic capacitor greater than 10 µF" at the input and "22 µF to 68 µF" at the output. The
+  4.7 µH stays: ripple is 0.22 A at 5 V in, and the transient equation asks for under 2 µF of real
+  output capacitance at this load, which two 22 µF 0603 parts give several times over even at
+  3.3 V bias. The input capacitor becomes the same 10 µF 0805 16 V X7R as the hub's bulk
+  capacitor, so that it still reads as 10 µF with 5 V across it; the 0603 10 V part would not. The
+  inductor is the Coilcraft XEL4030-472MEC: 4.7 µH, 4.6 A saturation, 44 mΩ, on the land pattern
+  already placed. The XFL part in the same size saturates at 1.7 A, under the buck's 2.8 A current
+  limit, which is why it is not the one.
+- **Vias in pads** are filled and capped, above.
+- **The capacitance on VBUS at attach**: 10 µF plus six 100 nF, 10.6 µF nominal and about 8 µF
+  with 5 V across the 0805 part, under the 10 µF the specification allows. The port capacitors sit
+  behind switches that are off until the hub is configured, so they do not count at attach.
+
+## To prove on the prototype
 
 - That 240 MHz holds at temperature on stock core voltage, and what raising the core voltage would
   cost the power budget if it does not. 240 MHz is above the datasheet and proven only on the boards
   in hand, so a production population is the open question, not whether it runs.
-- The QSPI divider at 240 MHz, and that the flash part chosen is rated for the 120 MHz it lands on.
-- **The 3.3 V buck's external values, against its datasheet.** The input and output capacitors, the
-  4.7 uH inductor and the bootstrap capacitor are the usual figures for this part at this output and
-  were entered from memory of its application circuit, not read off it for this design. The
-  inductor's part number and saturation current want settling at the same time.
-- **The fabricator's answer on vias in pads**: filled and capped, at what cost, or open 0.2 mm
-  holes with the wicking risk accepted. Every capacitor's plane connection depends on it.
-- **The capacitance on VBUS at attach**, measured against the 10 µF USB allows, with the bias curve
-  of the 10 µF part actually bought.
 - **The CC reading on real sources.** The thresholds are the specification's; what wants seeing is
   the reading through 10 kΩ and 100 nF while a Power Delivery source is signalling on the same line,
   and that the processor's pad draws nothing from it with its digital input disabled.
 - **What the ports do at the bottom of the input range**: the lowest VBUS at which the instruments
   that matter still run, since the board no longer regulates what it passes on.
+- **Both crystals' drive level and start-up**, on the bench with a probe: the hub's checklist says
+  the load capacitors are system dependent and want verifying, and the processor's vendor says the
+  same of any circuit that is not exactly its own.
+
 The largest piece of work this board creates is not on the board: **a full-speed USB host in PIO**,
 carrying the existing host stack on a new transport. Its shape is known — eight methods, with the
 frame cadence and the bit-level protocol to supply in software — but none of it is written. It is

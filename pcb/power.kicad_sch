@@ -1750,6 +1750,18 @@
 				(justify left)
 			)
 		)
+		(property "DCR" "44mR max"
+			(at 177.8 96.52 90)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
 		(property "Footprint" "Inductor_SMD:L_Coilcraft_XxL4030"
 			(at 177.8 99.06 0)
 			(hide yes)
@@ -1783,7 +1795,7 @@
 				)
 			)
 		)
-		(property "MPN" "4.7 uH, 4 mm shielded; part to confirm"
+		(property "MPN" "Coilcraft XEL4030-472MEC"
 			(at 177.8 106.68 0)
 			(hide yes)
 			(show_name no)
@@ -1805,7 +1817,7 @@
 				)
 			)
 		)
-		(property "Isat" "2A min"
+		(property "Isat" "4.6A"
 			(at 177.8 106.68 0)
 			(hide yes)
 			(show_name no)
@@ -2569,7 +2581,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
 			(at 116.84 101.6 0)
 			(hide yes)
 			(show_name no)
@@ -2602,7 +2614,7 @@
 				)
 			)
 		)
-		(property "Voltage" "10V"
+		(property "Voltage" "16V"
 			(at 116.84 109.22 0)
 			(hide yes)
 			(show_name no)
@@ -2613,7 +2625,7 @@
 				)
 			)
 		)
-		(property "Dielectric" "X5R"
+		(property "Dielectric" "X7R"
 			(at 116.84 109.22 0)
 			(hide yes)
 			(show_name no)
@@ -3449,6 +3461,28 @@
 			(at 156.21 93.98 0)
 			(show_name no)
 			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "AP63203WU-7"
+			(at 156.21 93.98 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C780769"
+			(at 156.21 93.98 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
 			(effects
 				(font
 					(size 1.27 1.27)
