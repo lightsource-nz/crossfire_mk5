@@ -629,14 +629,17 @@ themselves:
 * **Ground goes down through a via at the pad.** A ground track is drawn only where a loop is being
   closed on the surface; anywhere else it is copper the pour would have supplied, except that the
   pour gives way to a signal and a track does not.
-* **And the via is *in* the pad, both pads, wherever the pad is 0.5 mm or more across** -- which is
-  every capacitor on the board. A via beside a pad costs a stub and the width of the via on both
-  faces, so a capacitor with two of them takes three times its own room; one inside each pad takes
-  none, and the loop through it is the shortest there is. It is 0.4 mm on a 0.2 mm hole, and it
-  puts one question to the fabricator: an open hole in a reflowed pad draws solder down the barrel,
-  so the vias want filling and capping, or the risk of a starved joint on a 0402 is accepted.
-  Blind vias would free a little of the back face as well and are not worth a second lamination
-  for it; buried vias free nothing on the surface at all.
+* **The via is beside the pad, not in it, and it is 0.6 mm on a 0.3 mm hole.** The board was laid
+  out the other way -- a 0.4 mm via on a 0.2 mm hole inside each capacitor pad, which takes no room
+  and makes the shortest loop there is -- on the condition that the fabricator fills and caps the
+  holes, since an open hole in a reflowed pad draws solder down the barrel. The quote put a price
+  on that condition, and on the 0.2 mm hole itself, that a prototype does not carry. So the vias
+  came out of the pads: each sits just beyond its pad's outer end on a 0.3 mm stub, or shares a
+  neighbour's, which is the layout the first rule above was trying to avoid and costs the room it
+  saved. Most of that move was done by a script that tested every candidate position against the
+  board's own geometry; the rest, where capacitors sit between pins or vias sit between pads, by
+  hand. Blind vias would free a little of the back face and are not worth a second lamination;
+  buried vias free nothing on the surface at all.
 * **A pour must join at least two things**, and a track is used wherever a track fits.
 * **Stitching comes after routing, and on a grid.** A stitching via placed first is in a track's
   way, so the two outer pours are tied to the plane only once every net is in: a 0.6 mm via on a
@@ -809,22 +812,22 @@ source is required to have one.
 
 ## Fabrication
 
-**The board goes to JLCPCB, assembled.** The choice is made on four facts, each read off the
-fabricator's own capability pages rather than assumed. A four-layer board with 0.2 mm holes in
-0.4 mm vias is its standard process, not a premium one. It fills and caps vias with epoxy and
-plates over them, for holes up to 0.55 mm, which covers the 118 vias in capacitor pads and the nine
-0.25 mm holes under the processor; it is a paid option on four layers, free from six. It assembles
+**The board goes to JLCPCB, assembled.** The choice is made on facts read off the fabricator's
+own capability pages rather than assumed. A four-layer board is its standard process. It assembles
 both faces, surface-mount and through-hole, which this board needs: the sockets and the header are
 through-hole and the protection arrays sit on the back. And the four chips that matter are in its
-catalogue, so they are not sourced and shipped separately.
+catalogue, so they are not sourced and shipped separately. **What the quote changed** is the via:
+filling and capping vias in pads was priced out of a prototype, and 0.2 mm holes are a hard
+process whoever drills them, so every via on the board is 0.6 mm on a 0.3 mm hole, outside the
+pads, tented. The design rules now hold that minimum, so nothing smaller can be drawn again.
 
 | what | this board | the fabricator's limit |
 | --- | --- | --- |
 | track and gap | 0.15 mm minimum, 0.2 mm in use | 0.09 mm |
-| via | 0.4 mm on a 0.2 mm hole | 0.25 mm on 0.15 mm; 0.4 on 0.2 preferred |
+| via | 0.6 mm on a 0.3 mm hole | 0.25 mm on 0.15 mm; 0.4 on 0.2 preferred |
 | via to via | 0.2 mm between holes | 0.2 mm |
 | copper to routed edge | 0.3 mm | 0.2 mm |
-| via filling | 0.2 and 0.25 mm holes in pads | epoxy filled and capped up to 0.55 mm |
+| via covering | tented, none in pads | plugged or filled only where asked |
 | silkscreen line | 0.12 mm | 0.15 mm, below which it "may be unreadable" |
 
 The silkscreen line is the one figure under the limit. What remains of the silkscreen is the
@@ -832,9 +835,8 @@ socket outlines and a few reference labels, drawn at the library's 0.12 mm; if t
 nothing is lost.
 
 **What the order says.** Four layers, 1.6 mm, the default stackup (1 oz outside, 0.5 oz inside),
-ENIG, because a fine-pitch QFN and vias in pads both want a flat finish. Via covering: epoxy filled
-and capped, all vias, with the order note naming the 0.2 mm and 0.25 mm holes. Assembly on both
-sides, with a stencil. Two boards is the smallest run it takes; five is the sensible number for a
+ENIG, because a fine-pitch QFN wants a flat finish. Via covering: tented. Assembly on both sides,
+with a stencil. Two boards is the smallest run it takes; five is the sensible number for a
 first build, since one will be sacrificed to the bench.
 
 **Parts.** Catalogue numbers are carried in the schematic as an `LCSC` field and come out in the
@@ -867,7 +869,7 @@ is derived from the board.
   inductor is the Coilcraft XEL4030-472MEC: 4.7 µH, 4.6 A saturation, 44 mΩ, on the land pattern
   already placed. The XFL part in the same size saturates at 1.7 A, under the buck's 2.8 A current
   limit, which is why it is not the one.
-- **Vias in pads** are filled and capped, above.
+- **Vias in pads** are gone, above: 0.6 mm on 0.3 mm holes, beside the pads, tented.
 - **The capacitance on VBUS at attach**: 10 µF plus six 100 nF, 10.6 µF nominal and about 8 µF
   with 5 V across the 0805 part, under the 10 µF the specification allows. The port capacitors sit
   behind switches that are off until the hub is configured, so they do not count at attach.

@@ -1659,7 +1659,7 @@
 	(pad "61" thru_hole circle
 			(at -1.2 -1.2)
 			(size 0.6 0.6)
-			(drill 0.25)
+			(drill 0.3)
 			(layers "*.Cu")
 			(remove_unused_layers no)
 			(net "GND")
@@ -1670,7 +1670,7 @@
 	(pad "61" thru_hole circle
 			(at -1.2 0)
 			(size 0.6 0.6)
-			(drill 0.25)
+			(drill 0.3)
 			(layers "*.Cu")
 			(remove_unused_layers no)
 			(net "GND")
@@ -1681,7 +1681,7 @@
 	(pad "61" thru_hole circle
 			(at -1.2 1.2)
 			(size 0.6 0.6)
-			(drill 0.25)
+			(drill 0.3)
 			(layers "*.Cu")
 			(remove_unused_layers no)
 			(net "GND")
@@ -1692,7 +1692,7 @@
 	(pad "61" thru_hole circle
 			(at 0 -1.2)
 			(size 0.6 0.6)
-			(drill 0.25)
+			(drill 0.3)
 			(layers "*.Cu")
 			(remove_unused_layers no)
 			(net "GND")
@@ -1703,7 +1703,7 @@
 	(pad "61" thru_hole circle
 			(at 0 0)
 			(size 0.6 0.6)
-			(drill 0.25)
+			(drill 0.3)
 			(layers "*.Cu")
 			(remove_unused_layers no)
 			(net "GND")
@@ -1723,7 +1723,7 @@
 	(pad "61" thru_hole circle
 			(at 0 1.2)
 			(size 0.6 0.6)
-			(drill 0.25)
+			(drill 0.3)
 			(layers "*.Cu")
 			(remove_unused_layers no)
 			(net "GND")
@@ -1734,7 +1734,7 @@
 	(pad "61" thru_hole circle
 			(at 1.2 -1.2)
 			(size 0.6 0.6)
-			(drill 0.25)
+			(drill 0.3)
 			(layers "*.Cu")
 			(remove_unused_layers no)
 			(net "GND")
@@ -1745,7 +1745,7 @@
 	(pad "61" thru_hole circle
 			(at 1.2 0)
 			(size 0.6 0.6)
-			(drill 0.25)
+			(drill 0.3)
 			(layers "*.Cu")
 			(remove_unused_layers no)
 			(net "GND")
@@ -1756,7 +1756,7 @@
 	(pad "61" thru_hole circle
 			(at 1.2 1.2)
 			(size 0.6 0.6)
-			(drill 0.25)
+			(drill 0.3)
 			(layers "*.Cu")
 			(remove_unused_layers no)
 			(net "GND")
