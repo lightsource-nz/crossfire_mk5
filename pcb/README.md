@@ -441,6 +441,14 @@ under that part is the pattern its maker lays out, not a guess at the nearest li
 | core regulator inductor | Abracon AOTA-B201610S3R3-101-T | the processor's vendor names it, and publishes a layout built around it |
 | 3.3 V buck inductor | a 4.7 uH part in the 4 mm shielded family already on the board | the land pattern was already in the project; the exact part number is still to be confirmed against its saturation figure |
 
+**The board carries its name on the front silkscreen**: the application's graphic, 21 x 15.5 mm
+in the open area right of the hub, with `CROSSFIRE Rev ${REVISION}` beneath it, the revision read
+from the board's title block so a new revision is one field change. The graphic is a footprint in
+the project library, `crossfire_logo`, traced from `art/crossfire-logo.png` by
+`scripts/png2silk.py`: ink thickened at full resolution so the thinnest stroke prints at 0.2 mm,
+then scaled to 0.1 mm pixels and written as filled rectangles. Regenerate it from the script, not
+by hand, if the artwork changes.
+
 **The socket's footprint is a project copy of the library's**, differing only in its silkscreen.
 The library draws the whole body, including the 3.7 mm that stands beyond the board edge, and the
 rules check reports every silk line that crosses the edge. The copy stops its silkscreen 0.4 mm
