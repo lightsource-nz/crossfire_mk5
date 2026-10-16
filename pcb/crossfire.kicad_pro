@@ -654,6 +654,10 @@
         "pattern": "+5V"
       },
       {
+        "netclass": "Power+",
+        "pattern": "/upstream_data/VBUS_IN"
+      },
+      {
         "netclass": "Power",
         "pattern": "+3V3"
       },

@@ -724,6 +724,17 @@ library's current copy.
 
 ## Settled since
 
+**A fuse on the 5 V input.** The USB-C source is required to limit its current, and the port
+switches limit theirs, but nothing stood between a plain 5 V brick and a fault on the board, so
+a resettable fuse goes in series with VBUS at the receptacle, ahead of everything: F1, a 1812
+polymer part with a 2.6 A hold and a 5 A trip, rated 8 V. The hold sits above the 2.25 A the
+budget can draw, the trip well below what the copper would survive for long, and the part resets
+when the fault clears, which on a bench is worth more than a one-shot fuse's lower resistance:
+the polymer costs about 30 mΩ, 70 mV at full load, against a 5 V rail that can arrive at 4.5. The
+short wire between the receptacle's VBUS pins and the fuse is its own net, `VBUS_IN`, in the
+heavy-copper class; everything after the fuse is +5V as before, including the protection array's
+VBUS pin and the sense divider, which the fuse's resistance does not disturb.
+
 **Four things the reference documents asked for that the schematic did not have.** A pre-fab pass
 against the processor vendor's hardware design guide and the hub vendor's design checklists, read
 rather than remembered, found them; no rules check could. The processor's hardware USB pair
