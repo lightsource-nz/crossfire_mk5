@@ -54,12 +54,26 @@ if (Test-Path $zip) { Remove-Item $zip -Force }
 Compress-Archive -Path "$gerb\*" -DestinationPath $zip
 
 #   the bill of materials, one row per part, with the fabricator's catalogue number where the
-# schematic carries one; rows without one are matched in the fabricator's tool at order time
+# schematic carries one; rows without one are matched in the fabricator's tool at order time.
+#   The footprint column is rewritten to the plain package code the fabricator's tool reads:
+# KiCad's name carries both sizes, "C_0402_1005Metric", and the tool takes the one beside
+# "Metric", which in imperial is 01005 -- a quarter the part -- so it matched and rendered the
+# passives at a quarter of their size until the column said just "0402".
+$bomRaw = Join-Path $out 'crossfire-bom-kicad.csv'
 & $cli sch export bom `
 	--fields 'Reference,Value,Footprint,MPN,LCSC,Sourcing' `
 	--labels 'Designator,Comment,Footprint,MPN,LCSC Part #,Sourcing' `
 	--group-by 'Value,Footprint,LCSC' --ref-range-delimiter '' --exclude-dnp `
-	-o (Join-Path $out 'crossfire-bom.csv') $sch | Out-Null
+	-o $bomRaw $sch | Out-Null
+Import-Csv $bomRaw | ForEach-Object {
+	$fp = $_.Footprint -replace '^[^:]+:', ''
+	if ($fp -match '^(?:C|R|L|LED|D)_(\d{4})_\d{4}Metric') { $fp = $Matches[1] }
+	elseif ($fp -match '^(QFN-\d+)') { $fp = $Matches[1] }
+	elseif ($fp -match '^(SOIC-\d+)') { $fp = $Matches[1] }
+	$_.Footprint = $fp
+	$_
+} | Export-Csv -NoTypeInformation -Path (Join-Path $out 'crossfire-bom.csv')
+Remove-Item $bomRaw -Force
 
 #   the placement file: KiCad's columns renamed to the ones the uploader recognises. Positions
 # are in the Gerbers' own frame, since neither export is told to use another origin.
