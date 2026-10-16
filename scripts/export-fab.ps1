@@ -75,22 +75,22 @@ Import-Csv $bomRaw | ForEach-Object {
 } | Export-Csv -NoTypeInformation -Path (Join-Path $out 'crossfire-bom.csv')
 Remove-Item $bomRaw -Force
 
-#   the placement file: KiCad's columns renamed to the ones the uploader recognises. Positions
-# are in the Gerbers' own frame, since neither export is told to use another origin.
-$posRaw = Join-Path $out 'crossfire-pos-kicad.csv'
-& $cli pcb export pos --format csv --units mm --side both --exclude-dnp -o $posRaw $board | Out-Null
-$rows = Import-Csv $posRaw
-$rows | ForEach-Object {
-	[pscustomobject]@{
-		'Designator' = $_.Ref
-		'Mid X'      = $_.PosX
-		'Mid Y'      = $_.PosY
-		'Layer'      = if ($_.Side -eq 'top') { 'Top' } else { 'Bottom' }
-		'Rotation'   = $_.Rot
+#   the placement file, written by cpl.py beside this script: the fabricator's columns, each
+# part at the centre of its pad pattern rather than at its footprint's anchor, in the Gerbers'
+# own frame. KiCad's own export gives the anchor, which put the USB-C receptacle a body-width off
+# its pads in the fabricator's preview.
+$python = $null
+foreach ($base in @("$env:ProgramFiles\KiCad", "${env:ProgramFiles(x86)}\KiCad")) {
+	if (-not (Test-Path $base)) { continue }
+	foreach ($ver in (Get-ChildItem $base -Directory | Sort-Object Name -Descending)) {
+		$candidate = Join-Path $ver.FullName 'bin\python.exe'
+		if (Test-Path $candidate) { $python = $candidate; break }
 	}
-} | Export-Csv -NoTypeInformation -Path (Join-Path $out 'crossfire-cpl.csv')
-Remove-Item $posRaw -Force
+	if ($python) { break }
+}
+if (-not $python) { throw "could not find KiCad's Python -- it ships at <KiCad>\bin\python.exe" }
+$placed = & $python (Join-Path $PSScriptRoot 'cpl.py') $board (Join-Path $out 'crossfire-cpl.csv') 2>&1 |
+	Where-Object { $_ -notmatch 'swig|image handler|assert' }
 
-$smd = ($rows | Measure-Object).Count
 "wrote $zip"
-"wrote crossfire-bom.csv and crossfire-cpl.csv ($smd placed parts) in $out"
+"wrote crossfire-bom.csv and crossfire-cpl.csv ($placed) in $out"
