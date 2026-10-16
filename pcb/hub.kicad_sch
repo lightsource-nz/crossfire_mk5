@@ -5307,6 +5307,28 @@
 				)
 			)
 		)
+		(property "LCSC" "C70583"
+			(at 137.16 137.16 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "YXC X322524MMB4SI"
+			(at 137.16 137.16 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(property "Footprint" "Crystal:Crystal_SMD_3225-4Pin_3.2x2.5mm"
 			(at 137.16 140.97 0)
 			(hide yes)

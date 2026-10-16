@@ -847,14 +847,26 @@ ENIG, because a fine-pitch QFN wants a flat finish. Via covering: tented. Assemb
 with a stencil. Two boards is the smallest run it takes; five is the sensible number for a
 first build, since one will be sacrificed to the bench.
 
-**Parts.** Catalogue numbers are carried in the schematic as an `LCSC` field and come out in the
-bill of materials: the processor (C42411118), the hub (C16251, the reeled part; the loose one is
-nearly out of stock), the port switch (C353882) and the buck (C780769). The buck is marked **not
-recommended for new designs** at the distributor, with six thousand in stock: fine for prototypes,
-and a part to replace before any production run. The two connectors, the USB-C receptacle and the
-Molex sockets, are not in the catalogue and go in as globally sourced or consigned parts; the
-fabricator's tool matches the passives by value and package at order time, and the flash, the
-protection arrays, the crystals and the buttons are matched there too.
+**Parts.** Every line of the bill of materials has a definite answer for the assembler, carried
+in the schematic as fields and written out as columns: a catalogue number (`LCSC`) where the part
+is in the catalogue, a named part (`MPN`) with a `Sourcing` note where it is not. The first
+upload matched the passives by value and package and failed nine lines, which is what settled
+the rest:
+
+| part | answer |
+| --- | --- |
+| processor, hub, port switch, buck | C42411118, C16251 (the reeled hub; the loose one is nearly out of stock), C353882, C780769 |
+| flash, protection arrays | W25Q128JVSIQ C97521, USBLC6-2SC6 C7519 |
+| crystals | 12 MHz JGHC S3212000101080 C390763 and 24 MHz YXC X322524MMB4SI C70583, both **10 pF** parts: the catalogue's basic crystals are 20 pF, and the processor vendor's circuit, copied exactly, wants 10 pF with the 15 pF capacitors |
+| indicators, ferrite | KT-0603R C2286, KT-0603G C12624, Murata BLM18BD601SZ1D C2661913 |
+| core inductor | Abracon AOTA-B201610S3R3-101-T C42411119 |
+| buck inductor, buttons, USB-C receptacle, USB-A sockets | not in the catalogue: Coilcraft XEL4030-472MEC, C&K KSC621J LFS, GCT USB4105-GF-A, Molex 0676430910, each marked for the fabricator's global sourcing, which buys from the usual distributors for a fee and a week; consigning them is the alternative |
+| debug header | not fitted: a header is a bench part, soldered when a bench wants it |
+| mounting holes | not parts, and out of the bill and the placement file |
+
+The buck is marked **not recommended for new designs** at the distributor, with six thousand in
+stock: fine for prototypes, and a part to replace before any production run. The passives are
+left to the fabricator's matcher, which handled them first time.
 
 **The files** come from one script, `scripts/export-fab.ps1`, which runs the rules check with
 schematic parity first and writes nothing if it reports anything: the Gerbers and drill files

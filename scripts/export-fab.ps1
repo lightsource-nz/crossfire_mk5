@@ -56,8 +56,8 @@ Compress-Archive -Path "$gerb\*" -DestinationPath $zip
 #   the bill of materials, one row per part, with the fabricator's catalogue number where the
 # schematic carries one; rows without one are matched in the fabricator's tool at order time
 & $cli sch export bom `
-	--fields 'Reference,Value,Footprint,MPN,LCSC' `
-	--labels 'Designator,Comment,Footprint,MPN,LCSC Part #' `
+	--fields 'Reference,Value,Footprint,MPN,LCSC,Sourcing' `
+	--labels 'Designator,Comment,Footprint,MPN,LCSC Part #,Sourcing' `
 	--group-by 'Value,Footprint,LCSC' --ref-range-delimiter '' --exclude-dnp `
 	-o (Join-Path $out 'crossfire-bom.csv') $sch | Out-Null
 

@@ -1750,6 +1750,18 @@
 				(justify left)
 			)
 		)
+		(property "Sourcing" "JLCPCB global sourcing"
+			(at 177.8 96.52 90)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
 		(property "DCR" "44mR max"
 			(at 177.8 96.52 90)
 			(show_name no)
