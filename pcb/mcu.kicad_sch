@@ -6152,7 +6152,7 @@
 				)
 			)
 		)
-		(property "Sourcing" "JLCPCB global sourcing"
+		(property "LCSC" "C221726"
 			(at 135.89 115.57 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6163,7 +6163,18 @@
 				)
 			)
 		)
-		(property "MPN" "C&K KSC621J LFS"
+		(property "Sourcing" ""
+			(at 135.89 115.57 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "C&K KSC221JLFS"
 			(at 135.89 115.57 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7707,7 +7718,7 @@
 				)
 			)
 		)
-		(property "Sourcing" "JLCPCB global sourcing"
+		(property "LCSC" "C221726"
 			(at 147.32 93.98 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7718,7 +7729,18 @@
 				)
 			)
 		)
-		(property "MPN" "C&K KSC621J LFS"
+		(property "Sourcing" ""
+			(at 147.32 93.98 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "C&K KSC221JLFS"
 			(at 147.32 93.98 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -9458,7 +9480,7 @@
 				)
 			)
 		)
-		(property "Sourcing" "JLCPCB global sourcing"
+		(property "LCSC" "C221726"
 			(at 261.62 184.15 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -9469,7 +9491,18 @@
 				)
 			)
 		)
-		(property "MPN" "C&K KSC621J LFS"
+		(property "Sourcing" ""
+			(at 261.62 184.15 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "C&K KSC221JLFS"
 			(at 261.62 184.15 0)
 			(show_name no)
 			(do_not_autoplace no)

@@ -24,6 +24,8 @@ product information portal, and carries the same licence.
 
 USB_A_Molex_67643_Horizontal_Overhang.kicad_mod is the KiCad footprint library's
 Connector_USB:USB_A_Molex_67643_Horizontal with its silkscreen stopped short of the board-edge
-marking, for a socket that overhangs the edge. The KiCad libraries are published under
+marking, for a socket that overhangs the edge. USB_C_Receptacle_HRO_TYPE-C-31-M-12_Overhang
+.kicad_mod is the same library's Connector_USB:USB_C_Receptacle_HRO_TYPE-C-31-M-12 with its
+silkscreen stopped inside the board edge, for the same reason. The KiCad libraries are published under
 CC-BY-SA 4.0 with the KiCad library exception, which permits their use in a design without the
 design itself being bound by the licence.

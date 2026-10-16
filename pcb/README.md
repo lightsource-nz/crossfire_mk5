@@ -449,7 +449,8 @@ the project library, `crossfire_logo`, traced from `art/crossfire-logo.png` by
 then scaled to 0.1 mm pixels and written as filled rectangles. Regenerate it from the script, not
 by hand, if the artwork changes.
 
-**The socket's footprint is a project copy of the library's**, differing only in its silkscreen.
+**The socket's and the receptacle's footprints are project copies of the library's**, differing
+only in their silkscreen.
 The library draws the whole body, including the 3.7 mm that stands beyond the board edge, and the
 rules check reports every silk line that crosses the edge. The copy stops its silkscreen 0.4 mm
 inside the edge marking; pads, courtyard and fabrication drawing are the library's.
@@ -860,9 +861,20 @@ the rest:
 | crystals | 12 MHz JGHC S3212000101080 C390763 and 24 MHz YXC X322524MMB4SI C70583, both **10 pF** parts: the catalogue's basic crystals are 20 pF, and the processor vendor's circuit, copied exactly, wants 10 pF with the 15 pF capacitors |
 | indicators, ferrite | KT-0603R C2286, KT-0603G C12624, Murata BLM18BD601SZ1D C2661913 |
 | core inductor | Abracon AOTA-B201610S3R3-101-T C42411119 |
-| buck inductor, buttons, USB-C receptacle, USB-A sockets | not in the catalogue: Coilcraft XEL4030-472MEC, C&K KSC621J LFS, GCT USB4105-GF-A, Molex 0676430910, each marked for the fabricator's global sourcing, which buys from the usual distributors for a fee and a week; consigning them is the alternative |
+| buck inductor | Sunlord SWPA4030S4R7MT C57269 for the prototype, on the same 4030 land: rated 2 to 3.2 A depending on which figure is read, under the buck's 2.8 A limit, which only matters during an output short at a 0.35 A load. The Coilcraft XEL4030-472MEC, 4.6 A, is the production part |
+| buttons | C&K KSC221JLFS C221726, the 2 N member of the same 6.2 mm J-lead family as the sealed KSC6 the footprint was drawn for |
+| USB-C receptacle | Korean Hroparts TYPE-C-31-M-12 C165948, the catalogue's standard USB-C: KiCad's footprint for it has the same pegs and shell slots as the GCT part and a pad row 0.38 mm further out, so the footprint was swapped with the pads kept on the old row and the body moved toward the edge instead. GCT's own USB4215, which the catalogue also stocks, is not a drop-in: its drawing puts the pad row a millimetre further out |
+| USB-A sockets | TE 292303-6 C591765, through-hole right angle with board locks, on the Molex pattern (2.0 and 2.5 mm pin pitches, 13.14 mm between locks) that Stewart and Kycon share |
 | debug header | not fitted: a header is a bench part, soldered when a bench wants it |
 | mounting holes | not parts, and out of the bill and the placement file |
+
+What settled the connectors and buttons was never the fabricator's part page, which carries no
+drawing: every catalogue part has a page at the distributor behind it, `lcsc.com/product-detail/`
+with the catalogue number, and a datasheet at `lcsc.com/datasheet/` with the same number, and
+KiCad's reviewed library footprints are the quickest cross-check of a drawing. The fabricator's
+"global sourcing" route exists, under Parts Manager, but it pre-buys the part into your own
+library over three or four weeks and charges an inspection fee per kind of connector or switch, so
+it is kept for the production inductor and nothing else.
 
 The buck is marked **not recommended for new designs** at the distributor, with six thousand in
 stock: fine for prototypes, and a part to replace before any production run. The passives are

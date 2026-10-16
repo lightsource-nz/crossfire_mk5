@@ -2119,7 +2119,7 @@
 				)
 			)
 		)
-		(property "Sourcing" "JLCPCB global sourcing"
+		(property "LCSC" "C591765"
 			(at 190.5 116.84 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2130,7 +2130,18 @@
 				)
 			)
 		)
-		(property "MPN" "Molex 0676430910"
+		(property "Sourcing" ""
+			(at 190.5 116.84 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "TE 292303-6"
 			(at 190.5 116.84 0)
 			(show_name no)
 			(do_not_autoplace no)

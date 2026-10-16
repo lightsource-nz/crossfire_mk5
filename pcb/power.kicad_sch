@@ -1750,7 +1750,7 @@
 				(justify left)
 			)
 		)
-		(property "Sourcing" "JLCPCB global sourcing"
+		(property "LCSC" "C57269"
 			(at 177.8 96.52 90)
 			(show_name no)
 			(do_not_autoplace no)
@@ -1762,7 +1762,19 @@
 				(justify left)
 			)
 		)
-		(property "DCR" "44mR max"
+		(property "Sourcing" ""
+			(at 177.8 96.52 90)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "DCR" "78mR"
 			(at 177.8 96.52 90)
 			(show_name no)
 			(do_not_autoplace no)
@@ -1807,7 +1819,7 @@
 				)
 			)
 		)
-		(property "MPN" "Coilcraft XEL4030-472MEC"
+		(property "MPN" "Sunlord SWPA4030S4R7MT"
 			(at 177.8 106.68 0)
 			(hide yes)
 			(show_name no)
@@ -1829,7 +1841,7 @@
 				)
 			)
 		)
-		(property "Isat" "4.6A"
+		(property "Isat" "2A rated (prototype); Coilcraft XEL4030-472MEC for production"
 			(at 177.8 106.68 0)
 			(hide yes)
 			(show_name no)
