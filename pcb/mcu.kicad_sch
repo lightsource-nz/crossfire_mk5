@@ -7831,6 +7831,28 @@
 				)
 			)
 		)
+		(property "LCSC" "C25100"
+			(at 167.64 132.08 90)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "UNI-ROYAL 0402WGF270JTCE"
+			(at 167.64 132.08 90)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
 			(at 167.64 127 0)
 			(hide yes)
@@ -9053,6 +9075,30 @@
 				(justify left)
 			)
 		)
+		(property "LCSC" "C23733"
+			(at 226.06 87.6362 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "MPN" "Samsung CL05A475MP5NRNC"
+			(at 226.06 87.6362 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
 		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
 			(at 223.52 86.36 0)
 			(hide yes)
@@ -9086,7 +9132,7 @@
 				)
 			)
 		)
-		(property "Voltage" "6.3V"
+		(property "Voltage" "10V"
 			(at 226.822 89.408 0)
 			(hide yes)
 			(show_name no)
@@ -9157,7 +9203,7 @@
 				(justify left)
 			)
 		)
-		(property "LCSC" "C2661913"
+		(property "LCSC" "C85833"
 			(at 191.77 54.5718 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -9169,7 +9215,7 @@
 				(justify left)
 			)
 		)
-		(property "MPN" "Murata BLM18BD601SZ1D"
+		(property "MPN" "Murata BLM18KG601SN1D"
 			(at 191.77 54.5718 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -10076,6 +10122,30 @@
 				(justify left)
 			)
 		)
+		(property "LCSC" "C29266"
+			(at 182.88 95.2562 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "MPN" "Samsung CL05A105KO5NNNC"
+			(at 182.88 95.2562 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
 		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
 			(at 180.34 93.98 0)
 			(hide yes)
@@ -10109,7 +10179,7 @@
 				)
 			)
 		)
-		(property "Voltage" "6.3V"
+		(property "Voltage" "16V"
 			(at 183.642 97.028 0)
 			(hide yes)
 			(show_name no)
@@ -10847,6 +10917,30 @@
 				(justify left)
 			)
 		)
+		(property "LCSC" "C23733"
+			(at 73.66 72.3962 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "MPN" "Samsung CL05A475MP5NRNC"
+			(at 73.66 72.3962 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
 		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
 			(at 71.12 71.12 0)
 			(hide yes)
@@ -10880,7 +10974,7 @@
 				)
 			)
 		)
-		(property "Voltage" "6.3V"
+		(property "Voltage" "10V"
 			(at 73.914 73.66 0)
 			(hide yes)
 			(show_name no)
@@ -11546,6 +11640,28 @@
 			(at 167.64 121.92 90)
 			(show_name no)
 			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C25100"
+			(at 167.64 121.92 90)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "UNI-ROYAL 0402WGF270JTCE"
+			(at 167.64 121.92 90)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
 			(effects
 				(font
 					(size 1.27 1.27)

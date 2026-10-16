@@ -878,7 +878,13 @@ it is kept for the production inductor and nothing else.
 
 The buck is marked **not recommended for new designs** at the distributor, with six thousand in
 stock: fine for prototypes, and a part to replace before any production run. The passives are
-left to the fabricator's matcher, which handled them first time.
+left to the fabricator's matcher except where it went wrong: it matched the 1 µF to a 01005 part
+and could not match the 4.7 µF or the 27 Ω at all, so those carry numbers now (Samsung
+CL05A105KO5NNNC C29266, CL05A475MP5NRNC C23733 at 10 V, UNI-ROYAL 0402WGF270JTCE C25100), as does
+the ferrite after its first choice went out of stock (Murata BLM18KG601SN1D C85833). The 5.1 kΩ
+CC pull-downs are any 1% 0402 part with stock: the specification allows ±10 % on that resistor,
+so 4.99 kΩ serves as well as 5.1. A short line is not a missing part: the fabricator's "Pre-order"
+buys the balance from the distributor's warehouse in days.
 
 **The files** come from one script, `scripts/export-fab.ps1`, which runs the rules check with
 schematic parity first and writes nothing if it reports anything: the Gerbers and drill files
