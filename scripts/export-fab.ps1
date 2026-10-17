@@ -67,7 +67,7 @@ $bomRaw = Join-Path $out 'crossfire-bom-kicad.csv'
 	-o $bomRaw $sch | Out-Null
 Import-Csv $bomRaw | ForEach-Object {
 	$fp = $_.Footprint -replace '^[^:]+:', ''
-	if ($fp -match '^(?:C|R|L|LED|D)_(\d{4})_\d{4}Metric') { $fp = $Matches[1] }
+	if ($fp -match '^(?:C|R|L|LED|D|Fuse)_(\d{4})_\d{4}Metric') { $fp = $Matches[1] }
 	elseif ($fp -match '^(QFN-\d+)') { $fp = $Matches[1] }
 	elseif ($fp -match '^(SOIC-\d+)') { $fp = $Matches[1] }
 	$_.Footprint = $fp
