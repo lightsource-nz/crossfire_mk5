@@ -756,8 +756,10 @@ resistor, on the chip side of the crystal node. The hub's two non-removable stra
 unconnected, and its checklist says they "have no internal terminations and must be terminated":
 R24 and R25 pull them to ground, which reads as four removable ports. And the hub checklist wants a
 capacitor at each of its four analogue supply pins where one had none, so C45 joins the hub's
-3.3 V row, with C43 and C44 added for the processor's third DVDD pin and sixth IOVDD pin, which
-had been sharing. What the same reading confirmed is recorded above: the straps select the default
+3.3 V row, with C43 added for the processor's third DVDD pin. A capacitor was also added for the
+sixth IOVDD pin and then removed again: there is no room at that pin for one of its own, the
+regulator's input capacitor sits 2.5 mm from it on the same net, and the vendor's own board shares
+a capacitor between two pins in exactly that situation. What the same reading confirmed is recorded above: the straps select the default
 self-powered mode with per-port switching, the over-current inputs have internal pull-ups, the
 filter pins want no more than 100 nF, and 150 µF on a port is a ceiling, not a floor.
 
