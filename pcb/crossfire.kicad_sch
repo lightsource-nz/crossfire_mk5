@@ -282,16 +282,6 @@
 	)
 	(wire
 		(pts
-			(xy 71.12 71.12) (xy 76.2 71.12)
-		)
-		(stroke
-			(width 0)
-			(type solid)
-		)
-		(uuid "16dd9046-e595-43b3-ad98-887de80bb4bc")
-	)
-	(wire
-		(pts
 			(xy 95.25 167.64) (xy 95.25 170.18)
 		)
 		(stroke
@@ -599,16 +589,6 @@
 			(type solid)
 		)
 		(uuid "b157b39e-8c5c-496a-a003-129db8e4f1e3")
-	)
-	(wire
-		(pts
-			(xy 152.4 45.72) (xy 157.48 45.72)
-		)
-		(stroke
-			(width 0)
-			(type solid)
-		)
-		(uuid "b3b2a954-f398-43ef-ad74-fb2d2bcb7a47")
 	)
 	(wire
 		(pts
@@ -1070,16 +1050,6 @@
 		)
 		(uuid "6aa867a4-cfb5-42c3-a07d-1e4805d813d4")
 	)
-	(label "VBUS_DET"
-		(at 76.2 71.12 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "6af2a411-18d6-4d4c-a4a0-61ea658bccf6")
-	)
 	(label "P1_PWR"
 		(at 259.08 109.22 0)
 		(effects
@@ -1169,16 +1139,6 @@
 			(justify left bottom)
 		)
 		(uuid "bb25bac2-bcbc-4636-ac59-a5d2249da5c0")
-	)
-	(label "VBUS_DET"
-		(at 157.48 45.72 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "c68e0063-c066-437e-a282-214253c1a621")
 	)
 	(label "USB_D-"
 		(at 157.48 25.4 0)
@@ -2140,16 +2100,6 @@
 				(justify right)
 			)
 		)
-		(pin "VBUS_DET" input
-			(at 152.4 45.72 0)
-			(uuid "90f801ad-8d7c-4768-a109-2171edc8b593")
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-			)
-		)
 		(pin "HUB_VBUS_DET" output
 			(at 152.4 63.5 0)
 			(uuid "02ee0b29-3124-4179-9eed-288494646796")
@@ -2665,16 +2615,6 @@
 		(pin "USB_D-" bidirectional
 			(at 71.12 66.04 0)
 			(uuid "17e20c51-e697-4bd9-a162-02f44c9bd102")
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-			)
-		)
-		(pin "VBUS_DET" output
-			(at 71.12 71.12 0)
-			(uuid "70d45b48-5a1d-4a78-aac6-9513f0476582")
 			(effects
 				(font
 					(size 1.27 1.27)

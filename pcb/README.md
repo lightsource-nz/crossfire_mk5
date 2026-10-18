@@ -470,7 +470,7 @@ rest fall out of keeping peripherals on their default pins.
 | 10–13 | — | spare; the four a radio would take, 12 and 13 adjacent for its clock and data |
 | 14, 15 | `LED_1`, `LED_2` | |
 | 16 | `BUTTON` | |
-| 17 | `VBUS_DET` | VBUS present, divided down |
+| 17 | — | free; it watched VBUS through a divider until VBUS became the only supply, when it could only read high |
 | 18 | `HUB_VBUS_DET` | tells the hub its upstream is live; also the way to force a re-enumeration |
 | 19–25 | — | spare, and still contiguous: seven in a row is a display bus |
 | 26, 27 | `CC1_SENSE`, `CC2_SENSE` | ADC inputs: what the source advertises |
@@ -619,8 +619,9 @@ group of signals has a strip of its own that no part may enter:
 the upstream pair, the CC senses, the flash bus, the host pair, the debug and button lines up to the
 back edge, and the four downstream pairs down to their sockets. The decoupling capacitors ended up
 1.6 to 6 mm from their pins, joined at 0.4 mm rather than at the rail's width, since a wide track
-beside a pin row is a wall of its own. Two small parts are placed but not connected: the hub's bias
-resistor and the VBUS sense divider.
+beside a pin row is a wall of its own. (Two small parts were placed but not connected at that
+point, the hub's bias resistor and a VBUS sense divider since removed; the hand routing that
+followed connected everything.)
 
 The first layout taught the method, and it carries over even though the parts it was learned on do
 not. The record of how each rule was arrived at is in the history with that design; the rules
@@ -667,7 +668,7 @@ themselves:
 | sheet | contents |
 | --- | --- |
 | `mcu` | RP2350A, flash, crystal, SWD, boot button, decoupling, and the two ADC inputs that read CC |
-| `upstream_data` | the upstream receptacle, Rd on both CC pins and the sense behind each, ESD on the hardware USB pair, VBUS sense, and VBUS leaving as the 5 V rail |
+| `upstream_data` | the upstream receptacle, Rd on both CC pins and the sense behind each, ESD on the hardware USB pair, the fuse, and VBUS leaving as the 5 V rail |
 | `hub` | USB2514B, its 24 MHz crystal, the `RBIAS` resistor, the PIO host pair's series resistors and pull-downs, upstream detect from the MCU, and four downstream pairs |
 | `port` | one port: switch, ESD array, receptacle, bulk capacitance — instanced four times |
 | `power` | the 3.3 V buck with its capacitors and inductor, and one bypass capacitor for each port switch's input |
@@ -724,6 +725,14 @@ library's current copy.
 
 ## Settled since
 
+**Three things from the pre-order review.** The green indicator could not have lit: its part has
+a 3.1 V forward voltage, which on 3.3 V through 1 kΩ leaves a fifth of a milliamp. It is now a
+2.1 V yellow-green (LITEON LTST-C194KGKT) and both indicators run through 330 Ω, about 4 mA
+each. The VBUS sense divider is gone: it watched the one rail the board runs from, so it could
+only ever read high, and GPIO17 is free again. And eight test points are added, bare 1 mm pads
+that are neither in the bill nor placed: the PIO host pair, the processor's own USB pair, the
+three rails and ground, since a prototype whose job is to prove a PIO host wants a probe on it.
+
 **A fuse on the 5 V input.** The USB-C source is required to limit its current, and the port
 switches limit theirs, but nothing stood between a plain 5 V brick and a fault on the board, so
 a resettable fuse goes in series with VBUS at the receptacle, ahead of everything: F1, a 1812
@@ -733,7 +742,7 @@ when the fault clears, which on a bench is worth more than a one-shot fuse's low
 the polymer costs about 30 mΩ, 70 mV at full load, against a 5 V rail that can arrive at 4.5. The
 short wire between the receptacle's VBUS pins and the fuse is its own net, `VBUS_IN`, in the
 heavy-copper class; everything after the fuse is +5V as before, including the protection array's
-VBUS pin and the sense divider, which the fuse's resistance does not disturb.
+VBUS pin, which the fuse's resistance does not disturb.
 
 **Four things the reference documents asked for that the schematic did not have.** A pre-fab pass
 against the processor vendor's hardware design guide and the hub vendor's design checklists, read

@@ -2200,22 +2200,10 @@
 		(uuid "1cb6b108-d62a-46b6-873f-45a2aa49abaa")
 	)
 	(junction
-		(at 121.92 91.44)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "1d13612b-bc74-4f6c-a1f5-312d6f27a854")
-	)
-	(junction
 		(at 104.14 99.06)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "326f2244-840c-43dd-a5f0-3539bee985a8")
-	)
-	(junction
-		(at 121.92 99.06)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "488b26b5-33a7-49b8-a9dc-498aa3124683")
 	)
 	(junction
 		(at 121.92 165.1)
@@ -2292,16 +2280,6 @@
 			(type solid)
 		)
 		(uuid "26c618c9-fd00-44d6-a7cc-958bc83dc6fd")
-	)
-	(wire
-		(pts
-			(xy 121.92 99.06) (xy 121.92 96.52)
-		)
-		(stroke
-			(width 0)
-			(type solid)
-		)
-		(uuid "29503f77-7010-47de-a124-4c7debd61a05")
 	)
 	(wire
 		(pts
@@ -2395,16 +2373,6 @@
 	)
 	(wire
 		(pts
-			(xy 121.92 91.44) (xy 121.92 88.9)
-		)
-		(stroke
-			(width 0)
-			(type solid)
-		)
-		(uuid "59d517fd-6038-4f30-af9f-666e7aaa2194")
-	)
-	(wire
-		(pts
 			(xy 104.14 119.38) (xy 127 119.38)
 		)
 		(stroke
@@ -2485,16 +2453,6 @@
 	)
 	(wire
 		(pts
-			(xy 121.92 91.44) (xy 134.62 91.44)
-		)
-		(stroke
-			(width 0)
-			(type solid)
-		)
-		(uuid "a659858a-510c-417d-a364-804ea32a2d73")
-	)
-	(wire
-		(pts
 			(xy 104.14 116.84) (xy 104.14 119.38)
 		)
 		(stroke
@@ -2542,16 +2500,6 @@
 			(type solid)
 		)
 		(uuid "d67dca4f-7f5e-4164-a417-68519fe783ab")
-	)
-	(wire
-		(pts
-			(xy 121.92 83.82) (xy 121.92 78.74)
-		)
-		(stroke
-			(width 0)
-			(type solid)
-		)
-		(uuid "de6dfe55-20c4-4719-ac35-46c0d4371da3")
 	)
 	(wire
 		(pts
@@ -2685,17 +2633,6 @@
 			(justify left)
 		)
 		(uuid "21148bf4-7a67-43dd-ad2e-2a1f34ecbc32")
-	)
-	(hierarchical_label "VBUS_DET"
-		(shape output)
-		(at 134.62 91.44 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "a49f359f-8167-4c2a-afd1-59063db4da42")
 	)
 	(hierarchical_label "CC1_SENSE"
 		(shape output)
@@ -2862,99 +2799,6 @@
 			(project "crossfire"
 				(path "/4c5cdd13-4f54-43b0-affb-0ae4b9a4d279/9de577d2-4349-45dc-ab43-167b038179a9"
 					(reference "#PWR011")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Device:R_Small")
-		(at 121.92 86.36 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "1f4d330d-e63a-4165-a270-adfa70cdbaf9")
-		(property "Reference" "R5"
-			(at 124.46 85.0899 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "100k"
-			(at 124.46 87.6299 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
-			(at 121.92 86.36 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 121.92 86.36 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" ""
-			(at 121.92 86.36 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Tolerance" "1%"
-			(at 121.92 93.98 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "d2a2fc60-bb2c-4647-acf3-b67c90296bf1")
-		)
-		(pin "2"
-			(uuid "f7286fc8-d4e7-4df8-a752-a02a9a1df666")
-		)
-		(instances
-			(project "crossfire"
-				(path "/4c5cdd13-4f54-43b0-affb-0ae4b9a4d279/9de577d2-4349-45dc-ab43-167b038179a9"
-					(reference "R5")
 					(unit 1)
 				)
 			)
@@ -3938,99 +3782,6 @@
 		)
 	)
 	(symbol
-		(lib_id "Device:R_Small")
-		(at 121.92 93.98 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "a206b0a6-7bc1-47b1-a7f2-13886e55a93e")
-		(property "Reference" "R6"
-			(at 119.38 92.7099 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-			)
-		)
-		(property "Value" "100k"
-			(at 119.38 95.2499 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-			)
-		)
-		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
-			(at 121.92 93.98 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 121.92 93.98 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" ""
-			(at 121.92 93.98 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Tolerance" "1%"
-			(at 121.92 101.6 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "c8d230a7-8316-435e-adc2-702732743e62")
-		)
-		(pin "2"
-			(uuid "36c5f118-656d-4bb7-a1bf-032d9733dc6b")
-		)
-		(instances
-			(project "crossfire"
-				(path "/4c5cdd13-4f54-43b0-affb-0ae4b9a4d279/9de577d2-4349-45dc-ab43-167b038179a9"
-					(reference "R6")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
 		(lib_id "power:GND")
 		(at 121.92 170.18 0)
 		(unit 1)
@@ -4301,85 +4052,6 @@
 			(project "crossfire"
 				(path "/4c5cdd13-4f54-43b0-affb-0ae4b9a4d279/9de577d2-4349-45dc-ab43-167b038179a9"
 					(reference "U1")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "power:GND")
-		(at 121.92 78.74 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "d0374978-8681-4afc-af8d-049eebc1d4b7")
-		(property "Reference" "#PWR07"
-			(at 121.92 71.12 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "GND"
-			(at 124.46 80.0099 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" ""
-			(at 121.92 78.74 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 121.92 78.74 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" ""
-			(at 121.92 78.74 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "5a7967ca-a708-460a-a726-3f6a4153c694")
-		)
-		(instances
-			(project "crossfire"
-				(path "/4c5cdd13-4f54-43b0-affb-0ae4b9a4d279/9de577d2-4349-45dc-ab43-167b038179a9"
-					(reference "#PWR07")
 					(unit 1)
 				)
 			)
