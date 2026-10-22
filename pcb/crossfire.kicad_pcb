@@ -32340,8 +32340,8 @@
 			(justify left bottom)
 		)
 	)
-	(gr_text "TP1"
-		(at 145.45 64.95 0)
+	(gr_text "D+"
+		(at 146.85 63.65 0)
 		(layer "F.SilkS")
 		(uuid "ca9fde35-915d-4ce0-bb91-cf9c6797baa4")
 		(effects
@@ -32352,8 +32352,8 @@
 			(justify left bottom)
 		)
 	)
-	(gr_text "TP2"
-		(at 145.55 60.05 0)
+	(gr_text "D-"
+		(at 146.95 61.45 0)
 		(layer "F.SilkS")
 		(uuid "86537c1c-2ee4-4a6e-b4ec-2cd1a9bbe40e")
 		(effects
