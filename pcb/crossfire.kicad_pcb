@@ -13833,289 +13833,6 @@
 			)
 		)
 	)
-	(footprint "Inductor_SMD:L_Coilcraft_XxL4030"
-		(layer "F.Cu")
-		(uuid "6878f52d-1197-4054-8a65-a051e7f3a0b3")
-		(at 118 55 180)
-		(descr "L_Coilcraft_XxL4030 https://www.coilcraft.com/pdfs/xfl4030.pdf")
-		(tags "L Coilcraft XxL4030")
-		(property "Reference" "L2"
-			(at -3 0 270)
-			(layer "F.SilkS")
-			(uuid "e779bb3b-c054-4e97-89bf-6c9f9ed38918")
-			(effects
-				(font
-					(size 0.8 0.8)
-					(thickness 0.12)
-				)
-			)
-		)
-		(property "Value" "4u7"
-			(at 0 3 180)
-			(layer "F.Fab")
-			(hide yes)
-			(uuid "52890d80-cb4c-4fc9-b745-1a83ad4b0ea7")
-			(effects
-				(font
-					(size 1 1)
-					(thickness 0.15)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 0 0 180)
-			(unlocked yes)
-			(layer "F.Fab")
-			(hide yes)
-			(uuid "920ec13c-dd99-4d6e-be4d-53490cd18fb8")
-			(effects
-				(font
-					(size 1.27 1.27)
-					(thickness 0.15)
-				)
-			)
-		)
-		(property "Description" ""
-			(at 0 0 180)
-			(unlocked yes)
-			(layer "F.Fab")
-			(hide yes)
-			(uuid "601025d1-60ec-451d-816e-b463221b3490")
-			(effects
-				(font
-					(size 1.27 1.27)
-					(thickness 0.15)
-				)
-			)
-		)
-		(property "MPN" "Sunlord SWPA4030S4R7MT"
-			(at 0 0 180)
-			(unlocked yes)
-			(layer "F.Fab")
-			(hide yes)
-			(uuid "39d29362-635f-4b40-ac62-af54639b6b85")
-			(effects
-				(font
-					(size 1 1)
-					(thickness 0.15)
-				)
-			)
-		)
-		(property "Tolerance" "20%"
-			(at 0 0 180)
-			(unlocked yes)
-			(layer "F.Fab")
-			(hide yes)
-			(uuid "fd15e043-639f-4a3e-b3e8-b47cec8df5c4")
-			(effects
-				(font
-					(size 1 1)
-					(thickness 0.15)
-				)
-			)
-		)
-		(property "Isat" "2A rated (prototype); Coilcraft XEL4030-472MEC for production"
-			(at 0 0 180)
-			(unlocked yes)
-			(layer "F.Fab")
-			(hide yes)
-			(uuid "39b0991c-59fe-496b-9946-f69ca04426e7")
-			(effects
-				(font
-					(size 1 1)
-					(thickness 0.15)
-				)
-			)
-		)
-		(property "DCR" "78mR"
-			(at 0 0 180)
-			(unlocked yes)
-			(layer "F.Fab")
-			(hide yes)
-			(uuid "6d552d8e-b1fa-45ad-9e01-dcfc22aa7dbf")
-			(effects
-				(font
-					(size 1 1)
-					(thickness 0.15)
-				)
-			)
-		)
-		(property "Sourcing" ""
-			(at 0 0 0)
-			(layer "F.SilkS")
-			(hide yes)
-			(uuid "df0d3437-74bd-4cd0-9fe4-b613a5a298b6")
-			(effects
-				(font
-					(size 1.27 1.27)
-					(thickness 0.15)
-				)
-			)
-		)
-		(property "LCSC" "C57269"
-			(at 0 0 0)
-			(layer "F.SilkS")
-			(hide yes)
-			(uuid "849c8bb8-b3b1-461b-bee4-c713e2a9b919")
-			(effects
-				(font
-					(size 1.27 1.27)
-					(thickness 0.15)
-				)
-			)
-		)
-		(property ki_fp_filters "Choke_* *Coil* Inductor_* L_*")
-		(path "/3a0d800d-f868-47e5-a520-4703480651cc/37ee7499-23b3-40ad-a189-361517396d7c")
-		(sheetname "/power/")
-		(sheetfile "power.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "2")
-			)
-		)
-		(attr smd)
-		(duplicate_pad_numbers_are_jumpers no)
-		(fp_line
-			(start 2.154 2.154)
-			(end -2.154 2.154)
-			(stroke
-				(width 0.12)
-				(type solid)
-			)
-			(layer "F.SilkS")
-			(uuid "5cd72a35-72a1-4345-a665-61667632aefa")
-		)
-		(fp_line
-			(start -2.154 -2.154)
-			(end 2.154 -2.154)
-			(stroke
-				(width 0.12)
-				(type solid)
-			)
-			(layer "F.SilkS")
-			(uuid "1670c4ac-b2bb-4ac9-ae19-41e51ea8fdec")
-		)
-		(fp_line
-			(start 2.26 2.26)
-			(end -2.26 2.26)
-			(stroke
-				(width 0.05)
-				(type solid)
-			)
-			(layer "F.CrtYd")
-			(uuid "bcb4d871-8ebd-4c7f-97b8-e1de8700823e")
-		)
-		(fp_line
-			(start 2.26 -2.26)
-			(end 2.26 2.26)
-			(stroke
-				(width 0.05)
-				(type solid)
-			)
-			(layer "F.CrtYd")
-			(uuid "6eb2b3e4-164a-402e-9ab1-2394ee25f186")
-		)
-		(fp_line
-			(start -2.26 2.26)
-			(end -2.26 -2.26)
-			(stroke
-				(width 0.05)
-				(type solid)
-			)
-			(layer "F.CrtYd")
-			(uuid "1ab4d387-cee9-4266-803c-cbd9b0481cfa")
-		)
-		(fp_line
-			(start -2.26 -2.26)
-			(end 2.26 -2.26)
-			(stroke
-				(width 0.05)
-				(type solid)
-			)
-			(layer "F.CrtYd")
-			(uuid "2ff251e8-ea08-498b-b2a1-fe4d9af17011")
-		)
-		(fp_line
-			(start 2 2)
-			(end -2 2)
-			(stroke
-				(width 0.1)
-				(type solid)
-			)
-			(layer "F.Fab")
-			(uuid "2c4d7828-29bb-422b-867a-afe10ce14a75")
-		)
-		(fp_line
-			(start 2 -2)
-			(end 2 2)
-			(stroke
-				(width 0.1)
-				(type solid)
-			)
-			(layer "F.Fab")
-			(uuid "d5204703-b85d-4923-967a-c4997431dc61")
-		)
-		(fp_line
-			(start -2 2)
-			(end -2 -2)
-			(stroke
-				(width 0.1)
-				(type solid)
-			)
-			(layer "F.Fab")
-			(uuid "3dec6a47-e9a5-4aab-9eb2-9bcd1ee87293")
-		)
-		(fp_line
-			(start -2 -2)
-			(end 2 -2)
-			(stroke
-				(width 0.1)
-				(type solid)
-			)
-			(layer "F.Fab")
-			(uuid "eb42990c-81c6-4bce-a68a-d9ddceb9be55")
-		)
-		(fp_text user "${REFERENCE}"
-			(at 0 0 180)
-			(layer "F.Fab")
-			(uuid "1edd1747-d852-41c7-bc1c-268c02942c16")
-			(effects
-				(font
-					(size 1 1)
-					(thickness 0.15)
-				)
-			)
-		)
-		(pad "1" smd rect
-			(at -1.185 0 180)
-			(size 0.98 3.4)
-			(layers "F.Cu" "F.Mask" "F.Paste")
-			(net "Net-(U4-SW)")
-			(pintype "passive")
-			(uuid "032faf76-a8e1-4817-a6de-798dd385d1f3")
-		)
-		(pad "2" smd rect
-			(at 1.185 0 180)
-			(size 0.98 3.4)
-			(layers "F.Cu" "F.Mask" "F.Paste")
-			(net "+3V3")
-			(pintype "passive")
-			(uuid "91865de8-227d-4f97-b45a-3d77b940fe90")
-		)
-		(embedded_fonts no)
-		(model "${KICAD10_3DMODEL_DIR}/Inductor_SMD.3dshapes/L_Coilcraft_XxL4030.step"
-			(offset
-				(xyz 0 0 0)
-			)
-			(scale
-				(xyz 1 1 1)
-			)
-			(rotate
-				(xyz 0 0 0)
-			)
-		)
-	)
 	(footprint "Resistor_SMD:R_0402_1005Metric"
 		(layer "F.Cu")
 		(uuid "6b1958e5-5b65-4c4e-bb9a-5fa4b76cef53")
@@ -18405,6 +18122,274 @@
 		)
 		(embedded_fonts no)
 		(model "${KICAD10_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0402_1005Metric.step"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+	)
+	(footprint "crossfire:L_4030_Coilcraft_XxL_Sunlord_SWPA"
+		(layer "F.Cu")
+		(uuid "a8126e00-62e2-4145-80a0-97f6a24a59d5")
+		(at 118 55 180)
+		(descr "4.0 x 4.0 mm molded inductor, one land for both the Coilcraft XEL/XFL4030 (terminals 0.82 wide, 0.79 to 1.61 from centre) and the Sunlord SWPA4030S (terminals 0.95 wide, 1.05 to 2.00 from centre): the Coilcraft XxL4030 pads kept on their inner edge and carried out to the body edge")
+		(tags "L Coilcraft XxL4030 Sunlord SWPA4030S")
+		(property "Reference" "L2"
+			(at -3 0 270)
+			(layer "F.SilkS")
+			(uuid "cce7baea-6722-4f17-988f-7384dd5ba78c")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "Value" "4u7"
+			(at 0 3 180)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "4b5a345f-5878-44ed-a9a3-14ec3ccac004")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 0 0 180)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "3a55acb9-32d4-4a60-a5e9-f16aabf8fc4d")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "Description" ""
+			(at 0 0 180)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "3cf3d893-bd2d-41e0-a79f-a0cfefc8c8bb")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "MPN" "Sunlord SWPA4030S4R7MT"
+			(at 0 0 0)
+			(layer "F.SilkS")
+			(hide yes)
+			(uuid "8c45f184-c62c-43c8-8065-5b8a8c00f7dc")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "Tolerance" "20%"
+			(at 0 0 0)
+			(layer "F.SilkS")
+			(hide yes)
+			(uuid "e1c21945-db0d-4949-88d0-510ce97b972d")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "Isat" "2A rated (prototype); Coilcraft XEL4030-472MEC for production"
+			(at 0 0 0)
+			(layer "F.SilkS")
+			(hide yes)
+			(uuid "66383247-5890-470b-a8d3-0925aa1d82a2")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "DCR" "78mR"
+			(at 0 0 0)
+			(layer "F.SilkS")
+			(hide yes)
+			(uuid "210fede2-6666-487c-83b1-74230c7bebef")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "Sourcing" ""
+			(at 0 0 0)
+			(layer "F.SilkS")
+			(hide yes)
+			(uuid "9e1a416b-ba4f-41b6-ae29-217ec812ddb2")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "LCSC" "C57269"
+			(at 0 0 0)
+			(layer "F.SilkS")
+			(hide yes)
+			(uuid "f8bd5a6b-ffa8-402e-bb33-ff44f06610c0")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(path "/3a0d800d-f868-47e5-a520-4703480651cc/37ee7499-23b3-40ad-a189-361517396d7c")
+		(attr smd)
+		(duplicate_pad_numbers_are_jumpers no)
+		(fp_line
+			(start 2.154 2.154)
+			(end -2.154 2.154)
+			(stroke
+				(width 0.12)
+				(type solid)
+			)
+			(layer "F.SilkS")
+			(uuid "f74db7ec-0d6d-418e-9ee9-d9d18c466f23")
+		)
+		(fp_line
+			(start -2.154 -2.154)
+			(end 2.154 -2.154)
+			(stroke
+				(width 0.12)
+				(type solid)
+			)
+			(layer "F.SilkS")
+			(uuid "e8efe415-4930-47f4-8078-e74444c68811")
+		)
+		(fp_line
+			(start 2.26 2.26)
+			(end -2.26 2.26)
+			(stroke
+				(width 0.05)
+				(type solid)
+			)
+			(layer "F.CrtYd")
+			(uuid "8cbf869e-d6da-4d82-b67e-9f01c3087387")
+		)
+		(fp_line
+			(start 2.26 -2.26)
+			(end 2.26 2.26)
+			(stroke
+				(width 0.05)
+				(type solid)
+			)
+			(layer "F.CrtYd")
+			(uuid "b55de6af-3a7c-4f57-8bc4-2008bc4fdac6")
+		)
+		(fp_line
+			(start -2.26 2.26)
+			(end -2.26 -2.26)
+			(stroke
+				(width 0.05)
+				(type solid)
+			)
+			(layer "F.CrtYd")
+			(uuid "c8de6b00-5794-460a-b6c2-2d2ad3db9078")
+		)
+		(fp_line
+			(start -2.26 -2.26)
+			(end 2.26 -2.26)
+			(stroke
+				(width 0.05)
+				(type solid)
+			)
+			(layer "F.CrtYd")
+			(uuid "8123e837-c862-4437-ab83-3a7ef3282cee")
+		)
+		(fp_line
+			(start 2 2)
+			(end -2 2)
+			(stroke
+				(width 0.1)
+				(type solid)
+			)
+			(layer "F.Fab")
+			(uuid "2a3b9174-c42a-4f6b-abb3-ce64252ba2f9")
+		)
+		(fp_line
+			(start 2 -2)
+			(end 2 2)
+			(stroke
+				(width 0.1)
+				(type solid)
+			)
+			(layer "F.Fab")
+			(uuid "252214fc-34e1-4f55-9fc5-d77859bc0bc4")
+		)
+		(fp_line
+			(start -2 2)
+			(end -2 -2)
+			(stroke
+				(width 0.1)
+				(type solid)
+			)
+			(layer "F.Fab")
+			(uuid "c22fb15a-5b63-4786-a3b6-1fccb2205501")
+		)
+		(fp_line
+			(start -2 -2)
+			(end 2 -2)
+			(stroke
+				(width 0.1)
+				(type solid)
+			)
+			(layer "F.Fab")
+			(uuid "fcf153ee-2e4d-4d5b-9fb5-ae99d4625204")
+		)
+		(fp_text user "${REFERENCE}"
+			(at 0 0 180)
+			(layer "F.Fab")
+			(uuid "a104661f-3e3b-4113-b2c5-7490fb945e6a")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(pad "1" smd rect
+			(at -1.3475 0 180)
+			(size 1.305 3.4)
+			(layers "F.Cu" "F.Mask" "F.Paste")
+			(net "Net-(U4-SW)")
+			(uuid "9b706abc-cde8-4620-bcdb-ef0480f1b3a8")
+		)
+		(pad "2" smd rect
+			(at 1.3475 0 180)
+			(size 1.305 3.4)
+			(layers "F.Cu" "F.Mask" "F.Paste")
+			(net "+3V3")
+			(uuid "1b2be4c9-8a49-4aa2-9ef4-af7718ad01b5")
+		)
+		(embedded_fonts no)
+		(model "${KICAD10_3DMODEL_DIR}/Inductor_SMD.3dshapes/L_Coilcraft_XxL4030.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -33744,7 +33729,7 @@
 		(uuid "1dfa3510-1884-42b3-8985-974ac140999a")
 	)
 	(via
-		(at 120.45 53.95)
+		(at 120.75 53.95)
 		(size 0.6)
 		(drill 0.3)
 		(layers "F.Cu" "B.Cu")
@@ -46016,18 +46001,18 @@
 				(xy 110.411984 54.009491) (xy 110.309491 54.111984) (xy 110.237016 54.237513) (xy 110.237014 54.237518)
 				(xy 110.1995 54.377522) (xy 107.801002 54.377522) (xy 107.890509 54.288015) (xy 107.962984 54.162485)
 				(xy 108.000499 54.022477) (xy 108.0005 54.022477) (xy 108.0005 53.877523) (xy 108.000499 53.877522)
-				(xy 119.8995 53.877522) (xy 119.8995 54.022477) (xy 119.937014 54.162481) (xy 119.937016 54.162486)
-				(xy 119.980336 54.237518) (xy 120.009491 54.288015) (xy 120.111985 54.390509) (xy 120.167352 54.422475)
-				(xy 120.233212 54.4605) (xy 120.237515 54.462984) (xy 120.237516 54.462984) (xy 120.237518 54.462985)
-				(xy 120.30752 54.481742) (xy 120.377522 54.500499) (xy 120.377523 54.5005) (xy 120.377525 54.5005)
-				(xy 120.522477 54.5005) (xy 120.522477 54.500499) (xy 120.662485 54.462984) (xy 120.788015 54.390509)
-				(xy 120.890509 54.288015) (xy 120.962984 54.162485) (xy 121.000499 54.022477) (xy 121.0005 54.022477)
-				(xy 121.0005 53.877523) (xy 121.000499 53.877522) (xy 120.989645 53.837016) (xy 120.976516 53.788015)
-				(xy 120.962985 53.737518) (xy 120.962983 53.737513) (xy 120.890508 53.611984) (xy 120.788015 53.509491)
-				(xy 120.662486 53.437016) (xy 120.662481 53.437014) (xy 120.522477 53.3995) (xy 120.522475 53.3995)
-				(xy 120.377525 53.3995) (xy 120.377523 53.3995) (xy 120.237518 53.437014) (xy 120.237513 53.437016)
-				(xy 120.111984 53.509491) (xy 120.009491 53.611984) (xy 119.937016 53.737513) (xy 119.937014 53.737518)
-				(xy 119.8995 53.877522) (xy 108.000499 53.877522) (xy 107.989645 53.837016) (xy 107.976516 53.788015)
+				(xy 120.1995 53.877522) (xy 120.1995 54.022477) (xy 120.237014 54.162481) (xy 120.237016 54.162486)
+				(xy 120.280336 54.237518) (xy 120.309491 54.288015) (xy 120.411985 54.390509) (xy 120.467352 54.422475)
+				(xy 120.533212 54.4605) (xy 120.537515 54.462984) (xy 120.537516 54.462984) (xy 120.537518 54.462985)
+				(xy 120.60752 54.481742) (xy 120.677522 54.500499) (xy 120.677523 54.5005) (xy 120.677525 54.5005)
+				(xy 120.822477 54.5005) (xy 120.822477 54.500499) (xy 120.962485 54.462984) (xy 121.088015 54.390509)
+				(xy 121.190509 54.288015) (xy 121.262984 54.162485) (xy 121.300499 54.022477) (xy 121.3005 54.022477)
+				(xy 121.3005 53.877523) (xy 121.300499 53.877522) (xy 121.289645 53.837016) (xy 121.276516 53.788015)
+				(xy 121.262985 53.737518) (xy 121.262983 53.737513) (xy 121.190508 53.611984) (xy 121.088015 53.509491)
+				(xy 120.962486 53.437016) (xy 120.962481 53.437014) (xy 120.822477 53.3995) (xy 120.822475 53.3995)
+				(xy 120.677525 53.3995) (xy 120.677523 53.3995) (xy 120.537518 53.437014) (xy 120.537513 53.437016)
+				(xy 120.411984 53.509491) (xy 120.309491 53.611984) (xy 120.237016 53.737513) (xy 120.237014 53.737518)
+				(xy 120.1995 53.877522) (xy 108.000499 53.877522) (xy 107.989645 53.837016) (xy 107.976516 53.788015)
 				(xy 107.962985 53.737518) (xy 107.962983 53.737513) (xy 107.890508 53.611984) (xy 107.788015 53.509491)
 				(xy 107.662486 53.437016) (xy 107.662481 53.437014) (xy 107.522477 53.3995) (xy 107.522475 53.3995)
 				(xy 107.377525 53.3995) (xy 107.377523 53.3995) (xy 107.237518 53.437014) (xy 107.237513 53.437016)

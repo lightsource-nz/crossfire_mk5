@@ -26,6 +26,8 @@ USB_A_Molex_67643_Horizontal_Overhang.kicad_mod is the KiCad footprint library's
 Connector_USB:USB_A_Molex_67643_Horizontal with its silkscreen stopped short of the board-edge
 marking, for a socket that overhangs the edge. USB_C_Receptacle_HRO_TYPE-C-31-M-12_Overhang
 .kicad_mod is the same library's Connector_USB:USB_C_Receptacle_HRO_TYPE-C-31-M-12 with its
-silkscreen stopped inside the board edge, for the same reason. The KiCad libraries are published under
+silkscreen stopped inside the board edge, for the same reason. L_4030_Coilcraft_XxL_Sunlord_SWPA
+.kicad_mod is the same library's Inductor_SMD:L_Coilcraft_XxL4030 with each pad carried out to the
+body edge, so that the Sunlord SWPA4030S terminals are covered as well as the Coilcraft's. The KiCad libraries are published under
 CC-BY-SA 4.0 with the KiCad library exception, which permits their use in a design without the
 design itself being bound by the licence.

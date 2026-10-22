@@ -439,7 +439,7 @@ under that part is the pattern its maker lays out, not a guess at the nearest li
 | | part | why |
 | --- | --- | --- |
 | core regulator inductor | Abracon AOTA-B201610S3R3-101-T | the processor's vendor names it, and publishes a layout built around it |
-| 3.3 V buck inductor | a 4.7 uH part in the 4 mm shielded family already on the board | the land pattern was already in the project; the exact part number is still to be confirmed against its saturation figure |
+| 3.3 V buck inductor | Coilcraft XEL4030-472MEC, or Sunlord SWPA4030S4R7MT at the assembler | one project land, `L_4030_Coilcraft_XxL_Sunlord_SWPA`, takes both: the Coilcraft pads kept on their inner edge and carried out to the body edge, after the first order was stopped because a third of each Sunlord terminal hung outside the Coilcraft pads (under Fabrication) |
 
 **The board carries its name on the front silkscreen**: the application's graphic, 21 x 15.5 mm
 in the open area right of the hub, with `CROSSFIRE Rev ${REVISION}` beneath it, the revision read
@@ -725,6 +725,22 @@ library's current copy.
 
 ## Settled since
 
+**The buck inductor's land takes both its parts.** The assembler stopped the first order at L2:
+their overlay showed the Sunlord part's terminals covering the outer 0.6 mm of each Coilcraft pad
+and hanging 0.3 mm past it. The drawing had been misread here. In the Sunlord table the 0.95 mm
+figure is the terminal width and the 2.1 mm figure is the gap between the terminals, which puts
+their outer edges at the body edge, 2.0 mm from centre; the Coilcraft terminals are 0.82 mm wide
+and stop at 1.61. The 3.3 mm figure, taken for the terminal span, is the terminal's length the
+other way. Neither part's recommended land fits the other: Sunlord's pads start 1.05 mm from
+centre, the Coilcraft's end at 1.68. The land is now a project footprint,
+`L_4030_Coilcraft_XxL_Sunlord_SWPA`, which is the Coilcraft one with each pad kept on its inner
+edge and carried out to 2.00 mm, 1.3 mm wide instead of 0.98, so both terminals lie wholly on
+copper and the gap under the body, which sets the switching node's size, is unchanged. One ground
+stitching via beside the switch-node pad moved 0.3 mm to keep its clearance. The lesson is the one
+already written under Footprints, from the other side: a dimension table without its figure is a
+list of numbers, and the letters have to be read against the drawing, rendered, before a part is
+called a fit.
+
 **Three things from the pre-order review.** The green indicator could not have lit: its part has
 a 3.1 V forward voltage, which on 3.3 V through 1 kΩ leaves a fifth of a milliamp. It is now a
 2.1 V yellow-green (LITEON LTST-C194KGKT) and both indicators run through 330 Ω, about 4 mA
@@ -883,7 +899,7 @@ the rest:
 | crystals | 12 MHz JGHC S3212000101080 C390763 and 24 MHz YXC X322524MMB4SI C70583, both **10 pF** parts: the catalogue's basic crystals are 20 pF, and the processor vendor's circuit, copied exactly, wants 10 pF with the 15 pF capacitors |
 | indicators, ferrite | KT-0603R C2286, KT-0603G C12624, Murata BLM18BD601SZ1D C2661913 |
 | core inductor | Abracon AOTA-B201610S3R3-101-T C42411119 |
-| buck inductor | Sunlord SWPA4030S4R7MT C57269 for the prototype, on the same 4030 land: rated 2 to 3.2 A depending on which figure is read, under the buck's 2.8 A limit, which only matters during an output short at a 0.35 A load. The Coilcraft XEL4030-472MEC, 4.6 A, is the production part |
+| buck inductor | Sunlord SWPA4030S4R7MT C57269 for the prototype: rated 2 to 3.2 A depending on which figure is read, under the buck's 2.8 A limit, which only matters during an output short at a 0.35 A load. The Coilcraft XEL4030-472MEC, 4.6 A, is the production part. The two are **not** on the same land, and the first order was stopped for it: the Sunlord's terminals are 0.95 mm wide and run out to the 4.0 mm body edge with a 2.1 mm gap, where the Coilcraft's are 0.82 mm wide and stop 0.4 mm inside the body, so on the Coilcraft land the Sunlord overlapped the outer 0.6 mm of each pad and hung 0.3 mm past it. The land is now the project's own, `L_4030_Coilcraft_XxL_Sunlord_SWPA`: the Coilcraft pads with their inner edges where they were, 0.70 mm from centre, and their outer edges carried to the body edge at 2.00 mm, which covers the Coilcraft terminal (0.79 to 1.61) and the Sunlord's (1.05 to 2.00) whole. The gap between the pads, under the body, is unchanged |
 | buttons | C&K KSC221JLFS C221726, the 2 N member of the same 6.2 mm J-lead family as the sealed KSC6 the footprint was drawn for |
 | USB-C receptacle | Korean Hroparts TYPE-C-31-M-12 C165948, the catalogue's standard USB-C: KiCad's footprint for it has the same pegs and shell slots as the GCT part and a pad row 0.38 mm further out, so the footprint was swapped with the pads kept on the old row and the body moved toward the edge instead. GCT's own USB4215, which the catalogue also stocks, is not a drop-in: its drawing puts the pad row a millimetre further out |
 | USB-A sockets | TE 292303-6 C591765, through-hole right angle with board locks, on the Molex pattern (2.0 and 2.5 mm pin pitches, 13.14 mm between locks) that Stewart and Kycon share |
@@ -926,9 +942,10 @@ is derived from the board.
   output capacitance at this load, which two 22 µF 0603 parts give several times over even at
   3.3 V bias. The input capacitor becomes the same 10 µF 0805 16 V X7R as the hub's bulk
   capacitor, so that it still reads as 10 µF with 5 V across it; the 0603 10 V part would not. The
-  inductor is the Coilcraft XEL4030-472MEC: 4.7 µH, 4.6 A saturation, 44 mΩ, on the land pattern
-  already placed. The XFL part in the same size saturates at 1.7 A, under the buck's 2.8 A current
-  limit, which is why it is not the one.
+  inductor is the Coilcraft XEL4030-472MEC: 4.7 µH, 4.6 A saturation, 44 mΩ, on the Coilcraft land
+  the project started with, since widened so the assembler's Sunlord part sits on it too. The XFL
+  part in the same size saturates at 1.7 A, under the buck's 2.8 A current limit, which is why it
+  is not the one.
 - **Vias in pads** are gone, above: 0.6 mm on 0.3 mm holes, beside the pads, tented.
 - **The capacitance on VBUS at attach**: 10 µF plus six 100 nF, 10.6 µF nominal and about 8 µF
   with 5 V across the 0805 part, under the 10 µF the specification allows. The port capacitors sit
