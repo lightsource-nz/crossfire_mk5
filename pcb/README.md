@@ -162,7 +162,10 @@ firmware takes the higher of the two — the cable connects only one.
 The firmware then decides which ports to power. The hub already switches each port's power on
 request and reports over-current port by port, so enforcing a budget is a matter of which ports the
 host stack turns on, using requests it already makes. The 1 A threshold in each port switch protects
-the hardware; the policy decides what is offered.
+the hardware; the policy decides what is offered. The first firmware stops short of switching: its
+host stack exposes no per-port power control, so the budget it reads drives the red indicator and
+the console's `power` report, and every port is offered. Enforcing it is a later firmware's work,
+on the hardware as built.
 
 **The sense must not load the line it reads.** A divider across CC would sit in parallel with the
 5.1 kΩ and change what the source believes it is talking to, which is worse than not knowing the
