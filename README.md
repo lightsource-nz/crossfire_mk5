@@ -46,7 +46,7 @@ The RP2040 has no second slot and puts nothing on probation, so there every imag
 ## The production board
 
 `pcb/` holds the hardware for the board this firmware is heading for -- an RP2350 hosting four
-instruments through a hub, powered over USB-C, optionally with a radio and a battery. It is a KiCad
-project with the blocks and their interfaces settled and no components placed yet, alongside the
-power budget, the part selection and the two decisions the rest of the design hangs off. See
-`pcb/README.md`. Nothing has been built or measured.
+instruments through a hub, powered over USB-C. It is a KiCad project, designed, routed and ordered:
+revision 0.1 went to the fabricator, assembled, in October 2026. `pcb/README.md` carries the
+design and every decision behind it; `pcb/releases/v0.1/` carries the files that were submitted
+and a specification of the board as built. Nothing has been measured yet.
