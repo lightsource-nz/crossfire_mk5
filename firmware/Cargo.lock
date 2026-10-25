@@ -601,6 +601,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "light-board-crossfire-v01"
+version = "0.1.0"
+dependencies = [
+ "light-core",
+ "light-rp2",
+]
+
+[[package]]
 name = "light-core"
 version = "0.1.0"
 dependencies = [
@@ -674,6 +682,8 @@ dependencies = [
  "portable-atomic",
  "rp2040-pac",
  "rp235x-pac",
+ "usb-device",
+ "usbd-serial",
 ]
 
 [[package]]
@@ -737,6 +747,15 @@ dependencies = [
  "light-rp2",
  "light-update",
  "light_app_crossfire",
+]
+
+[[package]]
+name = "light_app_crossfire_v01"
+version = "0.1.0"
+dependencies = [
+ "light-board-crossfire-v01",
+ "light-core",
+ "light-rp2",
 ]
 
 [[package]]
@@ -1040,6 +1059,28 @@ name = "unicode-xid"
 version = "0.2.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ebc1c04c71510c7f702b52b7c350734c9ff1295c464a03335b00bb84fc54f853"
+
+[[package]]
+name = "usb-device"
+version = "0.3.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "98816b1accafbb09085168b90f27e93d790b4bfa19d883466b5e53315b5f06a6"
+dependencies = [
+ "heapless 0.8.0",
+ "portable-atomic",
+]
+
+[[package]]
+name = "usbd-serial"
+version = "0.2.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "065e4eaf93db81d5adac82d9cef8f8da314cb640fa7f89534b972383f1cf80fc"
+dependencies = [
+ "embedded-hal 0.2.7",
+ "embedded-io 0.6.1",
+ "nb 1.1.0",
+ "usb-device",
+]
 
 [[package]]
 name = "uuid"
