@@ -171,12 +171,15 @@ struct SimApp {
 
 impl SimApp {
         fn new(panel: PanelView, led: Line, button: Line, bus: BusHandle, logs: LogView) -> Self {
-                Self { panel, led, button, bus, logs, glass: None, turn: 1, scale: 3.0, sockets: Default::default(), log_lines: Vec::new(), console_input: String::new() }
+                //   three quarter-turns clockwise, which is the one that reads: the application
+                // puts its top on the panel's right edge, and a quarter turn the other way would
+                // show it upside down -- as the first build did
+                Self { panel, led, button, bus, logs, glass: None, turn: 3, scale: 3.0, sockets: Default::default(), log_lines: Vec::new(), console_input: String::new() }
         }
 
         /// The glass as an image, turned `turn` quarter-turns clockwise from the panel's own
         /// portrait orientation. The application draws its landscape interface rotated so its
-        /// top lands on the panel's right edge; one turn back the other way reads it.
+        /// top lands on the panel's right edge; three turns on (one back) reads it.
         fn glass_image(&self) -> egui::ColorImage {
                 let pw = self.panel.width();
                 let ph = self.panel.height();
