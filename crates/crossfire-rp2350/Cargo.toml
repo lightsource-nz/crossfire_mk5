@@ -1,0 +1,19 @@
+[package]
+workspace = "../../firmware"
+name = "crossfire-rp2350"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "what every crossfire on an RP2350 shares: the boot ROM's probation as the application's Probation, the firmware self-replacement module, and the signs of life with this chip's console-core pulse"
+
+[dependencies]
+light_app_crossfire = { path = "../light_app_crossfire" }
+light-core = { path = "../../../light_mk5/crates/light-core" }
+#   the chip is this crate's identity: the second application slot and the boot facility that
+# picks between them are the RP2350's
+light-rp2 = { path = "../../../light_mk5/crates/light-rp2", features = ["rp2350"] }
+#   the staging session an update is made of, and the slot it writes into
+light-update = { path = "../../../light_mk5/crates/light-update" }
+#   the commit holds core 0's interrupts off while it rewrites the flash it runs from; the
+# implementation is the port's
+critical-section = "1.2"

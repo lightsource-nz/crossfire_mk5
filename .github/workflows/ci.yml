@@ -47,6 +47,12 @@ jobs:
             preset: conf-crossfire-pico-debug
             targets: crossfire_pico
             tree: build-crossfire-pico
+          #   the production board: its own board definition, the host on PIO, the same
+          # bootloader and flash map as the Pico 2 build
+          - name: rp2350 (production board, revision 0.1)
+            preset: conf-crossfire-v01-debug
+            targets: crossfire_v01 crossfire_bootloader
+            tree: build-crossfire-v01
     uses: lightsource-nz/light_mk5/.github/workflows/project-build.yml@main
     with:
       project: crossfire_mk5

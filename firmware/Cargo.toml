@@ -11,6 +11,8 @@ resolver = "2"
 members = [
         "../module/crossfire_pico/rust",
         "../module/crossfire_pico2/rust",
+        #   what the two RP2350 boards share below the application: probation, self-replacement
+        "../crates/crossfire-rp2350",
         #   the production board: its board-support crate, and the instantiation that links it
         "../crates/light-board-crossfire-v01",
         "../module/crossfire_v01/rust",

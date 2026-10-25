@@ -14,13 +14,16 @@ crate-type = ["staticlib"]
 
 [dependencies]
 light_app_crossfire = { path = "../../../crates/light_app_crossfire" }
+#   what the chip gives the application -- probation, firmware self-replacement -- shared with
+# the production board rather than copied from it
+crossfire-rp2350 = { path = "../../../crates/crossfire-rp2350" }
 light-core = { path = "../../../../light_mk5/crates/light-core" }
 light-draw = { path = "../../../../light_mk5/crates/light-draw" }
 light-display = { path = "../../../../light_mk5/crates/light-display" }
 light-font = { path = "../../../../light_mk5/crates/light-font" }
 #   this board's assets live in storage rather than in its image, so it reads the pack
 light-assets = { path = "../../../../light_mk5/crates/light-assets", default-features = false }
-#   this board can replace its own firmware: the staging session, and the slot it writes into
+#   this board can replace its own firmware: the staging session the radio's fetch feeds
 light-update = { path = "../../../../light_mk5/crates/light-update" }
 #   the chip is THIS module's identity: the feature is pinned here, not switched by the
 # build system -- a crossfire_pico2 is an RP2350 or it is nothing
@@ -35,6 +38,3 @@ light-rp2 = { path = "../../../../light_mk5/crates/light-rp2", features = ["usb-
 # device with no cable on it. Additive to the wireless side -- one part, uploaded once, with the
 # over-the-air update path it already had
 light-cyw43 = { path = "../../../../light_mk5/crates/light-cyw43", features = ["bluetooth"] }
-#   the commit holds core 0's interrupts off while it rewrites the flash it runs from; the
-# implementation is the port's
-critical-section = "1.2"

@@ -1,217 +1,83 @@
-//! crossfire on its production board, revision 0.1: the hardware-bound instantiation.
+//! crossfire on its production board, revision 0.1: the hardware-bound instantiation. The
+//! application is `light_app_crossfire`, with no hardware in it; this crate is everything
+//! tangible -- the board's wiring through its own crate, the RP2350 chip feature, the host
+//! stack on the PIO pair, the shell ABI, the panic handler -- constructed here and handed to
+//! [`app::serve`].
 //!
-//! TODAY THIS IS THE BOARD'S BRING-UP FIRMWARE, not the application. The application as it
-//! stands drives an OLED and hosts instruments on the native USB port; this board has no
-//! display, hosts on a PIO pair that does not exist yet, and puts the native port in its device
-//! role. What is here is what the first boards need from a firmware: a console on both
-//! transports, the hub held in reset until asked, the indicators and the button exercised, and
-//! the two CC lines read and interpreted -- the things the board's "to prove" list wants a
-//! probe or a console for. The application replaces the board module below when it is wired
-//! to this hardware; the entry points, the console and the board crate stay.
+//! What this board brings that the others do not: a hub of its own to run ([`HubMod`]), two
+//! indicators in place of a display ([`IndicatorMod`]), the supply's advertisement off the
+//! receptacle's CC lines, and a USER button as the navigation control. What it does not bring:
+//! glass, a radio, an asset pack -- there is nothing to draw with, so there is nothing to read
+//! from the data partition, and the image is complete in itself.
+//!
+//! THE HOST IS BUILT OUT OF PIO and the hardware USB port is the device: the console rides it,
+//! and with it the route into the bootloader over the product's own connector. The PIO host
+//! wants a system clock that is a multiple of 12 MHz; the module's CMake chooses one, and the
+//! firmware says so at start-up if it did not get one.
 
 #![no_std]
 
-use light_board_crossfire_v01::board::{self, Peripherals, ADC_FULL_SCALE_MV, REVISION};
-use light_core::cli::{Cli, Command, Outcome, Parsed, Words};
+use light_app_crossfire as app;
+use app::{CcSense, ConsoleMod, HubMod, IndicatorMod, NavMod, ProbationMod, UsbMod, AppEvent, EVENTS};
+use crossfire_rp2350::{vitals, RomProbation, UpdateMod};
+use light_board_crossfire_v01::board::{self, ADC_FULL_SCALE_MV, DESIGN_SYS_HZ, PIN_HOST_DP, REVISION};
 use light_core::events::Subscription;
-use light_core::{info, log, warn, EventBus, Idle, InputPin, LineReader, Mailbox, Module, Poll, Runtime, StaticCell};
+use light_core::{info, warn, log, ConstStaticCell, Idle, InputPin, Module, Poll, StaticCell};
+use light_rp2::adc::Adc;
+use light_rp2::gpio::{Input, Output};
 use light_rp2::shell::{panic_report, ShellInfo, UART_BAUD, UART_RX, UART_TX};
 use light_rp2::uart::Uart;
+use light_rp2::usb_host::UsbMidiHost;
+use light_rp2::usb_host_pio::PioHostController;
 use light_rp2::{now_us, Breathe, Clocks};
 
-/// What the console can ask of the board.
-#[derive(Clone, Copy, Debug)]
-enum Cmd {
-        /// Release the hub from reset and tell it its upstream is live, or hold it again.
-        Hub(bool),
-        /// Read both CC lines and say what the source advertises.
-        Cc,
-        /// Drive an indicator by hand.
-        Led { green: bool, on: bool },
-        /// Start or stop the green heartbeat.
-        Blink(bool),
-        /// Whether USER is pressed right now.
-        Button,
-}
+/// The host's transmit DMA channel: the top of the chip's sixteen, where the SDK's own
+/// claims (counting up from 0) will not reach.
+const HOST_DMA_CH: usize = 15;
 
-static EVENTS: EventBus<Cmd, 4, 2> = EventBus::new();
-static CONSOLE_BYTES: Mailbox<u8, 128> = Mailbox::new();
-
-fn on_off(w: &mut Words) -> Option<bool> {
-        match w.next() {
-                Some("on") => Some(true),
-                Some("off") => Some(false),
-                _ => None,
-        }
-}
-
-static COMMANDS: &[Command<Cmd>] = &[
-        Command { name: "hub", usage: "hub on|off -- release the hub from reset and tell it VBUS is up, or hold it in reset again", parse: |w| on_off(w).map_or(Parsed::Usage, |on| Parsed::Event(Cmd::Hub(on))) },
-        Command { name: "cc", usage: "cc -- read both CC lines and say what the source advertises", parse: |_| Parsed::Event(Cmd::Cc) },
-        Command {
-                name: "led",
-                usage: "led red|green on|off",
-                parse: |w| {
-                        let green = match w.next() {
-                                Some("red") => false,
-                                Some("green") => true,
-                                _ => return Parsed::Usage,
-                        };
-                        on_off(w).map_or(Parsed::Usage, |on| Parsed::Event(Cmd::Led { green, on }))
-                },
-        },
-        Command { name: "blink", usage: "blink on|off -- the green heartbeat, on by default", parse: |w| on_off(w).map_or(Parsed::Usage, |on| Parsed::Event(Cmd::Blink(on))) },
-        Command { name: "button", usage: "button -- whether USER is pressed", parse: |_| Parsed::Event(Cmd::Button) },
-];
-static CLI: Cli<Cmd> = Cli::new(COMMANDS);
-
-/// Lines from either console transport, dispatched to the table above.
-struct ConsoleMod {
-        reader: LineReader<96>,
-}
-
-impl Module for ConsoleMod {
-        fn name(&self) -> &'static str {
-                "console"
-        }
-
-        fn poll(&mut self) -> Poll {
-                let mut result = Poll::Idle;
-                while let Some(b) = CONSOLE_BYTES.pop() {
-                        if let Some(line) = self.reader.push(b) {
-                                match CLI.dispatch(line.as_str()) {
-                                        Outcome::Quiet => {}
-                                        Outcome::Shutdown => return Poll::Shutdown,
-                                        Outcome::Event(e) => {
-                                                let _ = EVENTS.publish(e);
-                                                result = Poll::Busy;
-                                        }
-                                        Outcome::Handled => result = Poll::Busy,
-                                }
-                        }
-                }
-                result
-        }
-}
-
-/// The USB-C specification's three Rd voltage bands, as the sink sees them across its 5.1 kΩ:
-/// 0.25 to 0.61 V for a default source, 0.70 to 1.16 V for 1.5 A, 1.31 to 2.04 V for 3 A.
-/// The thresholds sit midway between the bands; below the lowest band the line has no pull-up
-/// on it at all, which is the unused CC line of an attached cable, or no cable.
-fn advertisement(mv: u32) -> &'static str {
-        match mv {
-                0..=199 => "no pull-up",
-                200..=655 => "default USB power: 500 mA at most",
-                656..=1235 => "1.5 A",
-                1236..=2200 => "3 A",
-                _ => "above any band: not a USB-C source",
-        }
+/// The receptacle's CC lines, read through the board's ADC and scaled to millivolts.
+struct CcLines {
+        cc1: Adc,
+        cc2: Adc,
 }
 
 fn millivolts(raw: u16) -> u32 {
         u32::from(raw) * ADC_FULL_SCALE_MV / 4095
 }
 
-/// The board's own peripherals, exercised: the heartbeat, the button on the red indicator,
-/// the hub under console control, and the CC lines on request.
-struct BoardMod {
-        p: Peripherals,
+impl CcSense for CcLines {
+        fn read_mv(&mut self) -> (u32, u32) {
+                (millivolts(self.cc1.read()), millivolts(self.cc2.read()))
+        }
+}
+
+/// What the PIO host's frame engine counts, said on `stats` beside the application's own
+/// figures: frames, the worst frame, transfers that failed, packets a pipe lost. The first
+/// boards' bring-up reads this before anything else.
+struct HostStatsMod {
         events: Subscription,
-        blink: bool,
-        green: bool,
-        last_blink_us: u64,
-        pressed: bool,
 }
 
-const BLINK_HALF_PERIOD_US: u64 = 500_000;
-
-impl BoardMod {
-        fn new(p: Peripherals) -> Self {
-                Self { p, events: EVENTS.subscribe().expect("subscriber slot"), blink: true, green: false, last_blink_us: 0, pressed: false }
-        }
-
-        fn hub(&mut self, on: bool) {
-                if on {
-                        //   out of reset first, then told its upstream is there: the part
-                        // samples its straps on the way out of reset and attaches when
-                        // VBUS_DET rises
-                        self.p.hub_reset_n.set(true);
-                        self.p.hub_vbus_det.set(true);
-                        info!("hub: released from reset, upstream reported live");
-                } else {
-                        self.p.hub_vbus_det.set(false);
-                        self.p.hub_reset_n.set(false);
-                        info!("hub: held in reset");
-                }
-        }
-
-        fn cc(&mut self) {
-                let cc1 = millivolts(self.p.cc1.read());
-                let cc2 = millivolts(self.p.cc2.read());
-                info!("cc1 {} mV ({}); cc2 {} mV ({})", cc1, advertisement(cc1), cc2, advertisement(cc2));
-                //   the source pulls up the one line its cable orients to; the other is the
-                // cable's own Ra or nothing, so the higher reading is the advertisement
-                let (line, mv) = if cc1 >= cc2 { ("CC1", cc1) } else { ("CC2", cc2) };
-                info!("source on {line}: {}", advertisement(mv));
-        }
-
-        fn led(&mut self, green: bool, on: bool) {
-                if green {
-                        //   driving the green by hand takes the heartbeat off it, or the next
-                        // half-period would undo the command
-                        self.blink = false;
-                        self.green = on;
-                        self.p.led_green.set(on);
-                } else {
-                        self.p.led_red.set(on);
-                }
-        }
-}
-
-impl Module for BoardMod {
+impl Module for HostStatsMod {
         fn name(&self) -> &'static str {
-                "board"
-        }
-
-        fn load(&mut self) -> Result<(), ()> {
-                info!("board: hub held in reset -- `hub on` releases it; `help` lists the rest");
-                Ok(())
+                "host-stats"
         }
 
         fn poll(&mut self) -> Poll {
                 let mut busy = false;
-                while let Some(cmd) = EVENTS.poll(&self.events) {
-                        match cmd {
-                                Cmd::Hub(on) => self.hub(on),
-                                Cmd::Cc => self.cc(),
-                                Cmd::Led { green, on } => self.led(green, on),
-                                Cmd::Blink(on) => self.blink = on,
-                                Cmd::Button => info!("button: {}", if self.p.button.is_low() { "pressed" } else { "released" }),
+                while let Some(ev) = EVENTS.poll(&self.events) {
+                        if let AppEvent::Stats = ev {
+                                let s = PioHostController::stats();
+                                let attached = match PioHostController::attached() {
+                                        None => "nothing attached",
+                                        Some(false) => "a full-speed device attached",
+                                        Some(true) => "a low-speed device attached (not spoken to)",
+                                };
+                                info!("pio host: frame {}, {} frames run, worst {} us; {} transfers failed, {} pipe packets lost; {}", PioHostController::frame_number(), s.frames, s.worst_frame_us, s.errors, s.pipe_dropped, attached);
+                                busy = true;
                         }
-                        busy = true;
-                }
-                let now = now_us();
-                if self.blink && now - self.last_blink_us >= BLINK_HALF_PERIOD_US {
-                        self.green = !self.green;
-                        self.p.led_green.set(self.green);
-                        self.last_blink_us = now;
-                }
-                //   the button on the red indicator, and on the console on each edge: the one
-                // input the board has, proven without a probe
-                let pressed = self.p.button.is_low();
-                if pressed != self.pressed {
-                        self.pressed = pressed;
-                        self.p.led_red.set(pressed);
-                        info!("button: {}", if pressed { "pressed" } else { "released" });
-                        busy = true;
                 }
                 if busy { Poll::Busy } else { Poll::Idle }
-        }
-
-        fn unload(&mut self) {
-                self.hub(false);
-                self.p.led_red.set(false);
-                self.p.led_green.set(false);
         }
 }
 
@@ -221,12 +87,7 @@ impl Module for BoardMod {
 pub extern "C" fn light_app_core1_main(info: &ShellInfo) -> ! {
         // SAFETY: core 1's one construction of the console UART
         let uart = unsafe { Uart::new(UART_TX, UART_RX, UART_BAUD, info.clk_peri_hz) };
-        light_rp2::shell::core1_main(
-                |b| {
-                        let _ = CONSOLE_BYTES.push(b);
-                },
-                Some(uart),
-        )
+        light_rp2::shell::core1_main(app::push_console_byte, Some(uart))
 }
 
 #[unsafe(no_mangle)]
@@ -234,33 +95,50 @@ pub extern "C" fn light_app_main(info: &ShellInfo) -> ! {
         log::set_clock(now_us);
         let clocks = Clocks { sys_hz: info.clk_sys_hz, peri_hz: info.clk_peri_hz };
         let p = board::take(&clocks).expect("the board's peripherals are taken once");
-        info!("crossfire rev {}: bring-up firmware; sys {} Hz, peri {} Hz; console on USB and the UART", REVISION, clocks.sys_hz, clocks.peri_hz);
-        if clocks.sys_hz != board::DESIGN_SYS_HZ {
-                info!("the board is designed for {} Hz; this build runs the SDK's default", board::DESIGN_SYS_HZ);
+        info!("crossfire rev {}: sys {} Hz, peri {} Hz; host on the PIO pair, console on USB and the UART", REVISION, clocks.sys_hz, clocks.peri_hz);
+        if clocks.sys_hz % 12_000_000 != 0 {
+                //   the PIO host's dividers are only exact at a multiple of 12 MHz; at anything
+                // else every bit carries jitter and the first boards would be debugging the clock
+                // rather than the bus
+                warn!("the system clock is not a multiple of 12 MHz: the PIO host's bit timing is inexact at this rate (the board is designed for {} Hz)", DESIGN_SYS_HZ);
         }
-        //   which image the ROM chose: on a board with an A/B pair this is the only answer to
-        // "which image am I running?"
-        if let Some(b) = light_rp2::shell::boot_info() {
-                info!("boot: type {}, partition {:?}, probation {:#x}", b.boot_type, b.partition, b.tbyb_and_update);
+        //   which image the ROM chose, and what it made of the slot it was asked about: on a
+        // board with an A/B pair this is the only answer to "which image am I running?"
+        let boot = light_rp2::shell::boot_info();
+        if let Some(b) = boot {
+                info!("boot: type {}, partition {:?}, probation {:#x}; diagnosing {:?} -> {:#010x}", b.boot_type, b.partition, b.tbyb_and_update, b.diagnostic_partition, b.diagnostic);
         }
 
-        //   the modules live in .bss, never on core 0's small stack
-        static BOARD_MOD: StaticCell<BoardMod> = StaticCell::new();
-        let board_mod = BOARD_MOD.init(BoardMod::new(p));
-        static CONSOLE_MOD: StaticCell<ConsoleMod> = StaticCell::new();
-        let console_mod = CONSOLE_MOD.init(ConsoleMod { reader: LineReader::new() });
+        //   the host stack on THIS core: its frame tick's interrupt lands here, and its futures
+        // are polled here -- the one rule the PIO host has
+        // SAFETY: the one construction; the board wired the pair to the hub and nothing else
+        // uses PIO0 or the channel
+        let host = unsafe { UsbMidiHost::init_pio(PIN_HOST_DP, HOST_DMA_CH, clocks.sys_hz) };
+        info!("USB host stack up on PIO: {} MIDI slots, hub aware; the hub is held until the application is ready", app::USB_SLOTS);
 
-        let mut rt: Runtime<4> = Runtime::new();
-        rt.add(console_mod).expect("capacity");
-        rt.add(board_mod).expect("capacity");
+        //   the big modules live in .bss, never on core 0's small stack
+        static USB_MOD: StaticCell<UsbMod<UsbMidiHost>> = StaticCell::new();
+        let usb_mod = USB_MOD.init(UsbMod::new(host));
+        let mut console_mod = ConsoleMod::new();
+        //   the USER button, a pin of the board's: pressed is low
+        let button: Input = p.button;
+        let mut nav_mod = NavMod::new(move || button.is_low());
+        //   the hub, released once the host is listening, and the supply read on the way
+        static HUB_MOD: StaticCell<HubMod<Output, Output, CcLines>> = StaticCell::new();
+        let hub_mod = HUB_MOD.init(HubMod::new(p.hub_reset_n, p.hub_vbus_det, CcLines { cc1: p.cc1, cc2: p.cc2 }));
+        let mut indicator_mod = IndicatorMod::new(p.led_green, p.led_red);
+        let mut host_stats_mod = HostStatsMod { events: EVENTS.subscribe().expect("subscriber slot") };
+        //   an image started on approval keeps itself only once the application has shown it
+        // works; until then a reset, or the ROM's own probation watchdog, brings the old one back
+        let mut probation_mod = ProbationMod::new(RomProbation::new(boot), vitals);
+        //   this board can replace its own firmware, which the portable application cannot know
+        //   WORDS, not bytes: the boot facility wants this word-aligned, and a byte array is not
+        static COMMIT_SCRATCH: ConstStaticCell<[u32; light_rp2::update::COMMIT_SCRATCH_WORDS]> = ConstStaticCell::new([0; light_rp2::update::COMMIT_SCRATCH_WORDS]);
+        static UPDATE_MOD: StaticCell<UpdateMod> = StaticCell::new();
+        let update_mod = UPDATE_MOD.init(UpdateMod::new(COMMIT_SCRATCH.take()));
+
         let mut idle = Breathe;
-        match rt.run(|| idle.idle()) {
-                Ok(()) => warn!("runtime stopped: `quit` was asked for; reset the board to start again"),
-                Err(e) => warn!("runtime stopped: {e:?}"),
-        }
-        loop {
-                idle.idle();
-        }
+        app::serve(usb_mod, &mut console_mod, &mut nav_mod, &mut [hub_mod, &mut indicator_mod, &mut host_stats_mod, update_mod], &mut probation_mod, move || idle.idle())
 }
 
 #[cfg(target_os = "none")]

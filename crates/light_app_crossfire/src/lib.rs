@@ -2,15 +2,23 @@
 //! the APPLICATION, with no hardware in it.
 //!
 //! The forwarding engine is `light_midi`, portable and host-tested; the host stack reaches
-//! this crate as a [`light_midi::Host`], the status display as a [`SpiDisplayBus`] under the
-//! SH1107 driver, the LED as an [`OutputPin`], time as `light_core::log`'s clock. A tangible
-//! crossfire -- a Pico, a Pico 2, whatever comes later -- is a hardware-bound module that
-//! constructs those concrete parts, hands them to [`serve`], and owns everything this crate
-//! must not: pins, chip features, the USB host stack, the shell ABI, the panic handler.
+//! this crate as a [`light_midi::Host`], a status display as a [`SpiDisplayBus`] under the
+//! SH1107 driver, indicators as [`OutputPin`]s, time as `light_core::log`'s clock. A tangible
+//! crossfire -- a Pico, a Pico 2, the production board, whatever comes later -- is a
+//! hardware-bound module that constructs those concrete parts, hands them to [`serve`], and
+//! owns everything this crate must not: pins, chip features, the USB host stack, the shell
+//! ABI, the panic handler.
+//!
+//! WHAT EVERY BOARD HAS is the host stack, the console and one navigation control; everything
+//! else is a module the board brings or does not. A display is one of those: the boards with
+//! glass bring [`OledMod`], and the board with two indicators brings [`IndicatorMod`] instead,
+//! with [`HubMod`] to run the hub it hosts through. The probation checks ask about a display
+//! only where there is one.
 
 #![no_std]
 
 use core::fmt::Write;
+use light_core::atomic::AtomicBool;
 use light_core::cli::{Cli, Command, Outcome, Parsed, Words};
 use light_core::{info, log, warn, Clock, ConstStaticCell, EventBus, LineReader, Mailbox, Module, OutputPin, Poll, Runtime, SpiDisplayBus, Subscription};
 use light_display::sh1107::Sh1107;
@@ -20,8 +28,14 @@ use light_font::Font;
 use light_midi::{Forwarder, Host, MidiEvent};
 use light_ui::{Descent, Fonts, Lui, LuiChild, Style, Theme, Ui};
 
+mod hub;
+mod indicators;
+pub mod power;
 mod probation;
-pub use probation::{judge, Permanent, Probation, ProbationMod, Verdict, Vitals, COMMIT_DEADLINE_MS, MIN_PASSES, SETTLE_MS};
+pub use hub::{read_budget, CcSense, HubLines, HubMod, NoCcSense};
+pub use indicators::{levels, Heard, IndicatorMod};
+pub use power::{Advertisement, Budget, CcLine};
+pub use probation::{judge, DisplayVitals, Permanent, Probation, ProbationMod, Verdict, Vitals, COMMIT_DEADLINE_MS, MIN_PASSES, SETTLE_MS};
 
 /// USB device slots the engine tracks: the host stack's MIDI slot count (`light_rp2::usb_host::SLOTS`,
 /// four). The engine indexes its table with the mount index directly, so the two must agree.
@@ -70,6 +84,15 @@ pub enum AppEvent {
         /// does, and a board whose radio will not start is still a board that forwards its
         /// instruments. On a board with no radio nothing answers, which is the right outcome.
         Radio,
+        /// Release the hub a board hosts through from reset -- or, if it is already up, make it
+        /// enumerate afresh -- or hold it in reset. On a board whose hub is on a cable nothing
+        /// answers.
+        Hub(bool),
+        /// Read the supply's advertisement again and say what it offers.
+        Power,
+        /// What the supply offers, as the hub module read it: for the indicators, and for
+        /// anything else that wants to know.
+        Budget(Budget),
 }
 
 //   WHAT IT TAKES TO JOIN A NETWORK IS NO LONGER DECLARED HERE, and why is worth keeping. This was
@@ -119,8 +142,9 @@ impl FetchTarget {
         }
 }
 
-///   The bus, public because a board may add a module of its own to it -- see `serve`.
-pub static EVENTS: EventBus<AppEvent, 8, 4> = EventBus::new();
+///   The bus, public because a board may add a module of its own to it -- see `serve`. Six
+/// subscriber slots: the most any board uses is four, and a slot is the cheapest thing here.
+pub static EVENTS: EventBus<AppEvent, 8, 6> = EventBus::new();
 static CONSOLE_BYTES: Mailbox<u8, 128> = Mailbox::new();
 
 /// A console byte from the transport the hardware module owns. Never blocks; a full
@@ -158,9 +182,10 @@ static STATS: Mailbox<StatsSnapshot, 1> = Mailbox::new();
 /// session that disturbs the answer. The console core keeps its own tick in the port.
 static CORE0_PASSES: light_core::atomic::AtomicU32 = light_core::atomic::AtomicU32::new(0);
 
-/// The display's health, published by the OLED module for the probation checks: how many frames
-/// have reached the glass in full, and how many pushes were abandoned because the bus stopped
-/// answering.
+/// The display's health, published by the OLED module for the probation checks: whether there is
+/// one at all, how many frames have reached the glass in full, and how many pushes were abandoned
+/// because the bus stopped answering.
+static DISPLAY_PRESENT: AtomicBool = AtomicBool::new(false);
 static DISPLAY_SHOWN: light_core::atomic::AtomicU32 = light_core::atomic::AtomicU32::new(0);
 static DISPLAY_TIMEOUTS: light_core::atomic::AtomicU32 = light_core::atomic::AtomicU32::new(0);
 
@@ -172,8 +197,7 @@ pub fn vitals(console_ticks: u32) -> Vitals {
                 uptime_ms: probation::uptime_ms(),
                 passes: CORE0_PASSES.load(Relaxed),
                 console_ticks,
-                frames_shown: DISPLAY_SHOWN.load(Relaxed),
-                display_timeouts: DISPLAY_TIMEOUTS.load(Relaxed),
+                display: DISPLAY_PRESENT.load(Relaxed).then(|| DisplayVitals { frames_shown: DISPLAY_SHOWN.load(Relaxed), timeouts: DISPLAY_TIMEOUTS.load(Relaxed) }),
         }
 }
 
@@ -348,6 +372,8 @@ impl<B: SpiDisplayBus, C: Clock> OledMod<B, C> {
                         Ok(l) => l,
                         Err(e) => panic!("the embedded UI does not parse: {e:?}"),
                 };
+                // from here the probation checks ask about the display
+                DISPLAY_PRESENT.store(true, light_core::atomic::Ordering::Relaxed);
                 Self { display, layer, font, ui, lui, clock, display_offset, events: EVENTS.subscribe().expect("subscriber slot"), status: Status::default(), stats: StatsSnapshot::default(), page: PAGE_STATUS, stats_ms: 0, dirty: true, worst_paint_us: 0, worst_push_us: 0 }
         }
 
@@ -586,6 +612,19 @@ fn parse_advertise(_w: &mut Words) -> Parsed<AppEvent> {
         Parsed::Event(AppEvent::Advertise)
 }
 
+fn parse_power(_w: &mut Words) -> Parsed<AppEvent> {
+        Parsed::Event(AppEvent::Power)
+}
+
+//   `hub on` releases it, or on a hub already up makes it enumerate afresh; `hub off` holds it
+fn parse_hub(w: &mut Words) -> Parsed<AppEvent> {
+        match w.next() {
+                Some("on") => Parsed::Event(AppEvent::Hub(true)),
+                Some("off") => Parsed::Event(AppEvent::Hub(false)),
+                _ => Parsed::Usage,
+        }
+}
+
 //   `fetch 192.168.1.10:8000 /crossfire.bin`, the port optional
 fn parse_fetch(w: &mut Words) -> Parsed<AppEvent> {
         let (Some(where_), Some(path)) = (w.next(), w.next()) else {
@@ -651,6 +690,8 @@ static COMMANDS: &[Command<AppEvent>] = &[
         Command { name: "scan", usage: "scan", parse: parse_scan },
         Command { name: "advertise", usage: "advertise   (announce on the short-range radio and wait to be connected to)", parse: parse_advertise },
         Command { name: "fetch", usage: "fetch <address>[:port] <path>", parse: parse_fetch },
+        Command { name: "hub", usage: "hub on|off   (release the on-board hub, or re-enumerate it if it is up; or hold it in reset)", parse: parse_hub },
+        Command { name: "power", usage: "power   (read what the supply advertises and what that leaves for the ports)", parse: parse_power },
 ];
 static CLI: Cli<AppEvent> = Cli::new(COMMANDS);
 
@@ -700,23 +741,25 @@ impl Module for ConsoleMod {
         }
 }
 
-/// The BOOTSEL button as the display's one navigation control: each press cycles the OLED to the
-/// next page. The board hands in its port's flash-safe reader (`light_rp2::shell::bootsel`) so this
-/// crate stays hardware-independent. Reading BOOTSEL briefly stops the world, so it is sampled at a
-/// modest rate rather than every pass, and a press is taken on the edge -- one page turn per push.
-pub struct NavMod {
-        pressed: fn() -> bool,
+/// One button as the one navigation control: each press cycles a display to its next page. The
+/// board hands in whatever reads its button -- the port's flash-safe BOOTSEL reader
+/// (`light_rp2::shell::bootsel`) on the boards with no other button, a pin on the board that has
+/// one -- so this crate stays hardware-independent. Reading BOOTSEL briefly stops the world, so the
+/// button is sampled at a modest rate rather than every pass, and a press is taken on the edge --
+/// one page turn per push.
+pub struct NavMod<F: FnMut() -> bool> {
+        pressed: F,
         was_down: bool,
         last_ms: u32,
 }
 
-impl NavMod {
-        pub fn new(pressed: fn() -> bool) -> Self {
+impl<F: FnMut() -> bool> NavMod<F> {
+        pub fn new(pressed: F) -> Self {
                 Self { pressed, was_down: false, last_ms: 0 }
         }
 }
 
-impl Module for NavMod {
+impl<F: FnMut() -> bool> Module for NavMod<F> {
         fn name(&self) -> &'static str {
                 "nav"
         }
@@ -745,12 +788,13 @@ impl Module for NavMod {
 /// big pieces where its memory map wants them (statics, not this core's stack) and hands
 /// in mutable borrows; this seals them into the runtime.
 ///   `board` is the seam for what only the hardware can do, and it is a LIST because the boards
-/// genuinely differ rather than differing by one optional extra. One has an indicator on a pin of
-/// its own and nothing else. Another has no such pin at all -- its indicator is on the radio, so
-/// it belongs to the radio's module and not to a module of its own -- and can replace its own
-/// firmware besides. What they have in common is the four modules named above; everything else a
-/// board brings joins the same runtime and the same bus here, and a board that brings nothing
-/// passes an empty list.
+/// genuinely differ rather than differing by one optional extra. One has a display and an
+/// indicator on a pin of its own. Another has the display but no such pin -- its indicator is
+/// on the radio, so it belongs to the radio's module and not to a module of its own -- and can
+/// replace its own firmware besides. A third has no display at all: two indicators, and a hub
+/// of its own to run. What they have in common is the three modules named above; everything
+/// else a board brings joins the same runtime and the same bus here, and a board that brings
+/// nothing passes an empty list.
 ///
 /// `probation` decides whether a firmware started on approval is kept: it commits the image only
 /// once the application has shown it works -- see [`ProbationMod`]. A board with nothing on
@@ -760,18 +804,16 @@ impl Module for NavMod {
 /// load LAST and a list does not say so. Loading last is the point: a module's load is the proof
 /// that everything it needed loaded first, so a probation check that runs at all has already
 /// established more than any of its own measurements do.
-pub fn serve<H: Host, B: SpiDisplayBus, C: Clock, Pr: Probation>(
+pub fn serve<H: Host, F: FnMut() -> bool, Pr: Probation>(
         usb: &mut UsbMod<H>,
-        oled: &mut OledMod<B, C>,
         console: &mut ConsoleMod,
-        nav: &mut NavMod,
+        nav: &mut NavMod<F>,
         board: &mut [&mut dyn Module],
         probation: &mut ProbationMod<Pr>,
         idle: impl FnMut(),
 ) -> ! {
         let mut rt: Runtime<8> = Runtime::new();
         rt.add(usb).expect("capacity");
-        rt.add(oled).expect("capacity");
         rt.add(console).expect("capacity");
         rt.add(nav).expect("capacity");
         for m in board.iter_mut() {

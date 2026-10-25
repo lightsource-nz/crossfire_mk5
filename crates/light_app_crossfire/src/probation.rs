@@ -15,7 +15,8 @@
 //! THE CHECKS ARE WHAT A CROSSFIRE CAN PROVE ON ITS OWN. Nobody is guaranteed to have plugged an
 //! instrument in during the first seconds after an update, so a working MIDI path cannot be asked
 //! for; what can be asked is that every module loaded, the main loop is turning over, the console
-//! core is alive, and the display took a whole frame without its bus timing out.
+//! core is alive, and -- on a board that has one -- the display took a whole frame without its
+//! bus timing out. A board with no display is not asked about one.
 //!
 //! AND THEY HAVE TO BE QUICK. The probation window is on the order of seventeen seconds from the
 //! boot, and a commit made after it closes does nothing while reporting success. So the checks
@@ -63,6 +64,15 @@ pub const MIN_PASSES: u32 = 100;
 /// ran -- and well inside that window, so a commit is never attempted after it has closed.
 pub const COMMIT_DEADLINE_MS: u32 = 10_000;
 
+/// The display's signs of life, on a board that has one.
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+pub struct DisplayVitals {
+        /// Frames delivered to the glass in full.
+        pub frames_shown: u32,
+        /// Pushes abandoned because the bus stopped answering.
+        pub timeouts: u32,
+}
+
 /// The application's signs of life, as the probation module reads them. Counters, so a check
 /// compares two readings rather than trusting a flag something forgot to clear.
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
@@ -73,10 +83,9 @@ pub struct Vitals {
         pub passes: u32,
         /// Passes of the console core's loop (core 1).
         pub console_ticks: u32,
-        /// Frames the display has delivered to the glass in full.
-        pub frames_shown: u32,
-        /// Pushes to the display abandoned because its bus stopped answering.
-        pub display_timeouts: u32,
+        /// The display's, where the board has a display; `None` is a board without one, which
+        /// is not a display that never showed a frame.
+        pub display: Option<DisplayVitals>,
 }
 
 /// What the checks make of a candidate so far.
@@ -95,7 +104,7 @@ pub enum Verdict {
 /// A display timeout is final however early it comes: it is a fault, not a delay. Everything else
 /// is something that has not happened YET, which becomes a failure only at the deadline.
 pub fn judge(since: &Vitals, now: &Vitals) -> Verdict {
-        if now.display_timeouts != 0 {
+        if now.display.is_some_and(|d| d.timeouts != 0) {
                 return Verdict::Unfit("the display stopped answering");
         }
         let pending = if now.uptime_ms.wrapping_sub(since.uptime_ms) < SETTLE_MS {
@@ -104,7 +113,7 @@ pub fn judge(since: &Vitals, now: &Vitals) -> Verdict {
                 Some("the main loop is not turning over")
         } else if now.console_ticks == since.console_ticks {
                 Some("the console core is not running")
-        } else if now.frames_shown == 0 {
+        } else if now.display.is_some_and(|d| d.frames_shown == 0) {
                 Some("the display never showed a frame")
         } else {
                 None
@@ -186,14 +195,16 @@ impl<P: Probation> Module for ProbationMod<P> {
                 // name. A portable module must not depend on one a board merely MIGHT bring. Naming
                 // "led" here was enough to stop a board outright: where the indicator hangs off the
                 // radio there is no such module, and the runtime fails the whole application at
-                // start on a missing dependency.
+                // start on a missing dependency. The display is such a module too: a board without
+                // one brings none, and its probation asks about the display through `Vitals`
+                // instead, where "none" is an answer.
                 //
                 //   It says so, clearly, and that is worth knowing because it is easy to conclude
                 // otherwise: the report names the module and the dependency, but it is out within
                 // twenty milliseconds of reset and then the board stops. A console opened after the
                 // fact sees an empty stream and reads exactly like hardware that never came up. To
                 // see it, the console has to be open across the reset.
-                &["usb", "oled", "console", "nav"]
+                &["usb", "console", "nav"]
         }
 
         fn load(&mut self) -> Result<(), ()> {
@@ -248,11 +259,11 @@ mod tests {
         }
 
         /// What the application looks like at load: up, but with no time behind it.
-        const AT_LOAD: Vitals = Vitals { uptime_ms: 500, passes: 10, console_ticks: 1_000, frames_shown: 1, display_timeouts: 0 };
+        const AT_LOAD: Vitals = Vitals { uptime_ms: 500, passes: 10, console_ticks: 1_000, display: Some(DisplayVitals { frames_shown: 1, timeouts: 0 }) };
 
         /// The same application a while later, doing everything it should.
         fn healthy(uptime_ms: u32) -> Vitals {
-                Vitals { uptime_ms, passes: AT_LOAD.passes + 50_000, console_ticks: AT_LOAD.console_ticks + 90_000, frames_shown: 3, display_timeouts: 0 }
+                Vitals { uptime_ms, passes: AT_LOAD.passes + 50_000, console_ticks: AT_LOAD.console_ticks + 90_000, display: Some(DisplayVitals { frames_shown: 3, timeouts: 0 }) }
         }
 
         fn watching(p: &mut Fake) -> ProbationMod<&mut Fake> {
@@ -271,8 +282,16 @@ mod tests {
         #[test]
         fn a_display_timeout_is_final_at_once() {
                 let mut now = healthy(AT_LOAD.uptime_ms + 10);
-                now.display_timeouts = 1;
+                now.display = Some(DisplayVitals { frames_shown: 3, timeouts: 1 });
                 assert!(matches!(judge(&AT_LOAD, &now), Verdict::Unfit(_)));
+        }
+
+        #[test]
+        fn a_board_without_a_display_is_not_asked_about_one() {
+                let since = Vitals { display: None, ..AT_LOAD };
+                let mut now = healthy(AT_LOAD.uptime_ms + SETTLE_MS);
+                now.display = None;
+                assert_eq!(judge(&since, &now), Verdict::Healthy);
         }
 
         #[test]
@@ -280,7 +299,7 @@ mod tests {
                 let stalls: [fn(&mut Vitals); 3] = [
                         |v| v.passes = AT_LOAD.passes + MIN_PASSES - 1,
                         |v| v.console_ticks = AT_LOAD.console_ticks,
-                        |v| v.frames_shown = 0,
+                        |v| v.display = Some(DisplayVitals { frames_shown: 0, timeouts: 0 }),
                 ];
                 for stall in stalls {
                         let mut early = healthy(AT_LOAD.uptime_ms + SETTLE_MS);
@@ -298,7 +317,7 @@ mod tests {
                 // too late even though the settle time itself was honoured
                 let since = Vitals { uptime_ms: COMMIT_DEADLINE_MS - 1_000, ..AT_LOAD };
                 let mut now = healthy(COMMIT_DEADLINE_MS + 1);
-                now.frames_shown = 0;
+                now.display = Some(DisplayVitals { frames_shown: 0, timeouts: 0 });
                 assert!(matches!(judge(&since, &now), Verdict::Unfit(_)));
         }
 
@@ -344,7 +363,7 @@ mod tests {
                 {
                         let mut m = watching(&mut p);
                         let mut now = healthy(AT_LOAD.uptime_ms + SETTLE_MS);
-                        now.display_timeouts = 2;
+                        now.display = Some(DisplayVitals { frames_shown: 3, timeouts: 2 });
                         assert_eq!(m.step(now), Poll::Busy);
                         assert!(!m.watching());
                         assert_eq!(m.step(healthy(AT_LOAD.uptime_ms + SETTLE_MS)), Poll::Idle);

@@ -7,17 +7,22 @@ name = "light_app_crossfire_v01"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
-description = "crossfire on its production board, revision 0.1: the hardware-bound instantiation -- today the board's bring-up firmware, until the application is wired to this hardware"
+description = "crossfire on its production board, revision 0.1: the hardware-bound instantiation -- the board's wiring, the PIO host, the hub, two indicators -- around the light_app_crossfire application"
 
 [lib]
 crate-type = ["staticlib"]
 
 [dependencies]
+light_app_crossfire = { path = "../../../crates/light_app_crossfire" }
 light-board-crossfire-v01 = { path = "../../../crates/light-board-crossfire-v01" }
+#   what the chip gives the application -- probation, firmware self-replacement -- shared with
+# the development board
+crossfire-rp2350 = { path = "../../../crates/crossfire-rp2350" }
 light-core = { path = "../../../../light_mk5/crates/light-core" }
 #   the chip is THIS module's identity: the feature is pinned here, not switched by the
 # build system -- a crossfire_v01 is an RP2350 or it is nothing
 #   usb-console, because on this board the hardware USB port is the DEVICE: the console rides
-# it, and with it the 1200-baud route into the bootloader. The instruments are hosted on a PIO
-# pair instead, which is the port's business once that host exists
-light-rp2 = { path = "../../../../light_mk5/crates/light-rp2", features = ["rp2350", "usb-console"] }
+# it, and with it the 1200-baud route into the bootloader. usb-host-pio, because the
+# instruments are hosted on a PIO pair: the same host stack the other boards run on the native
+# controller, over a full-speed host built out of PIO0
+light-rp2 = { path = "../../../../light_mk5/crates/light-rp2", features = ["rp2350", "usb-console", "usb-host-pio"] }
