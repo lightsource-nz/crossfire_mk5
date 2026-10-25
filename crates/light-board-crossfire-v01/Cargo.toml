@@ -1,0 +1,12 @@
+[package]
+workspace = "../../firmware"
+name = "light-board-crossfire-v01"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "board-support crate for crossfire revision 0.1, the production board: the pin wiring and the peripheral hand-over, independent of which firmware runs on it"
+
+[dependencies]
+light-core = { path = "../../../light_mk5/crates/light-core" }
+#   the chip is this board's identity: an RP2350A, pinned here and nowhere else
+light-rp2 = { path = "../../../light_mk5/crates/light-rp2", features = ["rp2350"] }

@@ -55,6 +55,21 @@
             }
         },
         {
+            "name": "conf-crossfire-v01-debug",
+            "description": "crossfire on its own production board, revision 0.1: the hardware USB port in its device role with the console on it and on the debug header's UART, the hub on a PIO host pair. The board is this project's, defined in boards/crossfire_v01.h rather than by the platform. Flashed and debugged over SWD on the debug header.",
+            "inherits": [
+                "conf-light-pico-base",
+                "conf-light-debug"
+            ],
+            "binaryDir": "${sourceDir}/build-crossfire-v01",
+            "generator": "Ninja",
+            "cacheVariables": {
+                "LIGHT_PLATFORM": "TARGET",
+                "LIGHT_BOARD": "crossfire_v01",
+                "Rust_CARGO_TARGET": "thumbv8m.main-none-eabi"
+            }
+        },
+        {
             "name": "conf-crossfire-host",
             "description": "The host tree: the application's tests, run with cargo through one ctest.",
             "inherits": ["conf-light-host-debug"],

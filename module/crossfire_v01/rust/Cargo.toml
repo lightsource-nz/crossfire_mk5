@@ -1,0 +1,23 @@
+[package]
+workspace = "../../../firmware"
+#   _app suffix: the plain name is the CMake EXECUTABLE (which must match the module
+# directory -- light-flash.ps1 finds module/<target>/<target>.uf2), and CMake target
+# names are one namespace with Corrosion's crate targets
+name = "light_app_crossfire_v01"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "crossfire on its production board, revision 0.1: the hardware-bound instantiation -- today the board's bring-up firmware, until the application is wired to this hardware"
+
+[lib]
+crate-type = ["staticlib"]
+
+[dependencies]
+light-board-crossfire-v01 = { path = "../../../crates/light-board-crossfire-v01" }
+light-core = { path = "../../../../light_mk5/crates/light-core" }
+#   the chip is THIS module's identity: the feature is pinned here, not switched by the
+# build system -- a crossfire_v01 is an RP2350 or it is nothing
+#   usb-console, because on this board the hardware USB port is the DEVICE: the console rides
+# it, and with it the 1200-baud route into the bootloader. The instruments are hosted on a PIO
+# pair instead, which is the port's business once that host exists
+light-rp2 = { path = "../../../../light_mk5/crates/light-rp2", features = ["rp2350", "usb-console"] }

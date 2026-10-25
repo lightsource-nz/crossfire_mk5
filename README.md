@@ -11,12 +11,18 @@ ports, the asset compilers and the shared script layer. Everything that is cross
 the application, the board modules, the version, the signing key, the flash map -- is here.
 
 ```
-scripts/build.ps1 [-Target crossfire_pico2|crossfire_pico]
+scripts/build.ps1 [-Target crossfire_pico2|crossfire_pico|crossfire_v01]
 scripts/flash.ps1 -Target crossfire_pico2     # over SWD, through a debug probe
 scripts/debug.ps1 -Target crossfire_pico2
 scripts/console.ps1 -Port <COM>               # the console rides the probe's UART
 scripts/test.ps1                              # the application's host tests
 ```
+
+`crossfire_v01` is the production board, revision 0.1 (`pcb/`): its own pico-sdk board
+definition in `boards/`, its wiring in `crates/light-board-crossfire-v01`, and today a
+bring-up firmware in `module/crossfire_v01` rather than the application, which still wants a
+display and a native-port host that this board does not have. Its console is on the USB-C port
+as well as the debug header's UART.
 
 CI (`.github/workflows/ci.yml`) runs the same scripts through the framework's reusable workflows:
 the host tests, and a firmware build of each board -- the Pico 2 leg with its bootloader -- whose

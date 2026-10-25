@@ -23,6 +23,13 @@ if(NOT EXISTS "${LIGHT_PATH}/light_init.cmake")
                 "could not find the light framework at '${LIGHT_PATH}'.\n"
                 "It is normally the light_mk5 checkout beside this one; set LIGHT_PATH for another layout.")
 endif()
+
+#   THIS PROJECT'S OWN BOARD. The production board (pcb/) is not a board pico-sdk knows, so its
+# definition lives here: the SDK finds <PICO_BOARD>.h in the directories named below, and the
+# framework is told which board names are RP2350 parts so it resolves the platform from the
+# name. Both before the preinit, which is where the name is first resolved.
+list(APPEND PICO_BOARD_HEADER_DIRS "${CMAKE_CURRENT_LIST_DIR}/boards")
+list(APPEND LIGHT_RP2350_BOARDS crossfire_v01)
 include(${LIGHT_PATH}/external/light_preinit.cmake)
 
 #   crossfire's OWN version, which is what its images are stamped with and what the boot ROM
@@ -52,7 +59,7 @@ if(LIGHT_PLATFORM STREQUAL "TARGET")
         # one the executable links is built
         corrosion_import_crate(
                 MANIFEST_PATH ${CMAKE_CURRENT_LIST_DIR}/firmware/Cargo.toml
-                CRATES light_app_crossfire_pico light_app_crossfire_pico2
+                CRATES light_app_crossfire_pico light_app_crossfire_pico2 light_app_crossfire_v01
                 NO_STD
         )
         #   crush belongs to the framework and runs on the host inside this cross build: the
@@ -81,8 +88,12 @@ if(LIGHT_PLATFORM STREQUAL "TARGET")
                 #   module/<target>/ because that is where light-flash.ps1 expects
                 # module/<target>/<target>.uf2 -- the layout every sibling project shares
                 #   the module IS the tangible board, and names its own chip: a crossfire_pico
-                # is an RP2040, a crossfire_pico2 is an RP2350
-                if(PICO_PLATFORM MATCHES "^rp2040")
+                # is an RP2040, a crossfire_pico2 is an RP2350, and crossfire_v01 is the
+                # production board, chosen by its own name because it is this project's board
+                # rather than one the platform knows
+                if(PICO_BOARD STREQUAL "crossfire_v01")
+                        add_subdirectory(module/crossfire_v01)
+                elseif(PICO_PLATFORM MATCHES "^rp2040")
                         add_subdirectory(module/crossfire_pico)
                 else()
                         add_subdirectory(module/crossfire_pico2)
