@@ -401,7 +401,8 @@ is across it. On this board the question has an upper bound as well as a lower o
 buck's input is in 0603, which keeps enough of itself at 5 V for the converter and loses enough to
 stay inside what USB allows a device to present at attach. The 22 uF parts at the 3.3 V output are
 in 0603 too, on a 3.3 V rail they are a long way up their own curves; the ones at each port are
-1206. Decoupling goes to 0402, where being close to the pin matters more than the package.
+1210, 25 V parts, for the same reason at 5 V. Decoupling goes to 0402, where being close to the
+pin matters more than the package.
 
 **The processor's regulator takes the vendor's parts, not ours.** Its own hardware design guide
 puts 4.7 uF in **0402** on the regulator's input (`VREG_VIN`), on its output (the core rail), and
@@ -730,6 +731,14 @@ library's current copy.
 
 ## Settled since
 
+**Revision 0.1 went without its port bulk capacitors.** The catalogue had no 22 µF in 1210 at
+the voltage the ports want when the order was placed, so C39 to C42 were left off it, and the
+first boards carry bare pads there. What a port loses is the reservoir behind its switch: an
+instrument's inrush and its draw transients are met by the 5 V plane and the upstream cable
+instead, and the hub checklist's 150 µF ceiling is a long way off. It is a bench question, not a
+fault, and the pads take a hand-fitted part: Samsung CL32B226KAJNNNE C309062 is the one to fit,
+or any 1210 22 µF rated 16 V or more. The design keeps the four lines; the next order fits them.
+
 **The receptacle's shell slots get a solder mask margin.** The fabricator's engineers, checking
 the files before production, reported the solder mask on the back face missing its openings
 around three of the upstream receptacle's four through-hole shell slots, and corrected it
@@ -924,7 +933,7 @@ the rest:
 | flash, protection arrays | W25Q128JVSIQ C97521, USBLC6-2SC6 C7519 |
 | crystals | 12 MHz JGHC S3212000101080 C390763 and 24 MHz YXC X322524MMB4SI C70583, both **10 pF** parts: the catalogue's basic crystals are 20 pF, and the processor vendor's circuit, copied exactly, wants 10 pF with the 15 pF capacitors |
 | indicators, ferrite | KT-0603R C2286, KT-0603G C12624, Murata BLM18BD601SZ1D C2661913 |
-| core inductor | Abracon AOTA-B201610S3R3-101-T C42411119 |
+| core inductor | Abracon AOTA-B201610S3R3-101-T C42411119 is the part the processor's vendor names and the production part. Revision 0.1 was built with TDK VLS201610ET-3R3M C114768 when the Abracon could not be had: it sits on the same land (its drawing asks 0.65 mm pads on a 0.70 mm gap, 1.60 long, against the land's 0.70, 0.70 and 1.70) and is the weaker inductor, 730 mA and 458 mΩ against 2.4 A and 115 mΩ, which the regulator's 200 mA tolerates. The schematic carries the TDK until the Abracon is fitted |
 | buck inductor | Sunlord SWPA4030S4R7MT C57269 for the prototype: rated 2 to 3.2 A depending on which figure is read, under the buck's 2.8 A limit, which only matters during an output short at a 0.35 A load. The Coilcraft XEL4030-472MEC, 4.6 A, is the production part. The two are **not** on the same land, and the first order was stopped for it: the Sunlord's terminals are 0.95 mm wide and run out to the 4.0 mm body edge with a 2.1 mm gap, where the Coilcraft's are 0.82 mm wide and stop 0.4 mm inside the body, so on the Coilcraft land the Sunlord overlapped the outer 0.6 mm of each pad and hung 0.3 mm past it. The land is now the project's own, `L_4030_Coilcraft_XxL_Sunlord_SWPA`: the Coilcraft pads with their inner edges where they were, 0.70 mm from centre, and their outer edges carried to the body edge at 2.00 mm, which covers the Coilcraft terminal (0.79 to 1.61) and the Sunlord's (1.05 to 2.00) whole. The gap between the pads, under the body, is unchanged |
 | buttons | C&K KSC221JLFS C221726, the 2 N member of the same 6.2 mm J-lead family as the sealed KSC6 the footprint was drawn for |
 | USB-C receptacle | Korean Hroparts TYPE-C-31-M-12 C165948, the catalogue's standard USB-C: KiCad's footprint for it has the same pegs and shell slots as the GCT part and a pad row 0.38 mm further out, so the footprint was swapped with the pads kept on the old row and the body moved toward the edge instead. GCT's own USB4215, which the catalogue also stocks, is not a drop-in: its drawing puts the pad row a millimetre further out |
@@ -948,7 +957,9 @@ CL05A105KO5NNNC C29266, CL05A475MP5NRNC C23733 at 10 V, UNI-ROYAL 0402WGF270JTCE
 the ferrite after its first choice went out of stock (Murata BLM18KG601SN1D C85833). The 5.1 kΩ
 CC pull-downs are any 1% 0402 part with stock: the specification allows ±10 % on that resistor,
 so 4.99 kΩ serves as well as 5.1. A short line is not a missing part: the fabricator's "Pre-order"
-buys the balance from the distributor's warehouse in days.
+buys the balance from the distributor's warehouse in days. The matcher's choices for revision 0.1
+are now carried as catalogue numbers on every passive, so the next order starts from what was
+built rather than from the matcher again; the bill as ordered is in `releases/v0.1/`.
 
 **The files** come from one script, `scripts/export-fab.ps1`, which runs the rules check with
 schematic parity first and writes nothing if it reports anything: the Gerbers and drill files

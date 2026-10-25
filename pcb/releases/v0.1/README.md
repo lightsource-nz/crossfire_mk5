@@ -5,8 +5,8 @@ addressed over one USB-C connector. This folder is the record of what was ordere
 they were submitted, and the specification of the board they describe. The design and the reasons
 behind it are in `../../README.md`; this file states what the hardware *is*.
 
-**Ordered October 2026 from JLCPCB, fabricated and assembled.** Four layers, ENIG, assembled on
-the front face from the bill of materials and placement file here. The files were
+**Ordered October 2026 from JLCPCB, fabricated and assembled.** Five boards, four layers, ENIG,
+assembled on the front face from the bill of materials and placement file here. The files were
 exported from the design at commit `8ae5b26`, which is the state the title block calls revision
 0.1 and the silkscreen prints as `CROSSFIRE Rev 0.1`.
 
@@ -18,6 +18,7 @@ exported from the design at commit `8ae5b26`, which is the state the title block
 | `crossfire-bom.csv` | the bill of materials as uploaded: reference, value, package, part name, catalogue number |
 | `crossfire-cpl.csv` | the placement file as uploaded: part centres, face, rotation, in the assembler's column names |
 | `drc.rpt` | the rules check that ran on the board before export, with schematic parity: clean |
+| `bom-as-ordered.csv` | the assembler's own bill, exported from the order: what was fitted, line by line, with the catalogue number chosen for every part and the quantity bought for five boards |
 
 All four were written by `scripts/export-fab.ps1` from the board, and are reproducible from the
 source at that commit. They are kept here because a built board is a fact that the source no
@@ -30,14 +31,24 @@ copper. The boards carry their correction. The source has carried the same margi
 after these files were exported, the commit "J1: a solder mask margin on the shell slots", so
 files exported from it differ from the zip here in exactly that respect.
 
-**Two kinds of part decision are not in these files.** Where the catalogue had no stock of a part
-named in the bill, the substitute was chosen in the assembler's order interface rather than in the
-design, so the order itself is the record of what was fitted on those lines. The lines it applies
-to are the buck inductor L2 (the bill names Sunlord SWPA4030S4R7MT; the land accepts any 4.0 mm
-part whose terminals lie between 0.70 and 2.00 mm from centre, and the production part is the
-Coilcraft XEL4030-472MEC), the four 22 µF port capacitors C39 to C42, the two 5.1 kΩ CC
-terminations R1 and R2, and the core inductor L1 if its pre-order did not land. Everything else
-was fitted as the bill names it.
+**Where the boards differ from the bill as exported.** The order was placed from
+`crossfire-bom.csv`, and `bom-as-ordered.csv` is what the assembler fitted. Three things differ:
+
+- **L1, the core inductor, is TDK VLS201610ET-3R3M, C114768**, not the Abracon the bill names,
+  which the catalogue could not supply. It sits on the same land and is the weaker part, 730 mA
+  and 458 mΩ against 2.4 A and 115 mΩ, which the regulator's 200 mA tolerates.
+- **C39 to C42, the 22 µF port capacitors, are not fitted.** The catalogue had none in 1210 at
+  the voltage. The pads are bare and take a hand-fitted part; Samsung CL32B226KAJNNNE, C309062,
+  is the one to fit.
+- **Every passive carries the catalogue number the assembler's matcher chose**, where the bill
+  left the choice to it: 100 nF C1525, 10 µF C15850, 22 µF 0603 C59461, 15 pF C1548, 18 pF
+  C1647, and the resistors C25744 (10 kΩ), C25741 (100 kΩ), C25076 (100 Ω), C11702 (1 kΩ),
+  C25905 (5.1 kΩ), C25752 (12 kΩ), C25756 (15 kΩ).
+
+L2 is the Sunlord SWPA4030S4R7MT the bill names, on the land that takes it and the Coilcraft
+XEL4030-472MEC alike. The debug header J2, the eight test pads and the mounting holes are not
+fitted, by design. The schematic has carried all of the above since the commit after this record,
+so the next bill exported from it names what these boards carry.
 
 ## What the board is
 
