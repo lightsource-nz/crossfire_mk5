@@ -112,8 +112,10 @@ if(LIGHT_PLATFORM STREQUAL "HOST")
         if(NOT LIGHT_CARGO)
                 message(FATAL_ERROR "cargo not found -- install rustup")
         endif()
+        #   the simulator is a desktop tool with a window and no tests of its own; left out so
+        # the test run does not build a GUI stack
         add_test(NAME cargo_test
-                COMMAND ${LIGHT_CARGO} test --workspace
+                COMMAND ${LIGHT_CARGO} test --workspace --exclude crossfire-sim
                 WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
         )
 endif()

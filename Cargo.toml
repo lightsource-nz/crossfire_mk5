@@ -4,7 +4,18 @@
 # live in the firmware workspace, so nothing here ever pulls a port in.
 [workspace]
 resolver = "2"
-members = ["crates/light_app_crossfire"]
+members = [
+        "crates/light_app_crossfire",
+        #   the application on a simulated board, in a window: a host tool, excluded from the
+        # test run like the framework's own desktop tools
+        "tools/crossfire-sim",
+]
+
+#   the simulator compiles its font through crush-core, whose freetype build needs the
+# framework's vendored fix (see the note in light_mk5's Cargo.toml); a patch applies only from
+# the workspace a crate is built in, so it is repeated here
+[patch.crates-io]
+freetype-sys = { path = "../light_mk5/tools/vendor/freetype-sys" }
 
 [workspace.package]
 version = "0.1.0"

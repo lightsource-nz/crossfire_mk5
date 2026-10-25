@@ -1,0 +1,28 @@
+[package]
+name = "crossfire-sim"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "crossfire on a simulated board: the unmodified application over the framework's simulated seams -- a decoded OLED, an indicator, a button, a hub with four sockets instruments plug into, the console -- in a desktop window"
+
+[[bin]]
+name = "crossfire-sim"
+path = "src/main.rs"
+
+[dependencies]
+light_app_crossfire = { path = "../../crates/light_app_crossfire" }
+#   the simulated board: the seams the application is instantiated over
+light-sim = { path = "../../../light_mk5/tools/light-sim" }
+#   the window, and egui/eframe through it
+light-host-gui = { path = "../../../light_mk5/tools/light-host-gui" }
+light-core = { path = "../../../light_mk5/crates/light-core" }
+light-display = { path = "../../../light_mk5/crates/light-display" }
+light-draw = { path = "../../../light_mk5/crates/light-draw" }
+light-font = { path = "../../../light_mk5/crates/light-font" }
+light-midi = { path = "../../../light_mk5/crates/light-midi" }
+#   the assets are compiled at start-up by the same code crush runs in the firmware build -- the
+# font rasterised from the same face, the theme and the interface from the same JSON -- so the
+# simulated glass shows what the panel shows, and nothing is mirrored by hand
+crush-core = { path = "../../../light_mk5/tools/crush-core" }
+#   light-core wants a critical section; the std one on the host
+critical-section = { version = "1.2", features = ["std"] }

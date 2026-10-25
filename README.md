@@ -19,6 +19,22 @@ scripts/console.ps1 -Port <COM>               # the console rides the probe's UA
 scripts/test.ps1                              # the application's host tests
 ```
 
+## Running it without a board
+
+```
+scripts/sim.ps1 [-Release]                    # crossfire on a simulated board, in a window
+```
+
+`tools/crossfire-sim` runs the application crate -- the same one the firmware links, unchanged --
+over the framework's simulated seams (`light_mk5/tools/light-sim`): an SH1107 panel that decodes
+the real driver's commands onto a simulated glass, the indicator, the BOOTSEL button, a hub with
+four sockets that instruments plug into and play from, and the console, in a desktop window. The
+font, the look-and-feel and the interface are compiled at start-up by the same code the firmware
+build runs, so the glass shows what the panel shows. Console lines can also be piped in on standard
+input, and the log is echoed to standard output. What it simulates is the application's logic
+against its seams, with a person at the controls; it is not a model of a chip, and the host tests
+remain the place a module's behaviour is pinned down.
+
 `crossfire_v01` is the production board, revision 0.1 (`pcb/`): its own pico-sdk board
 definition in `boards/`, its wiring in `crates/light-board-crossfire-v01`, and the application
 instantiated in `module/crossfire_v01`. Its instruments are hosted on a PIO pair to the on-board
