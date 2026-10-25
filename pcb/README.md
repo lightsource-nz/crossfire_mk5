@@ -3,8 +3,10 @@
 The production board: an RP2350 hosting four USB instruments through a hub, with one USB-C
 connector that carries both its power and its link to a computer.
 
-**Status: prototype, nothing built.** Every number below is a budget or a datasheet figure, not a
-measurement. A predecessor design exists elsewhere as a sketch of an earlier vision; it was never
+**Status: revision 0.1 is in production**, ordered assembled in October 2026; the files that went
+to the fabricator and a specification of the board as built are under `releases/v0.1/`. Every
+number below is still a budget or a datasheet figure, not a measurement, until those boards are on
+a bench. A predecessor design exists elsewhere as a sketch of an earlier vision; it was never
 manufactured or validated, so nothing here is inherited from it — individual parts are reused only
 where they stand up on their own.
 
@@ -450,10 +452,13 @@ then scaled to 0.1 mm pixels and written as filled rectangles. Regenerate it fro
 by hand, if the artwork changes.
 
 **The socket's and the receptacle's footprints are project copies of the library's**, differing
-only in their silkscreen.
+in their silkscreen and, for the receptacle, in a solder mask margin on its shell slots.
 The library draws the whole body, including the 3.7 mm that stands beyond the board edge, and the
 rules check reports every silk line that crosses the edge. The copy stops its silkscreen 0.4 mm
-inside the edge marking; pads, courtyard and fabrication drawing are the library's.
+inside the edge marking; pads, courtyard and fabrication drawing are the library's. The
+receptacle's four shell slots carry a 0.1 mm mask margin of their own, because the library's pads
+leave the mask opening the same size as the copper, and the fabricator read that as no opening at
+all (under Fabrication).
 
 ### GPIO budget
 
@@ -725,6 +730,20 @@ library's current copy.
 
 ## Settled since
 
+**The receptacle's shell slots get a solder mask margin.** The fabricator's engineers, checking
+the files before production, reported the solder mask on the back face missing its openings
+around three of the upstream receptacle's four through-hole shell slots, and corrected it
+themselves before the boards were made. The files had an opening at every one of those holes, on
+both faces, each exactly the size of the copper round the slot, which is what the library footprint
+draws and what a board-level mask expansion of zero leaves it at. Round a slot whose copper ring is
+only 0.2 mm wide, an opening that coincides with the copper is one that the mask's own registration
+tolerance can close, and a mask-to-copper clearance of nothing reads, to a fabricator, as an
+opening that is not there. The four slots now carry a 0.1 mm mask margin of their own, in the
+project's copy of the footprint and on the board, so the opening on each face stands clear of the
+ring by that much and the files say what the fabricator had to infer. The board-level expansion
+stays at zero: raising it for every pad would eat the 0.17 mm mask webs between the processor's
+0.4 mm pitch pins, and it is the fabricator's own expansion that serves there.
+
 **The buck inductor's land takes both its parts.** The assembler stopped the first order at L2:
 their overlay showed the Sunlord part's terminals covering the outer 0.6 mm of each Coilcraft pad
 and hanging 0.3 mm past it. The drawing had been misread here. In the Sunlord table the 0.95 mm
@@ -861,9 +880,9 @@ source is required to have one.
 
 **The board goes to JLCPCB, assembled.** The choice is made on facts read off the fabricator's
 own capability pages rather than assumed. A four-layer board is its standard process. It assembles
-both faces, surface-mount and through-hole, which this board needs: the sockets and the header are
-through-hole and the protection arrays sit on the back. And the four chips that matter are in its
-catalogue, so they are not sourced and shipped separately. **What the quote changed** is the via:
+surface-mount and through-hole parts in one order, which this board needs: the sockets are
+through-hole, and every fitted part is on the front face, so assembly is single-sided. And the four
+chips that matter are in its catalogue, so they are not sourced and shipped separately. **What the quote changed** is the via:
 filling and capping vias in pads was priced out of a prototype, and 0.2 mm holes are a hard
 process whoever drills them, so every via on the board is 0.6 mm on a 0.3 mm hole, outside the
 pads, tented. The design rules now hold that minimum, so nothing smaller can be drawn again.
@@ -882,9 +901,16 @@ socket outlines and a few reference labels, drawn at the library's 0.12 mm; if t
 nothing is lost.
 
 **What the order says.** Four layers, 1.6 mm, the default stackup (1 oz outside, 0.5 oz inside),
-ENIG, because a fine-pitch QFN wants a flat finish. Via covering: tented. Assembly on both sides,
-with a stencil. Two boards is the smallest run it takes; five is the sensible number for a
+ENIG, because a fine-pitch QFN wants a flat finish. Via covering: tented. Assembly on the front
+face, with a stencil. Two boards is the smallest run it takes; five is the sensible number for a
 first build, since one will be sacrificed to the bench.
+
+**What the fabricator's own check changed.** One thing, on the first production order: the solder
+mask openings round the upstream receptacle's shell slots, which the files drew the same size as
+the copper and the fabricator's engineers opened up before making the boards. The source now
+carries that margin itself (under Settled since), so the next files will not need the same hand.
+The mask openings everywhere else are left as the footprints draw them, at the copper's own size,
+and the fabricator applies its own expansion to those, as it does for every board it makes.
 
 **Parts.** Every line of the bill of materials has a definite answer for the assembler, carried
 in the schematic as fields and written out as columns: a catalogue number (`LCSC`) where the part

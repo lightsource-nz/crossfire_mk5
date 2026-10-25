@@ -5871,6 +5871,7 @@
 			(layers "*.Cu" "*.Mask")
 			(remove_unused_layers no)
 			(net "GND")
+			(solder_mask_margin 0.1)
 			(uuid "aa66376d-1a31-4824-99a3-8a46af6e85f2")
 		)
 		(pad "SH" thru_hole oval
@@ -5881,6 +5882,7 @@
 			(layers "*.Cu" "*.Mask")
 			(remove_unused_layers no)
 			(net "GND")
+			(solder_mask_margin 0.1)
 			(uuid "066a16ce-607c-498e-b9cc-c6557263aa63")
 		)
 		(pad "SH" thru_hole oval
@@ -5891,6 +5893,7 @@
 			(layers "*.Cu" "*.Mask")
 			(remove_unused_layers no)
 			(net "GND")
+			(solder_mask_margin 0.1)
 			(uuid "a118c1b9-09a4-4f65-97da-cd7dd2ceca11")
 		)
 		(pad "SH" thru_hole oval
@@ -5901,6 +5904,7 @@
 			(layers "*.Cu" "*.Mask")
 			(remove_unused_layers no)
 			(net "GND")
+			(solder_mask_margin 0.1)
 			(uuid "6f4294e7-9cb7-41ff-b0ea-90b4a634ba8b")
 		)
 		(embedded_fonts no)
