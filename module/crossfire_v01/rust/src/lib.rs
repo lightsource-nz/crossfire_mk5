@@ -73,7 +73,13 @@ impl Module for HostStatsMod {
                                         Some(false) => "a full-speed device attached",
                                         Some(true) => "a low-speed device attached (not spoken to)",
                                 };
-                                info!("pio host: frame {}, {} frames run, worst {} us; {} transfers failed, {} pipe packets lost; {}", PioHostController::frame_number(), s.frames, s.worst_frame_us, s.errors, s.pipe_dropped, attached);
+                                //   one line each, inside the log's message capacity
+                                info!("pio host: {}; frame {}, worst {} us", attached, PioHostController::frame_number(), s.worst_frame_us);
+                                info!("pio host: {} answered, {} transfers failed, {} pipe packets lost", s.answered, s.errors, s.pipe_dropped);
+                                let m = s.last_miss;
+                                if m.token != 0 {
+                                        info!("pio host: last miss after {:#04x}: started {}, {} bytes, {:02x} {:02x}", m.token, m.started, m.bytes, m.first[0], m.first[1]);
+                                }
                                 busy = true;
                         }
                 }
