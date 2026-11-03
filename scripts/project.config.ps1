@@ -4,8 +4,9 @@
 # OLED as its status display), the stock RP2040 Pico, and the production board, crossfire
 # revision 0.1. The Picos put the native USB port in its host role and take their console over
 # the debug probe's UART; the production board puts it in its device role, with the console on
-# it as well as on the UART. All three flash and debug over SWD. A fourth, host tree runs the
-# application's tests under ctest.
+# it as well as on the UART. The Picos flash over SWD; the production board flashes over its own
+# connector, and all three debug over SWD. A fourth, host tree runs the application's tests
+# under ctest.
 @{
         Name = 'crossfire'
 
@@ -28,10 +29,11 @@
         Targets = @{
                 'crossfire_pico2' = @{ Preset = 'conf-crossfire-pico2-debug'; Flash = 'swd'; Bootloader = 'crossfire_bootloader' }
                 'crossfire_pico'  = @{ Preset = 'conf-crossfire-pico-debug'; Flash = 'swd' }
-                #   the production board carries the same flash map as the Pico 2, so it is
-                # written the same way: bootloader, application in its slot, over SWD on the
-                # debug header
-                'crossfire_v01'   = @{ Preset = 'conf-crossfire-v01-debug'; Flash = 'swd'; Bootloader = 'crossfire_bootloader' }
+                #   the production board carries the same flash map as the Pico 2 -- bootloader,
+                # application in its slot -- but its USB port is the device, with the console on
+                # it, so the 1200-baud reset takes it into BOOTSEL over the product's own
+                # connector and no probe is needed to write it
+                'crossfire_v01'   = @{ Preset = 'conf-crossfire-v01-debug'; Flash = 'uf2'; Bootloader = 'crossfire_bootloader' }
         }
 
         #   the OpenOCD configurations belong to the framework, which is where the chip's

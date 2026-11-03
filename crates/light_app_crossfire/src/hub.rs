@@ -10,11 +10,13 @@
 //!
 //! The order matters and is the part a datasheet spells out: out of reset first, so the part
 //! samples its configuration straps and settles, and only then told that its upstream is
-//! there, which is what makes it pull the line up and enumerate. Taking the upstream away and
-//! giving it back is how the firmware forces a fresh enumeration without a power cycle.
+//! there, which is what makes it pull the line up and enumerate. Holding it and releasing it
+//! again is how the firmware forces a fresh enumeration without a power cycle -- with the hold
+//! kept for [`RESTART_HOLD_MS`], since a hub released in the same instant it was held never
+//! notices it went away.
 
 use light_core::events::Subscription;
-use light_core::{info, warn, Module, OutputPin, Poll};
+use light_core::{info, log, warn, Module, OutputPin, Poll};
 
 use crate::power::Budget;
 use crate::{AppEvent, EVENTS};
@@ -34,18 +36,24 @@ impl CcSense for NoCcSense {
         }
 }
 
+/// How long a restart holds the hub before releasing it: long enough for the host to see
+/// every device behind it leave, so what comes back is enumerated afresh.
+pub const RESTART_HOLD_MS: u32 = 100;
+
 /// The two lines and the order they are driven in. Apart from the module so the sequence is
-/// tested without a bus.
+/// tested without a bus or a clock: time comes in as an argument.
 pub struct HubLines<R: OutputPin, V: OutputPin> {
         reset_n: R,
         vbus_det: V,
         released: bool,
+        /// When a restart in progress releases the hub again.
+        restart_at: Option<u32>,
 }
 
 impl<R: OutputPin, V: OutputPin> HubLines<R, V> {
         /// `reset_n` and `vbus_det` as the board constructed them: low, the hub held.
         pub fn new(reset_n: R, vbus_det: V) -> Self {
-                Self { reset_n, vbus_det, released: false }
+                Self { reset_n, vbus_det, released: false, restart_at: None }
         }
 
         pub fn released(&self) -> bool {
@@ -58,19 +66,40 @@ impl<R: OutputPin, V: OutputPin> HubLines<R, V> {
                 self.reset_n.set(true);
                 self.vbus_det.set(true);
                 self.released = true;
+                self.restart_at = None;
         }
 
-        /// The upstream taken away first, then the reset: the mirror of `release`.
+        /// The upstream taken away first, then the reset: the mirror of `release`. Cancels a
+        /// restart in progress -- held means held.
         pub fn hold(&mut self) {
                 self.vbus_det.set(false);
                 self.reset_n.set(false);
                 self.released = false;
+                self.restart_at = None;
         }
 
-        /// A fresh enumeration without a power cycle: the upstream taken away and given back.
-        pub fn bounce_upstream(&mut self) {
-                self.vbus_det.set(false);
-                self.vbus_det.set(true);
+        /// A fresh enumeration without a power cycle: held now, released by [`Self::service`]
+        /// once [`RESTART_HOLD_MS`] have passed.
+        pub fn restart(&mut self, now_ms: u32) {
+                self.hold();
+                self.restart_at = Some(now_ms.wrapping_add(RESTART_HOLD_MS));
+        }
+
+        pub fn restarting(&self) -> bool {
+                self.restart_at.is_some()
+        }
+
+        /// Finish a restart whose hold has run its course; true when this call released the hub.
+        pub fn service(&mut self, now_ms: u32) -> bool {
+                match self.restart_at {
+                        //   compared as a signed difference, so the millisecond count wrapping
+                        // does not release early or never
+                        Some(at) if now_ms.wrapping_sub(at) as i32 >= 0 => {
+                                self.release();
+                                true
+                        }
+                        _ => false,
+                }
         }
 }
 
@@ -120,12 +149,15 @@ impl<R: OutputPin, V: OutputPin, S: CcSense> Module for HubMod<R, V, S> {
 
         fn poll(&mut self) -> Poll {
                 let mut busy = false;
+                let now_ms = (log::now_us() / 1000) as u32;
                 while let Some(ev) = EVENTS.poll(&self.events) {
                         match ev {
                                 AppEvent::Hub(true) => {
                                         if self.lines.released() {
-                                                self.lines.bounce_upstream();
-                                                info!("hub: upstream dropped and restored; re-enumerating");
+                                                self.lines.restart(now_ms);
+                                                info!("hub: held for {} ms to re-enumerate", RESTART_HOLD_MS);
+                                        } else if self.lines.restarting() {
+                                                //   already on its way back; asking again changes nothing
                                         } else {
                                                 self.lines.release();
                                                 info!("hub: released from reset, upstream reported live");
@@ -143,6 +175,10 @@ impl<R: OutputPin, V: OutputPin, S: CcSense> Module for HubMod<R, V, S> {
                                 }
                                 _ => {}
                         }
+                }
+                if self.lines.service(now_ms) {
+                        info!("hub: released from reset, upstream reported live");
+                        busy = true;
                 }
                 if busy { Poll::Busy } else { Poll::Idle }
         }
@@ -197,12 +233,40 @@ mod tests {
         }
 
         #[test]
-        fn a_bounce_touches_only_the_upstream() {
+        fn a_restart_holds_for_the_full_period_before_releasing() {
                 let (mut l, t) = lines();
                 l.release();
                 t.borrow_mut().clear();
-                l.bounce_upstream();
-                assert_eq!(*t.borrow(), [("vbus_det", false), ("vbus_det", true)]);
+                l.restart(1_000);
+                assert!(!l.released() && l.restarting());
+                assert_eq!(*t.borrow(), [("vbus_det", false), ("reset_n", false)]);
+                assert!(!l.service(1_000 + RESTART_HOLD_MS - 1));
+                assert!(!l.released());
+                assert!(l.service(1_000 + RESTART_HOLD_MS));
+                assert!(l.released() && !l.restarting());
+                assert_eq!(t.borrow()[2..], [("reset_n", true), ("vbus_det", true)]);
+                assert!(!l.service(1_000 + RESTART_HOLD_MS + 1));
+        }
+
+        #[test]
+        fn a_restart_across_the_millisecond_wrap_still_waits() {
+                let (mut l, _) = lines();
+                l.release();
+                l.restart(u32::MAX - 10);
+                assert!(!l.service(u32::MAX));
+                assert!(!l.service(RESTART_HOLD_MS - 12));
+                assert!(l.service(RESTART_HOLD_MS - 11));
+        }
+
+        #[test]
+        fn a_hold_cancels_a_restart_in_progress() {
+                let (mut l, _) = lines();
+                l.release();
+                l.restart(0);
+                l.hold();
+                assert!(!l.restarting());
+                assert!(!l.service(10 * RESTART_HOLD_MS));
+                assert!(!l.released());
         }
 
         struct Sense(u32, u32);
