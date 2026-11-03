@@ -74,7 +74,7 @@ impl Module for HostStatsMod {
                                         Some(true) => "a low-speed device attached (not spoken to)",
                                 };
                                 //   one line each, inside the log's message capacity
-                                info!("pio host: {}; frame {}, worst {} us", attached, PioHostController::frame_number(), s.worst_frame_us);
+                                info!("pio host: {}; frame {}, worst {} us, {} us late", attached, PioHostController::frame_number(), s.worst_frame_us, s.worst_late_us);
                                 info!("pio host: {} answered, {} transfers failed, {} pipe packets lost", s.answered, s.errors, s.pipe_dropped);
                                 let m = s.last_miss;
                                 if m.token != 0 {
