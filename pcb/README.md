@@ -3,10 +3,11 @@
 The production board: an RP2350 hosting four USB instruments through a hub, with one USB-C
 connector that carries both its power and its link to a computer.
 
-**Status: revision 0.1 is in production**, ordered assembled in October 2026; the files that went
-to the fabricator and a specification of the board as built are under `releases/v0.1/`. Every
-number below is still a budget or a datasheet figure, not a measurement, until those boards are on
-a bench. A predecessor design exists elsewhere as a sketch of an earlier vision; it was never
+**Status: the files here are revision 0.2, in design.** Revision 0.1 was ordered assembled in
+October 2026 and delivered in November; it is final, and the files that went to the fabricator and
+a specification of the board as built are under `releases/v0.1/`. Changes from here on are
+revision 0.2's. Unless a section says it was measured on revision 0.1, a number below is a budget
+or a datasheet figure. A predecessor design exists elsewhere as a sketch of an earlier vision; it was never
 manufactured or validated, so nothing here is inherited from it — individual parts are reused only
 where they stand up on their own.
 

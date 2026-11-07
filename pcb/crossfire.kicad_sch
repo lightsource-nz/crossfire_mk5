@@ -6,9 +6,9 @@
 	(paper "A3")
 	(title_block
 		(title "crossfire")
-		(date "2026-09-28")
-		(rev "A")
-		(comment 1 "prototype -- nothing built or measured")
+		(date "2026-11-08")
+		(rev "0.2")
+		(comment 1 "in design -- revision 0.1 was built, see releases/v0.1")
 	)
 	(lib_symbols
 		(symbol "Mechanical:MountingHole_Pad"

@@ -95,6 +95,7 @@ probation, so there every image is already kept.
 
 `pcb/` holds the hardware for the board this firmware is heading for -- an RP2350 hosting four
 instruments through a hub, powered over USB-C. It is a KiCad project, designed, routed and ordered:
-revision 0.1 went to the fabricator, assembled, in October 2026. `pcb/README.md` carries the
-design and every decision behind it; `pcb/releases/v0.1/` carries the files that were submitted
-and a specification of the board as built. Nothing has been measured yet.
+revision 0.1 went to the fabricator, assembled, in October 2026, and is the board the firmware
+above runs on. The design files are now revision 0.2. `pcb/README.md` carries the design and every
+decision behind it; `pcb/releases/v0.1/` carries the files that were submitted and a specification
+of the board as built.
