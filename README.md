@@ -52,9 +52,16 @@ of what four ports could ask for. It reads that from the receptacle's CC lines t
 since a worn cable's CC contact can make and break after start-up (`power` on the console
 reports them on request), releases the on-board hub once the host stack is
 listening (`hub on|off` re-enumerates it or holds it), and `stats` reports the PIO host's frame
-engine beside the application's own counters. None of this has run on hardware yet: the boards
-are in production, and the PIO host in particular is written against the reference
-implementation's timings and awaits its first bus.
+engine beside the application's own counters.
+
+All of this runs on revision 0.1 hardware. The PIO host enumerates the hub and two USB-MIDI
+instruments behind it, and notes played on them reach the board and are forwarded, with the
+activity indicator following. The CC lines read the USB default and 3 A advertisements correctly
+in both cable orientations. `scripts/flash.ps1 -Target crossfire_v01` writes the board over its
+own USB-C port, and `scripts/read-cc.ps1` reads the CC lines through the debug header, which
+leaves that port free for the supply under test. Three things are not yet shown on hardware: an
+instrument acting on what is forwarded to it, the 1.5 A advertisement, and the recovery of a hub
+port disabled for a device error, which is tested on the host only.
 
 CI (`.github/workflows/ci.yml`) runs the same scripts through the framework's reusable workflows:
 the host tests, and a firmware build of each board -- the two RP2350 legs with their bootloader --
