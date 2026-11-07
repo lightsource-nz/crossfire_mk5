@@ -118,12 +118,11 @@ pub fn read_budget(sense: &mut impl CcSense) -> Budget {
         b
 }
 
-/// Keeps the budget current. ONE READ AT START-UP IS NOT ENOUGH: a board powered by the act of
-/// plugging it in starts while the plug is still going home. Measured with a cable pushed in by
-/// hand, the CC contact made and broke for several seconds with the supply already up, so the
-/// line could read nothing at the moment of a single look, and the board then reported no source
-/// for as long as it ran. Time comes in as an argument, as it does for [`HubLines`], so this is
-/// tested without a clock.
+/// Keeps the budget current. ONE READ AT START-UP IS NOT ENOUGH: a line can be absent at that
+/// moment with the supply perfectly good. Measured on a worn cable with its supply always on, the
+/// CC contact made and broke for several seconds after the board had started, so a single look
+/// could read nothing, and the board then reported no source for as long as it ran. Time comes
+/// in as an argument, as it does for [`HubLines`], so this is tested without a clock.
 pub struct BudgetWatch {
         due_ms: u32,
         last: Option<Budget>,

@@ -49,7 +49,7 @@ boards share below the application -- probation, firmware self-replacement -- is
 The production board has no display, so it brings two indicators instead: green lit while an
 instrument is mounted and interrupted by traffic, red lit while the supply is known to be short
 of what four ports could ask for. It reads that from the receptacle's CC lines twice a second,
-since the CC contact can make and break while a plug is going in (`power` on the console
+since a worn cable's CC contact can make and break after start-up (`power` on the console
 reports them on request), releases the on-board hub once the host stack is
 listening (`hub on|off` re-enumerates it or holds it), and `stats` reports the PIO host's frame
 engine beside the application's own counters. None of this has run on hardware yet: the boards
