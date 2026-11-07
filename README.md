@@ -56,12 +56,13 @@ engine beside the application's own counters.
 
 All of this runs on revision 0.1 hardware. The PIO host enumerates the hub and two USB-MIDI
 instruments behind it, and notes played on them reach the board and are forwarded, with the
-activity indicator following. The CC lines read the USB default and 3 A advertisements correctly
-in both cable orientations. `scripts/flash.ps1 -Target crossfire_v01` writes the board over its
-own USB-C port, and `scripts/read-cc.ps1` reads the CC lines through the debug header, which
-leaves that port free for the supply under test. Three things are not yet shown on hardware: an
-instrument acting on what is forwarded to it, the 1.5 A advertisement, and the recovery of a hub
-port disabled for a device error, which is tested on the host only.
+activity indicator following. The CC lines read all three advertisements correctly -- the USB
+default, 1.5 A and 3 A -- and the default and 3 A on either line, as the cable is turned over.
+`scripts/flash.ps1 -Target crossfire_v01` writes the board over its own USB-C port, and
+`scripts/read-cc.ps1` reads the CC lines through the debug header, which leaves that port free for
+the supply under test. Two things are not yet shown on hardware: an instrument acting on what is
+forwarded to it, and the recovery of a hub port disabled for a device error, which is tested on
+the host only.
 
 CI (`.github/workflows/ci.yml`) runs the same scripts through the framework's reusable workflows:
 the host tests, and a firmware build of each board -- the two RP2350 legs with their bootloader --
