@@ -118,11 +118,12 @@ pub fn read_budget(sense: &mut impl CcSense) -> Budget {
         b
 }
 
-/// Keeps the budget current. ONE READ AT START-UP IS NOT ENOUGH: a line's pull-up need not be
-/// there when the processor is. Measured on one USB-A supply, the line sat at nothing for over
-/// half a second after the firmware started and then rose to its band, so a board that looked
-/// once reported no source for as long as it ran. Time comes in as an argument, as it does for
-/// [`HubLines`], so this is tested without a clock.
+/// Keeps the budget current. ONE READ AT START-UP IS NOT ENOUGH: a board powered by the act of
+/// plugging it in starts while the plug is still going home. Measured with a cable pushed in by
+/// hand, the CC contact made and broke for several seconds with the supply already up, so the
+/// line could read nothing at the moment of a single look, and the board then reported no source
+/// for as long as it ran. Time comes in as an argument, as it does for [`HubLines`], so this is
+/// tested without a clock.
 pub struct BudgetWatch {
         due_ms: u32,
         last: Option<Budget>,
