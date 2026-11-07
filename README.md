@@ -50,8 +50,9 @@ The production board has no display, so it brings two indicators instead: green 
 instrument is mounted and interrupted by traffic, red lit while the supply is known to be short
 of what four ports could ask for. It reads that from the receptacle's CC lines twice a second,
 since a worn cable's CC contact can make and break after start-up (`power` on the console
-reports them on request), releases the on-board hub once the host stack is
-listening (`hub on|off` re-enumerates it or holds it), and `stats` reports the PIO host's frame
+reports them on request), releases the on-board hub once the host stack is listening and the
+supply's advertisement has held for 100 ms, or after a second without one (`hub on|off`
+re-enumerates it or holds it), and `stats` reports the PIO host's frame
 engine beside the application's own counters.
 
 All of this runs on revision 0.1 hardware. The PIO host enumerates the hub and two USB-MIDI

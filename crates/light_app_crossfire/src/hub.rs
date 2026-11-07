@@ -14,6 +14,11 @@
 //! again is how the firmware forces a fresh enumeration without a power cycle -- with the hold
 //! kept for [`RESTART_HOLD_MS`], since a hub released in the same instant it was held never
 //! notices it went away.
+//!
+//! The hub also waits for the supply, the first time: it stays held until the CC lines show a
+//! steady advertisement, up to [`SETTLE_LIMIT_MS`], so what the board says about its budget is
+//! settled before there is anything drawing on it. Only the hub waits; the rest of the board
+//! does not.
 
 use light_core::events::Subscription;
 use light_core::{info, log, warn, Module, OutputPin, Poll};
@@ -110,6 +115,46 @@ pub const CC_FIRST_READ_MS: u32 = 20;
 /// asking; a read is two conversions of a few microseconds each.
 pub const CC_READ_PERIOD_MS: u32 = 500;
 
+/// How often the supply is read while the hub waits for it.
+pub const SETTLE_READ_MS: u32 = 20;
+/// How long one advertisement has to hold for the supply to count as settled.
+pub const SETTLE_HOLD_MS: u32 = 100;
+/// How long the hub waits for that before it starts anyway. A supply with nothing on its CC
+/// lines is a supply the board still has to run from.
+pub const SETTLE_LIMIT_MS: u32 = 1_000;
+
+/// Decides when the hub stops waiting for the supply. AN EMPTY READING NEVER ENDS THE WAIT EARLY,
+/// however steady: one USB-C charger was measured with the board already running and nothing on
+/// either line for the first few hundred milliseconds, so "steady at nothing" is not "settled".
+/// Only an advertisement can, and otherwise the limit does. Time comes in as an argument.
+pub struct SupplySettle {
+        started_ms: u32,
+        due_ms: u32,
+        held: Option<(Budget, u32)>,
+}
+
+impl SupplySettle {
+        pub fn new(now_ms: u32) -> Self {
+                Self { started_ms: now_ms, due_ms: now_ms, held: None }
+        }
+
+        /// Take the read that is due, if one is; true once the wait is over.
+        pub fn service(&mut self, now_ms: u32, sense: &mut impl CcSense) -> bool {
+                if (now_ms.wrapping_sub(self.due_ms) as i32) < 0 {
+                        return false;
+                }
+                self.due_ms = now_ms.wrapping_add(SETTLE_READ_MS);
+                let (cc1, cc2) = sense.read_mv();
+                let b = Budget::from_cc(cc1, cc2);
+                let since = match self.held {
+                        Some((held, since)) if held == b => since,
+                        _ => now_ms,
+                };
+                self.held = Some((b, since));
+                (b.known() && now_ms.wrapping_sub(since) >= SETTLE_HOLD_MS) || now_ms.wrapping_sub(self.started_ms) >= SETTLE_LIMIT_MS
+        }
+}
+
 /// Read the supply, say what it offers, and tell the bus.
 pub fn read_budget(sense: &mut impl CcSense) -> Budget {
         let (cc1, cc2) = sense.read_mv();
@@ -172,13 +217,15 @@ pub struct HubMod<R: OutputPin, V: OutputPin, S: CcSense> {
         lines: HubLines<R, V>,
         sense: S,
         watch: BudgetWatch,
+        /// The wait for the supply, from load until the hub is first released.
+        settling: Option<SupplySettle>,
         events: Subscription,
 }
 
 impl<R: OutputPin, V: OutputPin, S: CcSense> HubMod<R, V, S> {
         /// `reset_n` and `vbus_det` as the board constructed them: low, the hub held.
         pub fn new(reset_n: R, vbus_det: V, sense: S) -> Self {
-                Self { lines: HubLines::new(reset_n, vbus_det), sense, watch: BudgetWatch::new(0), events: EVENTS.subscribe().expect("subscriber slot") }
+                Self { lines: HubLines::new(reset_n, vbus_det), sense, watch: BudgetWatch::new(0), settling: None, events: EVENTS.subscribe().expect("subscriber slot") }
         }
 }
 
@@ -194,9 +241,11 @@ impl<R: OutputPin, V: OutputPin, S: CcSense> Module for HubMod<R, V, S> {
         }
 
         fn load(&mut self) -> Result<(), ()> {
-                self.watch = BudgetWatch::new((log::now_us() / 1000) as u32);
-                self.lines.release();
-                info!("hub: released from reset, upstream reported live");
+                //   the hub waits for the supply, in `poll`, and nothing else does: load never
+                // blocks, so the console and the rest of the board come up as they always did
+                let now_ms = (log::now_us() / 1000) as u32;
+                self.watch = BudgetWatch::new(now_ms);
+                self.settling = Some(SupplySettle::new(now_ms));
                 Ok(())
         }
 
@@ -206,6 +255,8 @@ impl<R: OutputPin, V: OutputPin, S: CcSense> Module for HubMod<R, V, S> {
                 while let Some(ev) = EVENTS.poll(&self.events) {
                         match ev {
                                 AppEvent::Hub(true) => {
+                                        //   asked for by name: nothing left to wait for
+                                        self.settling = None;
                                         if self.lines.released() {
                                                 self.lines.restart(now_ms);
                                                 info!("hub: held for {} ms to re-enumerate", RESTART_HOLD_MS);
@@ -218,6 +269,7 @@ impl<R: OutputPin, V: OutputPin, S: CcSense> Module for HubMod<R, V, S> {
                                         busy = true;
                                 }
                                 AppEvent::Hub(false) => {
+                                        self.settling = None;
                                         self.lines.hold();
                                         info!("hub: held in reset");
                                         busy = true;
@@ -233,7 +285,15 @@ impl<R: OutputPin, V: OutputPin, S: CcSense> Module for HubMod<R, V, S> {
                         info!("hub: released from reset, upstream reported live");
                         busy = true;
                 }
-                if self.watch.service(now_ms, &mut self.sense).is_some() {
+                if let Some(settle) = &mut self.settling {
+                        if settle.service(now_ms, &mut self.sense) {
+                                self.settling = None;
+                                let _ = self.watch.read_now(&mut self.sense);
+                                self.lines.release();
+                                info!("hub: released from reset, upstream reported live");
+                                busy = true;
+                        }
+                } else if self.watch.service(now_ms, &mut self.sense).is_some() {
                         busy = true;
                 }
                 if busy { Poll::Busy } else { Poll::Idle }
@@ -340,6 +400,56 @@ mod tests {
                 assert_eq!(b.line, crate::power::CcLine::Cc2);
                 let b = read_budget(&mut NoCcSense);
                 assert!(!b.known());
+        }
+
+        /// Step a settle from `from` in the read period; the time it finished at, if it did.
+        fn settled_at(s: &mut SupplySettle, sense: &mut Sense, from: u32, until: u32) -> Option<u32> {
+                (from..=until).step_by(SETTLE_READ_MS as usize).find(|&t| s.service(t, sense))
+        }
+
+        #[test]
+        fn an_advertisement_that_holds_ends_the_wait() {
+                let mut s = SupplySettle::new(0);
+                assert_eq!(settled_at(&mut s, &mut Sense(1700, 0), 0, 500), Some(SETTLE_HOLD_MS));
+        }
+
+        #[test]
+        fn a_supply_that_is_empty_at_first_is_waited_for() {
+                let mut s = SupplySettle::new(0);
+                let mut sense = Sense(4, 4);
+                assert_eq!(settled_at(&mut s, &mut sense, 0, 400), None, "steady at nothing is not settled");
+                sense.0 = 1700;
+                assert_eq!(settled_at(&mut s, &mut sense, 420, 900), Some(420 + SETTLE_HOLD_MS));
+        }
+
+        #[test]
+        fn a_line_that_drops_out_starts_the_hold_again() {
+                let mut s = SupplySettle::new(0);
+                let mut sense = Sense(425, 4);
+                assert_eq!(settled_at(&mut s, &mut sense, 0, 80), None);
+                sense.0 = 4;
+                assert_eq!(settled_at(&mut s, &mut sense, 100, 100), None);
+                sense.0 = 425;
+                assert_eq!(settled_at(&mut s, &mut sense, 120, 900), Some(120 + SETTLE_HOLD_MS));
+        }
+
+        #[test]
+        fn a_supply_that_never_advertises_is_not_waited_for_past_the_limit() {
+                let mut s = SupplySettle::new(0);
+                let mut sense = Sense(4, 4);
+                assert_eq!(settled_at(&mut s, &mut sense, 0, SETTLE_LIMIT_MS - SETTLE_READ_MS), None);
+                assert!(s.service(SETTLE_LIMIT_MS, &mut sense));
+        }
+
+        #[test]
+        fn the_wait_keeps_time_across_the_millisecond_wrap() {
+                let start = u32::MAX - 50;
+                let mut s = SupplySettle::new(start);
+                let mut sense = Sense(1700, 0);
+                assert!(!s.service(start, &mut sense));
+                assert!(!s.service(start.wrapping_add(SETTLE_READ_MS / 2), &mut sense), "no read due");
+                assert!(!s.service(start.wrapping_add(SETTLE_HOLD_MS - 1), &mut sense));
+                assert!(s.service(start.wrapping_add(SETTLE_HOLD_MS + SETTLE_READ_MS), &mut sense));
         }
 
         #[test]
