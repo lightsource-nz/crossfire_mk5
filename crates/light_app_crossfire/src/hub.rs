@@ -1,5 +1,5 @@
 //! The hub: held in reset until the application is ready for instruments, told when its
-//! upstream is live, and read the supply's advertisement on the way.
+//! upstream is live, and the supply's advertisement watched for as long as the board runs.
 //!
 //! A board that hosts its instruments through a hub on the board itself has a hub with no
 //! upstream cable: nothing supplies its upstream port, so the firmware tells it when to attach
@@ -103,29 +103,82 @@ impl<R: OutputPin, V: OutputPin> HubLines<R, V> {
         }
 }
 
+/// How long after load the supply is first read: the lines' filter has settled by then from the
+/// pad's reset state, measured at under 10 ms.
+pub const CC_FIRST_READ_MS: u32 = 20;
+/// How often it is read after that. Often enough that a light follows a change without anyone
+/// asking; a read is two conversions of a few microseconds each.
+pub const CC_READ_PERIOD_MS: u32 = 500;
+
 /// Read the supply, say what it offers, and tell the bus.
 pub fn read_budget(sense: &mut impl CcSense) -> Budget {
         let (cc1, cc2) = sense.read_mv();
         let b = Budget::from_cc(cc1, cc2);
+        announce(b, cc1, cc2);
+        b
+}
+
+/// Keeps the budget current. ONE READ AT START-UP IS NOT ENOUGH: a line's pull-up need not be
+/// there when the processor is. Measured on one USB-A supply, the line sat at nothing for over
+/// half a second after the firmware started and then rose to its band, so a board that looked
+/// once reported no source for as long as it ran. Time comes in as an argument, as it does for
+/// [`HubLines`], so this is tested without a clock.
+pub struct BudgetWatch {
+        due_ms: u32,
+        last: Option<Budget>,
+}
+
+impl BudgetWatch {
+        pub fn new(now_ms: u32) -> Self {
+                Self { due_ms: now_ms.wrapping_add(CC_FIRST_READ_MS), last: None }
+        }
+
+        /// A read somebody asked for: said and published whatever it finds.
+        pub fn read_now(&mut self, sense: &mut impl CcSense) -> Budget {
+                let b = read_budget(sense);
+                self.last = Some(b);
+                b
+        }
+
+        /// The read that is due, if one is; the budget when it differs from the last one, which
+        /// is the only time anybody hears about it.
+        pub fn service(&mut self, now_ms: u32, sense: &mut impl CcSense) -> Option<Budget> {
+                //   compared as a signed difference, as a restart's deadline is
+                if (now_ms.wrapping_sub(self.due_ms) as i32) < 0 {
+                        return None;
+                }
+                self.due_ms = now_ms.wrapping_add(CC_READ_PERIOD_MS);
+                let (cc1, cc2) = sense.read_mv();
+                let b = Budget::from_cc(cc1, cc2);
+                if self.last == Some(b) {
+                        return None;
+                }
+                self.last = Some(b);
+                announce(b, cc1, cc2);
+                Some(b)
+        }
+}
+
+fn announce(b: Budget, cc1: u32, cc2: u32) {
         if b.known() {
                 info!("power: source on {:?} advertises {}: {} mA for the ports -- {} at full current, {} typical instruments", b.line, b.advertisement.describe(), b.ports_ma, b.full_ports, b.typical_instruments);
         } else {
                 warn!("power: no USB-C advertisement on either CC line ({cc1} mV, {cc2} mV); the budget is unknown");
         }
         let _ = EVENTS.publish(AppEvent::Budget(b));
-        b
 }
 
 pub struct HubMod<R: OutputPin, V: OutputPin, S: CcSense> {
         lines: HubLines<R, V>,
         sense: S,
+        watch: BudgetWatch,
         events: Subscription,
 }
 
 impl<R: OutputPin, V: OutputPin, S: CcSense> HubMod<R, V, S> {
         /// `reset_n` and `vbus_det` as the board constructed them: low, the hub held.
         pub fn new(reset_n: R, vbus_det: V, sense: S) -> Self {
-                Self { lines: HubLines::new(reset_n, vbus_det), sense, events: EVENTS.subscribe().expect("subscriber slot") }
+                Self { lines: HubLines::new(reset_n, vbus_det), sense, watch: BudgetWatch::new(0), events: EVENTS.subscribe().expect("subscriber slot") }
         }
 }
 
@@ -141,7 +194,7 @@ impl<R: OutputPin, V: OutputPin, S: CcSense> Module for HubMod<R, V, S> {
         }
 
         fn load(&mut self) -> Result<(), ()> {
-                let _ = read_budget(&mut self.sense);
+                self.watch = BudgetWatch::new((log::now_us() / 1000) as u32);
                 self.lines.release();
                 info!("hub: released from reset, upstream reported live");
                 Ok(())
@@ -170,7 +223,7 @@ impl<R: OutputPin, V: OutputPin, S: CcSense> Module for HubMod<R, V, S> {
                                         busy = true;
                                 }
                                 AppEvent::Power => {
-                                        let _ = read_budget(&mut self.sense);
+                                        let _ = self.watch.read_now(&mut self.sense);
                                         busy = true;
                                 }
                                 _ => {}
@@ -178,6 +231,9 @@ impl<R: OutputPin, V: OutputPin, S: CcSense> Module for HubMod<R, V, S> {
                 }
                 if self.lines.service(now_ms) {
                         info!("hub: released from reset, upstream reported live");
+                        busy = true;
+                }
+                if self.watch.service(now_ms, &mut self.sense).is_some() {
                         busy = true;
                 }
                 if busy { Poll::Busy } else { Poll::Idle }
@@ -284,5 +340,51 @@ mod tests {
                 assert_eq!(b.line, crate::power::CcLine::Cc2);
                 let b = read_budget(&mut NoCcSense);
                 assert!(!b.known());
+        }
+
+        #[test]
+        fn the_supply_is_first_read_once_the_lines_have_settled() {
+                let mut w = BudgetWatch::new(1_000);
+                let mut s = Sense(1700, 0);
+                assert_eq!(w.service(1_000 + CC_FIRST_READ_MS - 1, &mut s), None);
+                assert!(w.service(1_000 + CC_FIRST_READ_MS, &mut s).is_some());
+        }
+
+        #[test]
+        fn a_pull_up_that_arrives_late_is_heard() {
+                let mut w = BudgetWatch::new(0);
+                let mut s = Sense(4, 4);
+                let first = w.service(CC_FIRST_READ_MS, &mut s).unwrap();
+                assert!(!first.known());
+                s.0 = 425;
+                assert_eq!(w.service(CC_FIRST_READ_MS + CC_READ_PERIOD_MS - 1, &mut s), None, "not due yet");
+                let later = w.service(CC_FIRST_READ_MS + CC_READ_PERIOD_MS, &mut s).unwrap();
+                assert_eq!(later.advertisement, crate::power::Advertisement::Default);
+                assert!(later.limited());
+        }
+
+        #[test]
+        fn a_supply_that_has_not_changed_says_nothing() {
+                let mut w = BudgetWatch::new(0);
+                let mut s = Sense(1700, 0);
+                assert!(w.service(CC_FIRST_READ_MS, &mut s).is_some());
+                s.0 = 1650;
+                assert_eq!(w.service(CC_FIRST_READ_MS + CC_READ_PERIOD_MS, &mut s), None, "the same band");
+        }
+
+        #[test]
+        fn a_read_on_request_counts_as_the_last_one_heard() {
+                let mut w = BudgetWatch::new(0);
+                let mut s = Sense(900, 0);
+                let _ = w.read_now(&mut s);
+                assert_eq!(w.service(CC_FIRST_READ_MS, &mut s), None);
+        }
+
+        #[test]
+        fn the_watch_keeps_time_across_the_millisecond_wrap() {
+                let mut w = BudgetWatch::new(u32::MAX - 5);
+                let mut s = Sense(1700, 0);
+                assert_eq!(w.service(u32::MAX, &mut s), None);
+                assert!(w.service(CC_FIRST_READ_MS - 6, &mut s).is_some());
         }
 }
