@@ -4073,10 +4073,6 @@
 		(uuid "fa406ef3-f571-479d-aa6f-1bbd28ec8842")
 	)
 	(no_connect
-		(at 228.6 114.3)
-		(uuid "06d3a050-5c02-45b7-98a7-553973206fbf")
-	)
-	(no_connect
 		(at 228.6 162.56)
 		(uuid "1c88b2ae-6db3-4202-a7fe-94779f692889")
 	)
@@ -4099,10 +4095,6 @@
 	(no_connect
 		(at 228.6 132.08)
 		(uuid "6b369ab3-3873-4a89-b0e6-ff16f2b43359")
-	)
-	(no_connect
-		(at 228.6 111.76)
-		(uuid "752c27d4-ef47-48c5-9618-2b7b48214218")
 	)
 	(no_connect
 		(at 228.6 109.22)
@@ -4696,16 +4688,6 @@
 	)
 	(wire
 		(pts
-			(xy 228.6 170.18) (xy 233.68 170.18)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "662c3677-34a6-4db9-b796-aec9790e61a6")
-	)
-	(wire
-		(pts
 			(xy 203.2 185.42) (xy 203.2 190.5)
 		)
 		(stroke
@@ -4803,16 +4785,6 @@
 			(type solid)
 		)
 		(uuid "6ef2cdde-9175-453c-a989-7f8489d655c9")
-	)
-	(wire
-		(pts
-			(xy 228.6 172.72) (xy 233.68 172.72)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "73eac47c-1cca-461b-a1ca-bf3e04695f75")
 	)
 	(wire
 		(pts
@@ -5574,17 +5546,6 @@
 		)
 		(uuid "adfabf65-d4a1-447d-b7db-2821aa09bc99")
 	)
-	(hierarchical_label "CC2_SENSE"
-		(shape input)
-		(at 233.68 172.72 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "145a16a6-d937-4fe1-bf7e-eabb8297b9a6")
-	)
 	(hierarchical_label "HUB_RESET"
 		(shape output)
 		(at 233.68 119.38 0)
@@ -5595,17 +5556,6 @@
 			(justify left)
 		)
 		(uuid "209944b4-f886-4c7c-afc1-9531ecd5192e")
-	)
-	(hierarchical_label "CC1_SENSE"
-		(shape input)
-		(at 233.68 170.18 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "2d48d415-15a9-4b34-b714-386d656dc679")
 	)
 	(hierarchical_label "PIO_D-"
 		(shape bidirectional)
@@ -13515,5 +13465,55 @@
 				)
 			)
 		)
+	)
+	(no_connect
+		(at 228.6 170.18)
+		(uuid "203e918c-2085-4655-a736-0e242a8a858d")
+	)
+	(wire
+		(pts
+			(xy 228.6 111.76) (xy 233.68 111.76)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "f7b08310-d479-4fa1-9072-ffa5e03c0479")
+	)
+	(no_connect
+		(at 228.6 172.72)
+		(uuid "b6632f6b-6348-4e97-a4ed-8abbb2693758")
+	)
+	(wire
+		(pts
+			(xy 228.6 114.3) (xy 233.68 114.3)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "0c3d5c0e-b808-49e0-855c-cbc3a352aa53")
+	)
+	(hierarchical_label "SDA"
+		(shape bidirectional)
+		(at 233.68 111.76 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "7c6e90cb-3a71-49ef-b67c-bba5235ad206")
+	)
+	(hierarchical_label "SCL"
+		(shape bidirectional)
+		(at 233.68 114.3 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "9d3a943b-bb04-43dc-9034-c6dd27e52060")
 	)
 )

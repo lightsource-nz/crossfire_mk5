@@ -6,8 +6,9 @@ connector that carries both its power and its link to a computer.
 **Status: the files here are revision 0.2, in design.** Revision 0.1 was ordered assembled in
 October 2026 and delivered in November; it is final, and the files that went to the fabricator and
 a specification of the board as built are under `releases/v0.1/`. Changes from here on are
-revision 0.2's. Unless a section says it was measured on revision 0.1, a number below is a budget
-or a datasheet figure. A predecessor design exists elsewhere as a sketch of an earlier vision; it was never
+revision 0.2's: the first, a Power Delivery sink on the upstream connector and an input rail rated
+for 20 V, is in the schematic and not yet on the board. Unless a section says it was measured on
+revision 0.1, a number below is a budget or a datasheet figure. A predecessor design exists elsewhere as a sketch of an earlier vision; it was never
 manufactured or validated, so nothing here is inherited from it — individual parts are reused only
 where they stand up on their own.
 
@@ -15,11 +16,12 @@ where they stand up on their own.
 sink on a second connector, a charger and a cell, and a radio. Those are deferred, not rejected: they
 made a first board that was hard to lay out and harder to bring up, and none of them is needed to
 prove the thing the product is for. That revision is kept whole in the history at commit `bb66643`.
+Revision 0.2 brings the first of them back, the sink, on the one connector this board already has.
 
 ## What the board has to do
 
-- Host four USB-MIDI instruments at once, on four type-A receptacles, each supplied from the
-  board's 5 V input.
+- Host four USB-MIDI instruments at once, on four type-A receptacles, each supplied from a 5 V
+  rail the board makes from its input.
 - Keep the firmware that already exists: the USB device role and its console, and the signed A/B
   image pair with probation.
 - Present itself to a computer on the upstream connector *while* hosting the instruments, so the two
@@ -106,40 +108,51 @@ that powers the host" — so a GPIO, which costs one pin and hands the firmware 
 the hub down until it is ready and to force a re-enumeration by toggling it. Without that pin
 asserted the hub never believes it is connected.
 
-### 2. One upstream connector, and its 5 V is the board's 5 V
+### 2. One upstream connector, a negotiated input, and a 5 V rail the board makes
 
 Power and data arrive on **one USB-C receptacle**. Its data pair goes to the processor's hardware
-controller, as above. Its VBUS *is* the 5 V rail: it feeds the four port switches directly and a
-small buck converter that makes 3.3 V for everything else. There is no power path to manage, no
-second source to keep apart from the first, and nothing between the connector and a port except that
-port's own switch.
+controller, as above. Its CC pair goes to a **Power Delivery sink**, which asks the source for up to
+9 V, and its VBUS, after the fuse, is the board's **input rail**, `VBUS`: 5 V from a source that
+offers nothing more, 9 V under a contract, and rated throughout for the 20 V a source can put
+there. A buck converter makes **5 V** from the input rail for the four port switches, and the 3.3 V
+buck that revision 0.1 ran from VBUS now runs from that 5 V. There is still no power path to manage
+and no second source to keep apart from the first.
 
 | | receptacle | carries |
 | --- | --- | --- |
-| upstream | type-C, USB 2.0, 16-pin | D+/D− to the hardware controller, Rd on both CC pins, ESD, VBUS as the 5 V rail |
+| upstream | type-C, USB 2.0, 16-pin | D+/D− to the hardware controller, CC to the PD sink, ESD, VBUS as the input rail |
 
-**What that gives up is stated here rather than discovered later.**
+**Revision 0.1 took VBUS straight to the ports, and stated what that gave up. Revision 0.2 takes it
+back, and states what it costs.**
 
-- **The ports get what the cable delivers, not a regulated 5 V.** A source is allowed to be as low
-  as 4.75 V at its own connector and a cable may drop half a volt more at 3 A, so a port can see
-  about 4.2 V in the worst case with every port loaded through a poor cable. Class-compliant MIDI
-  instruments draw a fraction of that current, where the drop is tens of millivolts, so this is a
-  limit to state rather than one expected to bite.
-- **The power available is 15 W at most**, because nothing on the board can ask for more than 5 V.
-  That is exactly enough for four ports at full USB 2.0 current and the electronics, with about
-  three quarters of an amp to spare.
-- **A computer is now the power source as well as the host**, and most computers offer far less than
-  3 A. That is what the third decision is about.
-- **Nothing protects the rail from a source that misbehaves.** A compliant source stays at 5 V
-  because this board never negotiates for anything else, and the port switches are 6 V parts. A
-  charger that puts 9 V or more on VBUS unasked would damage them. That was a risk the earlier
-  design's input switches removed; here it is accepted.
+- **The ports get a regulated 5 V from any source that offers more than 5 V.** On 0.1 a port saw
+  whatever the cable delivered, down to about 4.2 V with every port loaded through a poor cable.
+  From a source that offers only 5 V -- a computer, or a charger with no Power Delivery -- the
+  buck cannot regulate up, and does not try: near dropout it holds its high-side switch on and
+  passes its input through, less its 75 mΩ switch and the inductor, so a port sees what it saw on
+  0.1 less about a tenth of a volt at full load. A buck-boost would regulate that case too; it was
+  weighed and not taken, because a plain buck is simpler to lay out and to bring up, and the drop is
+  small against what class-compliant instruments draw.
+- **The power available is what the source offers at 9 V**, 18 W from the straps' 9 V and 2 A,
+  where 0.1 was held to the 15 W of 5 V at 3 A. The board's worst case is about 12.5 W at the input,
+  so the contract carries four ports at full current with room. How the sink chooses is under
+  *Power*, because the obvious reading of its two straps is wrong.
+- **A computer is still the power source as well as the host**, and most computers offer 5 V and far
+  less than 3 A. That is what the third decision is about.
+- **A source that misbehaves is no longer fatal.** The sink never asks for more than 9 V, but
+  everything on the input rail -- the fuse, the sink, the 5 V buck and every capacitor there -- is
+  rated for 20 V, and nothing that stops at 6 V is on it: the port switches sit behind the buck,
+  and the protection array's VBUS pin, which is meant for USB's 5 V, takes the regulated 5 V. Revision 0.1 accepted
+  that risk; 0.2 removes it.
 
 **The capacitance the source sees at plug-in is kept to what USB allows.** A device may present no
-more than 10 µF to VBUS when it is attached. Everything permanently on the rail counts: the buck's
-input capacitor, the bypass at each port switch, the one at the connector. That comes to 10.6 µF as
-printed on the parts and noticeably less in circuit, since a 10 µF ceramic keeps perhaps two thirds
-of itself at 5 V. Each port's 22 µF sits *behind* its switch, so it is charged through a current
+more than 10 µF to VBUS when it is attached. On revision 0.2 only the input rail counts: the 100 nF
+at the connector, the sink's 1 µF, and the 5 V buck's two 4.7 µF and 100 nF -- 10.6 µF as printed,
+the figure 0.1 shipped with. They are 50 V parts in 1206, which keep nearly all of themselves at 5
+to 9 V, so the margin is thinner than 0.1's and the sum is kept to that figure deliberately. The 3.3
+V buck's input capacitors sit behind the 5 V buck, which is the reason that buck runs from 5 V and
+not from the input rail: its datasheet asks for more than 10 µF at its input, which the input rail
+cannot also carry. Each port's 22 µF sits *behind* its switch, so it is charged through a current
 limit when the hub turns that port on, not by the plug going in.
 
 ### 3. The source says what it can supply, and the firmware divides it
@@ -153,12 +166,16 @@ are very different budgets:
 | 3 A | 0.25 A | 2.75 A — every port at its full 500 mA |
 | 1.5 A | 0.25 A | 1.25 A — four typical instruments, or two at full current |
 | USB default (0.5 A, or 0.9 A on a USB 3 port) | 0.25 A | 0.25–0.65 A — one or two instruments |
+| a Power Delivery contract at 9 V, 2 A or more | — | every port at full current, with about 5 W to spare |
 
-**So the processor reads the CC lines, and port power is policy.** Each CC pin already carries the
-5.1 kΩ that marks this board as a sink. The voltage the source's pull-up produces across that
-resistor is the advertisement: under 0.61 V is the default, 0.70–1.16 V is 1.5 A, and 1.31–2.04 V
-is 3 A. Both pins go to ADC inputs, each through 10 kΩ with 100 nF to ground at the pin, and the
-firmware takes the higher of the two — the cable connects only one.
+**So the sink reports what the source offers, and port power is policy.** On revision 0.1 the
+processor read the advertisement itself: the voltage the source's pull-up made across each CC
+pin's 5.1 kΩ, through 10 kΩ and 100 nF into an ADC input. On 0.2 the CC pins belong to the sink,
+which presents those 5.1 kΩ terminations itself, reads the same advertisement, and holds the result
+in registers on I²C at address 0x08 -- the Type-C current at 5 V when there is no contract, and the
+source's offers and the contract when there is one. So the firmware reads one place for both cases,
+and the series senses, the terminations and GPIO 26 and 27 are all freed. The sink is the part the
+power framework already drives, proven on hardware against a 45 W charger.
 
 The firmware then decides which ports to power. The hub already switches each port's power on
 request and reports over-current port by port, so enforcing a budget is a matter of which ports the
@@ -168,21 +185,25 @@ host stack exposes no per-port power control, so the budget it reads drives the 
 the console's `power` report, and every port is offered. Enforcing it is a later firmware's work,
 on the hardware as built.
 
-**The sense must not load the line it reads.** A divider across CC would sit in parallel with the
-5.1 kΩ and change what the source believes it is talking to, which is worse than not knowing the
-answer. A series resistor into a capacitor draws nothing at DC, so the termination stays exactly
-5.1 kΩ. That holds only while the processor's pad draws nothing either, which makes one firmware
-requirement: **the digital input on those two pads stays disabled.** They are read by the ADC only.
+**The sink's own data pins are left open, and must stay so.** It has D+ and D− for the older
+charger-detection schemes, and it starts them by itself 1.5 s after attach when no contract has
+been made: it drives 0.6 V onto one line and sinks 100 µA from the other. On this board the
+receptacle's pair is the processor's USB connection to a computer, which is exactly the source with
+no contract, so tying the sink to it would disturb enumeration on the one connection the board
+cannot afterwards recover. A source without Power Delivery is read from CC alone, which is all
+revision 0.1 had. Its gate drive, for an optional switch on its own supply, is left open as well:
+no switch is needed when every part on the input rail is rated for what the rail can carry.
 
 ## Block structure
 
 ```mermaid
 graph LR
   C[USB-C upstream] <-->|data, hardware device| MCU
-  C -->|VBUS, 5 V| R5[5 V rail]
-  C -.->|CC1, CC2| MCU
-  R5 -->|5 V| P[4 port switches and type-A]
-  R5 --> B33[buck 3.3 V]
+  C -->|VBUS, 5 to 20 V| B5[buck 5 V]
+  C -.->|CC1, CC2| PD[PD sink]
+  PD -.->|I2C| MCU
+  B5 -->|5 V| P[4 port switches and type-A]
+  B5 --> B33[buck 3.3 V]
   B33 --> MCU[RP2350A and flash]
   B33 --> HUB[4-port hub]
   MCU <-->|data, PIO host| HUB
@@ -198,7 +219,8 @@ graph LR
 
 | rail | source | sized for | why |
 | --- | --- | --- | --- |
-| 5 V | the upstream connector's VBUS, directly | 3 A | the ports and the buck; whatever the source and the cable deliver |
+| input (`VBUS`) | the upstream connector, after the fuse | 5–20 V, about 1.4 A at 9 V | whatever the sink agreed: 9 V under a contract, 5 V without one; every part on it rated for 20 V |
+| 5 V | AP64350 buck from the input | 3.5 A part, 2.5 A needed | the four ports and the 3.3 V buck; regulated from any source above 5 V, passed through from a 5 V one |
 | 3.3 V | fixed-output buck from 5 V | 2 A part, 0.35 A needed | a buck rather than a linear regulator saves about 80 mA of an input budget that can be as small as half an amp |
 | 1.1 V (core) | the MCU's own switching regulator | — | not a board converter, but it needs board parts: an inductor on `VREG_LX` and a feedback network, which is why it is a rail and not just decoupling |
 
@@ -210,8 +232,35 @@ through it.
 
 **The 3.3 V converter is a fixed-output part, so it has no divider to get wrong.** It takes an input
 capacitor, a bootstrap capacitor, an inductor and its output capacitors, and its enable is tied to
-its input so it starts when the cable goes in. Its input range reaches well above anything VBUS
-should carry and down to 3.8 V, which is below the lowest the cable can leave it with.
+its input so it starts when the 5 V rail comes up. Its input range reaches down to 3.8 V, below
+anything the 5 V buck can leave it with in dropout. Every part around it is as built on revision
+0.1; only its supply moved.
+
+**The 5 V converter is the vendor's own 5 V design, value for value.** The AP64350's datasheet
+works one example through, 5 V out at 3.5 A and 500 kHz, and the board takes it whole: 115 kΩ over
+22.1 kΩ to the 0.8 V reference, 200 kΩ on `RT` for 500 kHz, 14 kΩ and 3.3 nF on `COMP` for a 20
+kHz crossover, 100 nF bootstrap, two 22 µF at the output. The datasheet's optional 47 pF across the
+upper feedback resistor is left out, as its example leaves it. Its enable is tied to its input, which
+the part allows since the pin is rated for the full input. Two numbers differ from the example and
+both on purpose: the input capacitance is two 4.7 µF where the example has one 10 µF, which is the
+plug-in limit above, and the inductor is a 5.6 µH part where the example's is 5.5 µH, the nearest
+standard value. Its dropout behaviour is what makes a buck acceptable here at all, so it is quoted:
+near its output voltage "the regulator enters low-dropout mode by holding Q1 on for multiple clock
+cycles", refreshing the bootstrap capacitor through the low side as it goes, so "the effective duty
+cycle is approximately 100%".
+
+**The sink's two straps are the contract the board boots on, and the obvious reading of them is
+wrong.** A fixed 100 µA flows out of `VSET` and `ISET`, and a resistor to ground on each states a
+voltage and a current: 6.04 kΩ is 9 V and 10.5 kΩ is 2 A. The part forms its request from the lower
+of the straps and its own factory setting, then walks the source's offers **from the highest voltage
+down**, taking the first whose voltage is at or below the request and whose current is at or above
+it. So the voltage strap is a *ceiling*, and the current strap is a *floor* the offer has to clear --
+which runs the other way from what it looks like: asking for 3 A would make a common 18 W charger
+fail its 9 V line and fall through to 5 V at 3 A, 15 W, where asking for 2 A takes 9 V at 2 A, 18 W.
+The modest request is the one that wins more power. On a mismatch the `_002` variant keeps walking
+down the offers rather than jumping to 5 V, and every source offers 5 V, so the walk always ends in a
+contract or in the plain Type-C current the source advertises. Firmware can choose an offer over I²C
+afterwards; the straps are what holds before any firmware runs.
 
 ### Budget
 
@@ -225,7 +274,7 @@ should carry and down to 3.8 V, which is below the lowest the cable can leave it
 | indicators, crystals, pull-ups | 25 mA | 40 mA |
 | **total** | **240 mA** (0.79 W) | **335 mA** (1.1 W) |
 
-At about 90% conversion that is **175 mA typical and 250 mA peak from the 5 V input**.
+At about 90% conversion that is **175 mA typical and 250 mA peak from the 5 V rail**.
 
 **5 V rail**
 
@@ -237,9 +286,12 @@ At about 90% conversion that is **175 mA typical and 250 mA peak from the 5 V in
 
 **Upstream**
 
-Worst case is 2.25 A at 5 V, which a 3 A source covers with margin. A 1.5 A source runs four
-ordinary instruments. A default port runs the board and one or two instruments, and it is the
-firmware's reading of CC that tells those three cases apart.
+Worst case is 2.25 A at 5 V, about 11.3 W, and about 12.5 W at the input once the 5 V buck's
+losses are counted. Under a 9 V contract that is about 1.4 A from the source, inside the 2 A the
+straps ask for. Without a contract the buck passes the input through and the figures are 0.1's: a
+3 A source covers the worst case with margin, a 1.5 A source runs four ordinary instruments, and a
+default port runs the board and one or two instruments. It is the firmware's reading of the sink
+that tells those cases apart.
 
 ## Parts
 
@@ -252,10 +304,12 @@ Stock KiCad symbols exist for everything marked with one; the rest need drawing.
 | hub | USB2514B | `Interface_USB:USB2514B_Bi` | four downstream ports, per-port power and overcurrent pins, no external EEPROM needed |
 | port switch ×4 | TPS2065C | `Power_Management:TPS2065CDBV` | 1 A threshold, **active-high enable, open-drain fault** — what the hub needs at both ends. It limits by going into constant current rather than latching off, and adds reverse blocking and output discharge, both of which a port wants. Its 0.5 A sibling is the same trap as before: that is the budget itself, with nothing for inrush |
 | port data ESD ×4 | 2-channel array, low capacitance | — | needed because the switch above protects power only. The TPD3S0x4 would have covered both, but it has no fault output, so it cannot tell the hub anything |
-| 3.3 V | AP63203WU | `Regulator_Switching:AP63203WU` | fixed 3.3 V, 2 A, input to 32 V and down to 3.8 V; no feedback divider, six pins |
+| PD sink | HUSB238_002DD | `Interface_USB:HUSB238_xxxDD` | already driven by this codebase's power framework and proven against a real charger; VIN and gate drive to 30 V, CC to 25 V; requests by two straps, reports over I²C; the `_002` variant walks down to the next offer on a mismatch |
+| 5 V | AP64350SP-13 | `crossfire:AP64350`, drawn for the project | 3.5 A synchronous buck, 3.8–40 V in (42 V absolute), external compensation, and a low-dropout mode at about 100% duty, which is what lets a buck serve a 5 V source |
+| 3.3 V | AP63203WU | `Regulator_Switching:AP63203WU` | fixed 3.3 V, 2 A, input to 32 V and down to 3.8 V; no feedback divider, six pins; from the 5 V rail |
 | upstream data ESD | 2-channel array, low capacitance | — | the downstream pairs get theirs from the port switch; the upstream pair has no such part in front of it |
 | upstream connector | USB-C 2.0, 16-pin | `Connector:USB_C_Receptacle_USB2.0_16P` | power and data both |
-| CC sense ×2 | 10 kΩ and 100 nF | `Device:R_Small`, `Device:C_Small` | one pair per CC pin, into an ADC input; in series, so the 5.1 kΩ termination is not loaded |
+| I²C pull-ups ×2 | 4.7 kΩ to 3.3 V | `Device:R_Small` | beside the sink; its pins take up to 6 V and read high from 1.4 V |
 | port connectors ×4 | type-A | `Connector:USB_A` | |
 
 Two notes on the hub. Its upstream link runs at full speed, because the RP2350's controller is
@@ -276,12 +330,14 @@ reach is able to present.
 | --- | --- | --- |
 | 3.3 V, the bootstrap and the internal filter nodes | 16 V | X7R |
 | the core rail and the regulator's own capacitors (1.1 V and 3.3 V, 4.7 uF in 0402) | **6.3 V** | X5R |
-| the 5 V rail and each port's own output | 25 V | X7R |
-| the connector side — the capacitor at the receptacle and the two on the CC senses | **50 V** | X7R |
+| the 5 V rail and each port's own output | 25 V | X7R; X5R for the 5 V buck's two 22 µF outputs |
+| the input rail — the capacitor at the receptacle, the sink's supply and the 5 V buck's input | **50 V** | X7R |
 | crystal loads | 50 V | **C0G** |
 
-**The 5 V rail is now a connector-side rail**, since nothing stands between it and the receptacle.
-Its capacitors are rated 25 V for that reason and not because 5 V asks for it.
+**The input rail is the connector-side rail.** On revision 0.1 it was also the 5 V rail, and its
+capacitors were rated 25 V because nothing stood between them and the receptacle. On 0.2 the input
+can carry 20 V by design, so everything on it is rated 50 V, and the 5 V rail behind the buck keeps
+its 25 V parts, now for headroom rather than for a fault.
 
 **Resistors carry a tolerance, and it is 1% only where the value is read**: a reference a part
 trims itself against, a divider ratio, a termination that states what this end of a cable is. The
@@ -290,12 +346,19 @@ nothing on the other side of it. Power is not a field: the largest dissipation a
 board is a few milliwatts in an indicator's series resistor, so the smallest standard part covers
 every one of them.
 
-**The two inductors are specified by what they have to carry, not by their value alone.**
+**The three inductors are specified by what they have to carry, not by their value alone.**
 
 | | value | has to stay unsaturated to | why that number |
 | --- | --- | --- | --- |
 | core regulator | 3.3 uH +/-20% | **1.5 A** | the processor's own datasheet says so, along with a 250 mohm ceiling on resistance |
 | 3.3 V buck | 4.7 uH | **2 A** | the load is a third of an amp, but the converter limits at well over 2 A and the inductor should not be what gives way first |
+| 5 V buck | 5.6 uH +/-20% | **4.5 A, within 20% of its value** | the 3.5 A rating plus half the ripple at 20 V in; a molded or composite core, so that up to the converter's 5.75 A worst-case current limit it gives way gradually rather than collapsing; 30 mohm at most, the datasheet's figure for efficiency |
+
+**The 5 V buck's inductor is not chosen yet, and the first candidate shows why the requirement
+names its drop.** Würth's 7443552560 is sold as 5.6 µH with a 7.5 A saturation current, and its own
+datasheet gives that figure at a 30% drop; at 10% it is 3.3 A, and the part is 10 mm square. Saturation
+currents are quoted at whatever drop flatters the part, so the requirement states its own. The
+schematic carries a 7 mm footprint as a placeholder and says so on the part.
 
 **The core regulator's inductor has a requirement that is easy to lose**: it must be fully shielded
 and **marked for polarity**, and oriented the way the vendor's layout shows. Their own note is that
@@ -474,7 +537,8 @@ rest fall out of keeping peripherals on their default pins.
 | --- | --- | --- |
 | 0, 1 | `CONSOLE_TX`, `CONSOLE_RX` | UART0's default pair |
 | 2, 3 | — | spare |
-| 4, 5, 6 | — | spare; 4 and 5 are I²C0's default pair, kept free for the power parts when they return |
+| 4, 5 | `SDA`, `SCL` | I²C0's default pair, to the PD sink |
+| 6 | — | spare |
 | 7 | `HUB_RESET` | |
 | 8, 9 | `PIO_D+`, `PIO_D-` | **forced adjacent**, low pin first — the PIO program addresses the pair as a base and an offset |
 | 10–13 | — | spare; the four a radio would take, 12 and 13 adjacent for its clock and data |
@@ -483,8 +547,7 @@ rest fall out of keeping peripherals on their default pins.
 | 17 | — | free; it watched VBUS through a divider until VBUS became the only supply, when it could only read high |
 | 18 | `HUB_VBUS_DET` | tells the hub its upstream is live; also the way to force a re-enumeration |
 | 19–25 | — | spare, and still contiguous: seven in a row is a display bus |
-| 26, 27 | `CC1_SENSE`, `CC2_SENSE` | ADC inputs: what the source advertises |
-| 28, 29 | — | spare, and the last two that reach the ADC on this package |
+| 26–29 | — | spare, and the four that reach the ADC on this package; 26 and 27 read the CC lines on revision 0.1 |
 
 Dedicated pins take the rest: QSPI to the flash, the hardware USB pair to the upstream receptacle, SWD to
 the debug header, XIN/XOUT to the 12 MHz crystal, RUN to reset.
@@ -677,11 +740,11 @@ themselves:
 
 | sheet | contents |
 | --- | --- |
-| `mcu` | RP2350A, flash, crystal, SWD, boot button, decoupling, and the two ADC inputs that read CC |
-| `upstream_data` | the upstream receptacle, Rd on both CC pins and the sense behind each, ESD on the hardware USB pair, the fuse, and VBUS leaving as the 5 V rail |
+| `mcu` | RP2350A, flash, crystal, SWD, boot button, decoupling, and the I²C pair to the PD sink |
+| `upstream_data` | the upstream receptacle, the PD sink with its two straps and the I²C pull-ups, ESD on the hardware USB pair, the fuse, and VBUS leaving as the input rail |
 | `hub` | USB2514B, its 24 MHz crystal, the `RBIAS` resistor, the PIO host pair's series resistors and pull-downs, upstream detect from the MCU, and four downstream pairs |
 | `port` | one port: switch, ESD array, receptacle, bulk capacitance — instanced four times |
-| `power` | the 3.3 V buck with its capacitors and inductor, and one bypass capacitor for each port switch's input |
+| `power` | the 5 V buck with its feedback, timing and compensation, the 3.3 V buck from 5 V with its capacitors and inductor, and one bypass capacitor for each port switch's input |
 
 ## The project as it stands
 
@@ -789,8 +852,14 @@ budget can draw, the trip well below what the copper would survive for long, and
 when the fault clears, which on a bench is worth more than a one-shot fuse's lower resistance:
 the polymer costs about 30 mΩ, 70 mV at full load, against a 5 V rail that can arrive at 4.5. The
 short wire between the receptacle's VBUS pins and the fuse is its own net, `VBUS_IN`, in the
-heavy-copper class; everything after the fuse is +5V as before, including the protection array's
-VBUS pin, which the fuse's resistance does not disturb.
+heavy-copper class; on revision 0.1 everything after the fuse was +5V, including the protection
+array's VBUS pin, which the fuse's resistance does not disturb.
+
+**Revision 0.2 takes the 24 V member of the same fuse family**, TECHFUSE mSMD260-24V (C6851471):
+the same 1812 body, 2.6 A hold and 5 A trip, 15 mΩ, rated for the 20 V the input can now carry where
+the 8 V part was not. The hold still has the most to do at 5 V, where the input current is largest;
+under a 9 V contract the input is about 1.4 A. Everything after the fuse is now the input rail,
+`VBUS`, and the protection array's VBUS pin has moved to +5V, since it is meant for USB's 5 V.
 
 **Four things the reference documents asked for that the schematic did not have.** A pre-fab pass
 against the processor vendor's hardware design guide and the hub vendor's design checklists, read
@@ -831,6 +900,14 @@ port's contribution was capped by intent, so that knowing what its source offere
 The data port is now the only source, what it offers is the whole budget, and the range is sixfold.
 The objection that removed them still shapes how they are drawn: nothing may sit across the
 termination resistor, so each sense is a series resistor into a capacitor and not a divider.
+
+**Revision 0.2 brings the sink back, on the connector the board already has.** Revision 0.1 showed
+on hardware that a PIO host carries the hub and its instruments, so the reason for leaving the sink
+off has been met, and it returns as one part with four passives rather than the earlier design's
+second connector, charger and switches. It takes the CC lines from the processor's senses, which
+were right on 0.1 for every advertisement tried and are now simply not needed. What it brings with
+it is the input rail at up to 20 V, and with that the 5 V buck, since the port switches cannot see
+the input any longer.
 
 **The host stack's seam carries a PIO transport.** This was the first thing to establish and it
 holds up. The stack is written against a `HostController` trait of eight methods — device detect,
@@ -965,6 +1042,14 @@ buys the balance from the distributor's warehouse in days. The matcher's choices
 are now carried as catalogue numbers on every passive, so the next order starts from what was
 built rather than from the matcher again; the bill as ordered is in `releases/v0.1/`.
 
+**Revision 0.2's new parts are not all sourced yet.** The sink is C7471904 (`HUSB238_002DD`), the 5
+V buck C2071691 (`AP64350SP-13`) and the fuse C6851471; the 5 V buck's inductor is unchosen, above,
+and the new passives carry their value, rating and dielectric with the catalogue field left empty
+for a sourcing pass. That pass has one question to answer first: the 100 nF parts on the
+connector's side were drawn as 50 V and carry C1525, which is believed to be a 16 V part. That was
+harmless at 5 V and is not at 20 V, so both of them now carry an empty field until a 50 V part is
+named.
+
 **The files** come from one script, `scripts/export-fab.ps1`, which runs the rules check with
 schematic parity first and writes nothing if it reports anything: the Gerbers and drill files
 zipped for upload, the bill of materials with the catalogue column, and the placement file in the
@@ -990,18 +1075,30 @@ is derived from the board.
 - **Vias in pads** are gone, above: 0.6 mm on 0.3 mm holes, beside the pads, tented.
 - **The capacitance on VBUS at attach**: 10 µF plus six 100 nF, 10.6 µF nominal and about 8 µF
   with 5 V across the 0805 part, under the 10 µF the specification allows. The port capacitors sit
-  behind switches that are off until the hub is configured, so they do not count at attach.
+  behind switches that are off until the hub is configured, so they do not count at attach. On
+  revision 0.2 the same 10.6 µF is made differently, under *One upstream connector* above.
+- **Revision 0.2's sink and 5 V buck, against their datasheets.** The sink's ratings (VIN 3–25 V,
+  VIN and gate to 30 V, CC to 25 V, I²C pins to 6 V and high from 1.4 V), its 1 µF at VIN, its
+  strap tables, its matching rule and its legacy detection on D+ and D− are all read from its own
+  datasheet, as are the buck's pins, its 3.8–40 V range, its 4.25–5.75 A current limit, its example
+  values and its low-dropout mode. Its SO-8EP exposed pad is 2.41 by 3.05 mm typical with a
+  suggested land of 2.61 by 3.50; the schematic names KiCad's `EP2.41x3.3mm` footprint, which is to
+  be compared with that land before layout.
 
 ## To prove on the prototype
 
 - That 240 MHz holds at temperature on stock core voltage, and what raising the core voltage would
   cost the power budget if it does not. 240 MHz is above the datasheet and proven only on the boards
   in hand, so a production population is the open question, not whether it runs.
-- **The CC reading on real sources.** The thresholds are the specification's; what wants seeing is
-  the reading through 10 kΩ and 100 nF while a Power Delivery source is signalling on the same line,
-  and that the processor's pad draws nothing from it with its digital input disabled.
+- **The CC reading on real sources** -- shown on revision 0.1: all three advertisements, from a
+  computer, a USB-A charger and two USB-C chargers, and the default and 3 A on either line.
+- **On revision 0.2, the contract and the dropout.** That the straps win 9 V from the chargers that
+  offer it and fall back cleanly from those that do not; that the buck's output at dropout, from a
+  5 V source at full port load, is the tenth of a volt below its input it is expected to be; and that
+  the sink's legacy detection, with its data pins open, leaves the processor's enumeration alone on a
+  computer's port.
 - **What the ports do at the bottom of the input range**: the lowest VBUS at which the instruments
-  that matter still run, since the board no longer regulates what it passes on.
+  that matter still run, since from a 5 V source the board passes on what it is given.
 - **Both crystals' drive level and start-up**, on the bench with a probe: the hub's checklist says
   the load capacitors are system dependent and want verifying, and the processor's vendor says the
   same of any circuit that is not exactly its own.

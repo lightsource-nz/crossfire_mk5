@@ -960,7 +960,7 @@
 		)
 		(uuid "56fc1a13-bfa9-4fdb-bd81-b4e1e9158ef1")
 	)
-	(label "CC2_SENSE"
+	(label "SCL"
 		(at 76.2 73.66 0)
 		(effects
 			(font
@@ -1030,7 +1030,7 @@
 		)
 		(uuid "6743d217-3398-4e21-a308-d02a547f8cb7")
 	)
-	(label "CC2_SENSE"
+	(label "SCL"
 		(at 157.48 38.1 0)
 		(effects
 			(font
@@ -1120,7 +1120,7 @@
 		)
 		(uuid "a383860e-f901-4eea-a163-d20f67e56ed7")
 	)
-	(label "CC1_SENSE"
+	(label "SDA"
 		(at 76.2 68.58 0)
 		(effects
 			(font
@@ -1230,7 +1230,7 @@
 		)
 		(uuid "f91f4488-3d2a-47a1-a826-1b08ddc144c4")
 	)
-	(label "CC1_SENSE"
+	(label "SDA"
 		(at 157.48 35.56 0)
 		(effects
 			(font
@@ -2110,7 +2110,7 @@
 				(justify right)
 			)
 		)
-		(pin "CC1_SENSE" input
+		(pin "SDA" bidirectional
 			(at 152.4 35.56 0)
 			(uuid "c57c6ec1-99be-4ed1-ad91-bad6125da0df")
 			(effects
@@ -2120,7 +2120,7 @@
 				(justify right)
 			)
 		)
-		(pin "CC2_SENSE" input
+		(pin "SCL" bidirectional
 			(at 152.4 38.1 0)
 			(uuid "f0a14e09-cf54-4457-9ad0-b486692506a2")
 			(effects
@@ -2622,7 +2622,7 @@
 				(justify right)
 			)
 		)
-		(pin "CC1_SENSE" output
+		(pin "SDA" bidirectional
 			(at 71.12 68.58 0)
 			(uuid "0df49f19-1a85-4e71-8444-260ecdfed940")
 			(effects
@@ -2632,7 +2632,7 @@
 				(justify right)
 			)
 		)
-		(pin "CC2_SENSE" output
+		(pin "SCL" bidirectional
 			(at 71.12 73.66 0)
 			(uuid "df4481c8-c6aa-46cc-9bfe-b67dfe4109d5")
 			(effects
