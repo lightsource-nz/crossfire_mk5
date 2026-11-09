@@ -4605,7 +4605,7 @@
 				)
 			)
 		)
-		(property "LCSC" ""
+		(property "LCSC" "C51205"
 			(at 116.84 170.18 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -4796,7 +4796,7 @@
 				)
 			)
 		)
-		(property "LCSC" ""
+		(property "LCSC" "C307331"
 			(at 127 170.18 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -5017,7 +5017,7 @@
 				)
 			)
 		)
-		(property "LCSC" ""
+		(property "LCSC" "C25764"
 			(at 137.16 180.34 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -5284,7 +5284,7 @@
 				)
 			)
 		)
-		(property "LCSC" ""
+		(property "LCSC" "C1525"
 			(at 167.64 170.18 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -5409,7 +5409,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Inductor_SMD:L_Wuerth_HCI-7040"
+		(property "Footprint" "crossfire:L_8.8x8.2_cjiang_FXL0840"
 			(at 175.26 172.72 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -5442,7 +5442,7 @@
 				)
 			)
 		)
-		(property "LCSC" ""
+		(property "LCSC" "C5359252"
 			(at 175.26 172.72 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -5453,7 +5453,7 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "cjiang FXL0840-5R6-M"
 			(at 175.26 172.72 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -5475,7 +5475,7 @@
 				)
 			)
 		)
-		(property "Requirement" "PART NOT CHOSEN, footprint is a 7 mm placeholder: within 20% of 5.6 uH at 4.5 A, molded or composite core (soft at the 5.75 A limit), DCR <= 30 mohm"
+		(property "Requirement" "within 20% of 5.6 uH at 4.5 A, molded or composite core (soft at the 5.75 A limit), DCR <= 30 mohm; FXL0840-5R6-M: 30 mohm max, 30% roll-off at 10 A, no curve published"
 			(at 175.26 172.72 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -5641,7 +5641,7 @@
 				)
 			)
 		)
-		(property "LCSC" ""
+		(property "LCSC" "C423255"
 			(at 180.34 175.26 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -5744,7 +5744,7 @@
 				)
 			)
 		)
-		(property "LCSC" ""
+		(property "LCSC" "C43473"
 			(at 180.34 180.34 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -5970,7 +5970,7 @@
 				)
 			)
 		)
-		(property "LCSC" ""
+		(property "LCSC" "C3015834"
 			(at 165.1 180.34 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6073,7 +6073,7 @@
 				)
 			)
 		)
-		(property "LCSC" ""
+		(property "LCSC" "C26404"
 			(at 165.1 185.42 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6264,7 +6264,7 @@
 				)
 			)
 		)
-		(property "LCSC" ""
+		(property "LCSC" "C12891"
 			(at 187.96 175.26 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6455,7 +6455,7 @@
 				)
 			)
 		)
-		(property "LCSC" ""
+		(property "LCSC" "C12891"
 			(at 195.58 175.26 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6800,7 +6800,7 @@
 				)
 			)
 		)
-		(property "LCSC" ""
+		(property "LCSC" "C51205"
 			(at 109.22 170.18 0)
 			(show_name no)
 			(do_not_autoplace no)

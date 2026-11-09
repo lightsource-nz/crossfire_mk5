@@ -354,11 +354,18 @@ every one of them.
 | 3.3 V buck | 4.7 uH | **2 A** | the load is a third of an amp, but the converter limits at well over 2 A and the inductor should not be what gives way first |
 | 5 V buck | 5.6 uH +/-20% | **4.5 A, within 20% of its value** | the 3.5 A rating plus half the ripple at 20 V in; a molded or composite core, so that up to the converter's 5.75 A worst-case current limit it gives way gradually rather than collapsing; 30 mohm at most, the datasheet's figure for efficiency |
 
-**The 5 V buck's inductor is not chosen yet, and the first candidate shows why the requirement
-names its drop.** Würth's 7443552560 is sold as 5.6 µH with a 7.5 A saturation current, and its own
-datasheet gives that figure at a 30% drop; at 10% it is 3.3 A, and the part is 10 mm square. Saturation
-currents are quoted at whatever drop flatters the part, so the requirement states its own. The
-schematic carries a 7 mm footprint as a placeholder and says so on the part.
+**The 5 V buck's inductor is cjiang's FXL0840-5R6-M** (C5359252): 5.6 µH ±20 %, a molded part
+8.8 by 8.2 mm and 3.8 mm tall, 30 mΩ at most, 30 % down at 10 A. The first candidate shows why the
+requirement names its drop. Würth's 7443552560 is sold as 5.6 µH with a 7.5 A saturation current,
+and its own datasheet gives that figure at a 30 % drop; at 10 % it is 3.3 A, and the part is 10 mm
+square. Saturation currents are quoted at whatever drop flatters the part, so the requirement
+states its own. The cjiang datasheet publishes no curve, so "within 20 % at 4.5 A" is inferred,
+not read: 4.5 A is under half the current that costs it 30 %, and molded cores roll off
+gradually. The 7 mm molded parts of the same value are 42 mΩ, over the ceiling. The land is the
+maker's recommendation, `L_8.8x8.2_cjiang_FXL0840` in the project library: two 2.75 by 5.5 mm
+pads, 4.0 mm apart and 9.5 mm across, under terminals 1.4 by 3.0 mm at the body ends. Two
+revisions of that datasheet disagree on the terminal width, 3.0 and 5.0 mm, and the 5.5 mm pad
+covers either.
 
 **The core regulator's inductor has a requirement that is easy to lose**: it must be fully shielded
 and **marked for polarity**, and oriented the way the vendor's layout shows. Their own note is that
@@ -510,6 +517,7 @@ under that part is the pattern its maker lays out, not a guess at the nearest li
 | --- | --- | --- |
 | core regulator inductor | Abracon AOTA-B201610S3R3-101-T | the processor's vendor names it, and publishes a layout built around it |
 | 3.3 V buck inductor | Coilcraft XEL4030-472MEC, or Sunlord SWPA4030S4R7MT at the assembler | one project land, `L_4030_Coilcraft_XxL_Sunlord_SWPA`, takes both: the Coilcraft pads kept on their inner edge and carried out to the body edge, after the first order was stopped because a third of each Sunlord terminal hung outside the Coilcraft pads (under Fabrication) |
+| 5 V buck inductor | cjiang FXL0840-5R6-M | the library has no land for it; `L_8.8x8.2_cjiang_FXL0840` is the maker's recommended one, drawn from its datasheet |
 
 **The board carries its name on the front silkscreen**: the application's graphic, 21 x 15.5 mm
 in the open area right of the hub, with `CROSSFIRE Rev ${REVISION}` beneath it, the revision read
@@ -1042,13 +1050,16 @@ buys the balance from the distributor's warehouse in days. The matcher's choices
 are now carried as catalogue numbers on every passive, so the next order starts from what was
 built rather than from the matcher again; the bill as ordered is in `releases/v0.1/`.
 
-**Revision 0.2's new parts are not all sourced yet.** The sink is C7471904 (`HUSB238_002DD`), the 5
-V buck C2071691 (`AP64350SP-13`) and the fuse C6851471; the 5 V buck's inductor is unchosen, above,
-and the new passives carry their value, rating and dielectric with the catalogue field left empty
-for a sourcing pass. That pass has one question to answer first: the 100 nF parts on the
-connector's side were drawn as 50 V and carry C1525, which is believed to be a 16 V part. That was
-harmless at 5 V and is not at 20 V, so both of them now carry an empty field until a 50 V part is
-named.
+**Revision 0.2's new parts carry catalogue numbers**: the sink C7471904 (`HUSB238_002DD`), the 5 V
+buck C2071691 (`AP64350SP-13`), its inductor C5359252, the fuse C6851471, and every new passive.
+Those were chosen by part number, not by the matcher, so the stock behind each is the
+distributor's: three were thin when chosen (115 kΩ C423255, 14 kΩ C3015834 and the 1 µF 50 V X7R
+C5199872, a thousand or more each) and the 4.7 µF 50 V 1206 C51205 is marked not for new designs.
+All of that is to be read again when the order is placed. **The 100 nF parts on the connector's
+side were drawn as 50 V and carried C1525, which is a 16 V part**: Samsung's CL05B104KO5NNNC, and
+the O in that code is 16 V. That was harmless at 5 V and is not at 20 V. The one left on the
+input, C1, now carries Samsung's 50 V CL05B104KB54PNC, C307331, as does the 5 V buck's input
+bypass; the buck's bootstrap capacitor sees 5 V and keeps C1525.
 
 **The files** come from one script, `scripts/export-fab.ps1`, which runs the rules check with
 schematic parity first and writes nothing if it reports anything: the Gerbers and drill files
@@ -1081,9 +1092,14 @@ is derived from the board.
   VIN and gate to 30 V, CC to 25 V, I²C pins to 6 V and high from 1.4 V), its 1 µF at VIN, its
   strap tables, its matching rule and its legacy detection on D+ and D− are all read from its own
   datasheet, as are the buck's pins, its 3.8–40 V range, its 4.25–5.75 A current limit, its example
-  values and its low-dropout mode. Its SO-8EP exposed pad is 2.41 by 3.05 mm typical with a
-  suggested land of 2.61 by 3.50; the schematic names KiCad's `EP2.41x3.3mm` footprint, which is to
-  be compared with that land before layout.
+  values and its low-dropout mode. **Its land, against the maker's suggested one:** KiCad's
+  `SOIC-8-1EP_3.9x4.9mm_P1.27mm_EP2.41x3.3mm` is kept. Its lead pads, 0.6 by 1.95 mm from 1.5 to
+  3.45 mm off centre, cover the lead feet (2.28 to 3.0 mm nominal) as Diodes' 0.80 by 1.50 mm pads
+  (1.75 to 3.25 mm) do. Its exposed-pad land is 2.41 by 3.3 mm, which covers the package's typical
+  paddle of 2.41 by 3.05 mm but not the largest it allows, 2.71 by 3.35; Diodes suggests 2.61 by
+  3.50. The paddle carries ground and heat, not a precise joint, so the smaller land costs a little
+  thermal area that the vias under it and the ground pour beyond it give back. Those vias are a
+  layout task: the datasheet's 45 °C/W is measured on a four-layer, 2 oz board.
 
 ## To prove on the prototype
 
