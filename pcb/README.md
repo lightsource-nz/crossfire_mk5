@@ -778,6 +778,11 @@ before this goes anywhere: the converter's input loop, from the capacitors' grou
 planes to the exposed pad; whether the input rail's three vias at each end are enough for 3 A from
 a 5 V source; and the silkscreen, which passes its check but was placed by rule.
 
+**A ninth test point goes on the input rail**, TP9, 3 mm above the ground pad and labelled the same
+way, so one probe pair reads what the source is actually delivering before the converter. It is a
+bare 1 mm pad like the other eight, with a via in the pad down to the input rail's pour on the
+power layer; a pad that is never soldered has no paste for the hole to draw away.
+
 ## Sheets
 
 | sheet | contents |
