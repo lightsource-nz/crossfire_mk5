@@ -658,6 +658,10 @@
         "pattern": "/upstream_data/VBUS_IN"
       },
       {
+        "netclass": "Power+",
+        "pattern": "VBUS"
+      },
+      {
         "netclass": "Power",
         "pattern": "+3V3"
       },
@@ -692,6 +696,14 @@
       {
         "netclass": "Converter",
         "pattern": "Net-(U4-BST)"
+      },
+      {
+        "netclass": "Converter",
+        "pattern": "Net-(U15-SW)"
+      },
+      {
+        "netclass": "Converter",
+        "pattern": "Net-(U15-BST)"
       },
       {
         "netclass": "USB",

@@ -7,7 +7,8 @@ connector that carries both its power and its link to a computer.
 October 2026 and delivered in November; it is final, and the files that went to the fabricator and
 a specification of the board as built are under `releases/v0.1/`. Changes from here on are
 revision 0.2's: the first, a Power Delivery sink on the upstream connector and an input rail rated
-for 20 V, is in the schematic and not yet on the board. Unless a section says it was measured on
+for 20 V, is in the schematic and on the board, which grew 10 mm deeper for it (under *Layout*).
+Unless a section says it was measured on
 revision 0.1, a number below is a budget or a datasheet figure. A predecessor design exists elsewhere as a sketch of an earlier vision; it was never
 manufactured or validated, so nothing here is inherited from it — individual parts are reused only
 where they stand up on their own.
@@ -174,7 +175,8 @@ pin's 5.1 kΩ, through 10 kΩ and 100 nF into an ADC input. On 0.2 the CC pins b
 which presents those 5.1 kΩ terminations itself, reads the same advertisement, and holds the result
 in registers on I²C at address 0x08 -- the Type-C current at 5 V when there is no contract, and the
 source's offers and the contract when there is one. So the firmware reads one place for both cases,
-and the series senses, the terminations and GPIO 26 and 27 are all freed. The sink is the part the
+and the series senses and the terminations are gone; GPIO 26 and 27 carry the sink's bus instead,
+along the same tracks. The sink is the part the
 power framework already drives, proven on hardware against a 45 W charger.
 
 The firmware then decides which ports to power. The hub already switches each port's power on
@@ -545,8 +547,7 @@ rest fall out of keeping peripherals on their default pins.
 | --- | --- | --- |
 | 0, 1 | `CONSOLE_TX`, `CONSOLE_RX` | UART0's default pair |
 | 2, 3 | — | spare |
-| 4, 5 | `SDA`, `SCL` | I²C0's default pair, to the PD sink |
-| 6 | — | spare |
+| 4–6 | — | spare; 4 and 5 are I²C0's default pair, and held the sink's bus in the schematic until layout moved it to 26 and 27 |
 | 7 | `HUB_RESET` | |
 | 8, 9 | `PIO_D+`, `PIO_D-` | **forced adjacent**, low pin first — the PIO program addresses the pair as a base and an offset |
 | 10–13 | — | spare; the four a radio would take, 12 and 13 adjacent for its clock and data |
@@ -555,7 +556,8 @@ rest fall out of keeping peripherals on their default pins.
 | 17 | — | free; it watched VBUS through a divider until VBUS became the only supply, when it could only read high |
 | 18 | `HUB_VBUS_DET` | tells the hub its upstream is live; also the way to force a re-enumeration |
 | 19–25 | — | spare, and still contiguous: seven in a row is a display bus |
-| 26–29 | — | spare, and the four that reach the ADC on this package; 26 and 27 read the CC lines on revision 0.1 |
+| 26, 27 | `SDA`, `SCL` | I²C1, to the PD sink. These are the pins that read the CC lines on revision 0.1: they face the connector, and the tracks that carried the senses carry the bus. 4 and 5 face the hub, and a bus from there would have had to go round the processor |
+| 28, 29 | — | spare, and with 26 and 27 the four that reach the ADC on this package |
 
 Dedicated pins take the rest: QSPI to the flash, the hardware USB pair to the upstream receptacle, SWD to
 the debug header, XIN/XOUT to the 12 MHz crystal, RUN to reset.
@@ -611,13 +613,14 @@ copper at one ounce and a ten degree rise carries roughly an amp in 0.3 mm, two 
 | Default | 0.20 mm | everything carrying information rather than current |
 | USB | 0.25 mm | the six pairs, as pairs |
 | Power | 0.50 mm | up to an amp: the logic rails, one port's output |
-| Power+ | 1.00 mm | two to three amps: the 5 V rail, from the upstream connector to the ports |
+| Power+ | 1.00 mm | two to three amps: the input rail from the upstream connector, and the 5 V rail to the ports |
 
 The heavy rails are expected to end up as poured copper rather than track, so that last width
 is the floor for any stub that *is* tracked, not a plan for how the current gets there. There is no
 separate signal class: the default *is* the signal class, which is one fewer thing to keep in step.
 
-**The outline is 100 x 49.8 mm** with 1.5 mm corners. The 100 is not a choice -- it is what four
+**The outline is 100 x 59.8 mm** with 1.5 mm corners; revision 0.1 was 100 x 49.8, and 0.2 grew
+10 mm at the back edge to make room for its 5 V converter (under *Layout*). The 100 is not a choice -- it is what four
 receptacles at 25.4 mm centres plus edge margin come to. The depth is 18 mm for the sockets with
 their switches behind them, one row of everything else behind that, and ten millimetres behind
 *that* for the signals to run in: the board was 44 for a while, every part fitted, and the lines
@@ -660,10 +663,12 @@ The floor plan is one row behind the sockets, read left to right in the order th
 | | what | why there |
 | --- | --- | --- |
 | left edge | the upstream connector, facing left, with its protection array behind it | one cable out of the side, away from the four at the front |
-| top left | the 3.3 V converter, its inductor and capacitors | beside the connector whose 5 V it takes |
-| centre left | the processor **turned a half turn**, its crystal above it and its flash below it | turned, its flash and USB pins face down to the flash and the connector's pair, its host pair faces the hub, its crystal and the debug, reset, button and indicator pins face the back edge, and its two ADC pins face the connector's CC senses |
+| along the back edge, left | the 5 V converter (0.2): input capacitors, converter, inductor, output capacitors, left to right | the strip the board grew by; its input arrives on the power layer from the fuse below it, and its output drops into the 5 V plane under it |
+| top left | the 3.3 V converter, its inductor and capacitors | under the 5 V converter whose output it takes |
+| left, behind the connector | the PD sink (0.2), with its straps and bypass | where the CC senses were, on the connector's CC lines |
+| centre left | the processor **turned a half turn**, its crystal above it and its flash below it | turned, its flash and USB pins face down to the flash and the connector's pair, its host pair faces the hub, its crystal and the debug, reset, button and indicator pins face the back edge, and its two ADC pins face the connector -- they read the CC senses on 0.1 and carry the sink's I²C bus on 0.2 |
 | centre right | the hub, turned a quarter turn, **level with the processor's host pair** | turned, its upstream pins and crystal face the processor and its four downstream pairs face the sockets; raised so the host pair is one straight run across the gap |
-| top right | three buttons along the back edge, the debug header below them, the indicators at the right edge | where a hand reaches them on a bare board |
+| top right | three buttons along the back edge, the debug header beside them, the indicators at the right edge | where a hand reaches them on a bare board |
 | front | four sockets, each with its switch, its bypass and its bulk capacitor directly behind it, and its protection array on the back under its pins | |
 
 **The turns are the plan.** Each part's pins are grouped by function along its four sides, and
@@ -678,6 +683,9 @@ millimetres.
 **The second inner layer is split where the current runs.** 5 V takes a strip down the left edge,
 under the connector and the converter's input, and the whole band under the sockets, so the 3 A
 from the connector to the port switches is carried by a plane and no track. 3.3 V takes the rest.
+On revision 0.2 the connector's side of that strip, from the fuse up to the back edge, is the
+input rail's own pour, which carries the source's current to the 5 V converter; 5 V keeps the rest
+of the strip and the band along the back edge where the converter's output lands.
 
 Sixty-two passives were then placed one at a time in order of importance, each at the nearest
 position from which its own connections could actually be drawn, and drawn there: crystals and the
@@ -743,6 +751,32 @@ themselves:
   whether a socket opens toward the edge.
 * **A rules check that passes proves clearance, not adequacy.** A switch node routed clean at a
   fifth of a millimetre is clean and wrong.
+
+**Revision 0.2 was placed and routed by script, in one pass, and has not yet been read by eye in
+the editor.** The pass did four things. It **grew the board 10 mm at the back edge** by cutting it
+along a line and moving everything behind the line back: right of the debug header's left end the
+cut runs just in front of the buttons, so the buttons, the header and the right-hand mounting hole
+moved with their pads, and each track that crossed the line gained a 10 mm straight piece where it
+crossed; left of that the cut runs along the edge itself, so nothing moved there but the outline,
+the pours and the corner mounting hole, which left the new strip empty for the converter. It
+**brought the board in line with the schematic** -- the CC senses' six parts out, the new parts in,
+each linked to its symbol, every pad's net and every field read from the schematic -- so the rules
+check with schematic parity passes with nothing to update. It **placed and routed the sink and the
+5 V converter** by the rules above: the converter's input capacitors against its input pin, its
+switch node one millimetre of copper to the inductor, its feedback and compensation below the
+part and away from the switch node, and the output capacitors under the inductor's output pad,
+which drops into the 5 V plane through four vias. The input rail reaches the converter through
+three vias at each end of its own pour. And it **put the sink's bus on the old sense tracks**, with
+one pair of vias where the two lines cross: the sink's pins and the processor's put them in
+opposite orders, and no placement of one part changes that.
+
+**The exposed pads take their vias in the pad**, six under the converter and two under the sink,
+0.6 mm on 0.3 mm holes. That is the exception the via rule above allows for: an exposed pad exists
+to carry heat and ground to the planes, a via beside it does neither, and the processor's own land
+from its vendor puts its vias in its pad the same way. What a person should read in the editor
+before this goes anywhere: the converter's input loop, from the capacitors' ground through the
+planes to the exposed pad; whether the input rail's three vias at each end are enough for 3 A from
+a 5 V source; and the silkscreen, which passes its check but was placed by rule.
 
 ## Sheets
 
