@@ -91,6 +91,13 @@ is given up on well inside the ROM's window. The console reports every step as `
 A board with no display is not asked about one. The RP2040 has no second slot and puts nothing on
 probation, so there every image is already kept.
 
+An image reaches the other slot over the console, so a board that is running needs no BOOTSEL, no
+button and no probe to be given new firmware: `scripts/update.ps1 -Target crossfire_v01` builds the
+image, sends it over the board's own USB-C port a line at a time (the console commands `receive`
+and `rx`), and follows the board through its reboot to say whether the new image kept itself and
+which slot it is running. On the production board a 161 KiB image takes about fifteen seconds. The
+board has to be running firmware that has these commands, which `scripts/flash.ps1` puts on once.
+
 ## The production board
 
 `pcb/` holds the hardware for the board this firmware is heading for -- an RP2350 hosting four

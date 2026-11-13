@@ -10,13 +10,14 @@
 
 #![no_std]
 
-use light_app_crossfire::{AppEvent, Probation, Vitals, EVENTS};
+use light_app_crossfire::{AppEvent, Chunk, Probation, Receive, Vitals, EVENTS};
 use light_core::events::Subscription;
 use light_core::hal::UpdateError;
 use light_core::module::{Module, Poll};
 use light_core::{info, warn, ConstStaticCell};
 use light_rp2::shell::BootInfo;
 use light_rp2::update::{FlashSlot, COMMIT_SCRATCH_WORDS};
+use light_update::wire::{ReceiveError, Receiver};
 use light_update::{Update, UpdateTarget};
 
 /// The boot ROM's flag for an image started on approval that has not yet bought itself
@@ -92,22 +93,119 @@ const CHUNK: usize = 4096;
 /// slot and how to write it. The staging itself is `light_update`'s and has nothing to do with
 /// where the image came from; what is here is the chip's answer to "with what?".
 ///
-/// WHAT IT COPIES TODAY IS ITSELF. There is no transport yet: the source is the image this board
-/// is running, read through the window the bootloader rolled onto it, and the result is the same
-/// firmware in the other slot -- which is a real thing to want (a fallback that is known to boot)
-/// and, more to the point, exercises every step an arriving image will take. When a transport
-/// arrives it replaces these few lines and nothing else: the session, the slot and the hand-over
-/// are already what they will be.
+/// TWO SOURCES. `update` copies the image this board is running, read through the window the
+/// bootloader rolled onto it, into the other slot -- a real thing to want (a fallback that is known
+/// to boot), and an exercise of every step an arriving image takes. `receive` takes an image that
+/// arrives over the console a line at a time, sent by the framework's update script: the wired
+/// route, which is how a board with no radio is given new firmware without a debugger or a button.
+/// Both end at the same session, the same slot and the same hand-over.
 pub struct UpdateMod {
         events: Subscription,
         /// Lent to the boot ROM when this board keeps an image it was trying out: clearing the
         /// on-approval mark means rewriting the sector the mark sits in, and it wants the room.
         scratch: &'static mut [u32],
+        /// An image arriving over the console, while one is.
+        receiving: Option<Receiver<FlashSlot>>,
 }
 
 impl UpdateMod {
         pub fn new(scratch: &'static mut [u32]) -> Self {
-                Self { events: EVENTS.subscribe().expect("subscriber slot"), scratch }
+                Self { events: EVENTS.subscribe().expect("subscriber slot"), scratch, receiving: None }
+        }
+
+        //   WHAT THE SCRIPT READS. Every answer to a step that leaves the session open is
+        // `receive: next <offset> of <length>`, so the sender has one line to wait for whatever it
+        // said; everything that ends a session without starting an image says `receive: failed`.
+        // A person watching the console reads the same lines
+        fn receive(&mut self, step: Receive) {
+                match step {
+                        Receive::Begin { len, crc } => self.receive_begin(len, crc),
+                        Receive::Chunk(c) => self.receive_chunk(&c),
+                        Receive::Status => match &self.receiving {
+                                Some(rx) => {
+                                        let (next, total) = rx.progress();
+                                        info!("receive: next {next} of {total}");
+                                }
+                                None => {
+                                        let running = light_rp2::shell::boot_info().and_then(|b| b.partition);
+                                        info!("receive: idle; running partition {running:?}");
+                                }
+                        },
+                        Receive::Cancel => match self.receiving.take() {
+                                Some(rx) => {
+                                        let (next, total) = rx.progress();
+                                        drop(rx.abandon());
+                                        info!("receive: cancelled at {next} of {total}; the slot is left unbootable");
+                                }
+                                None => info!("receive: idle; nothing to cancel"),
+                        },
+                }
+        }
+
+        fn receive_begin(&mut self, len: u32, crc: u32) {
+                //   a new image replaces one half-sent: the sender that started that one has gone
+                if let Some(rx) = self.receiving.take() {
+                        let (next, total) = rx.progress();
+                        info!("receive: giving up the image at {next} of {total} for a new one");
+                        drop(rx.abandon());
+                }
+                let slot = match FlashSlot::inactive() {
+                        Ok(slot) => slot,
+                        Err(e) => {
+                                warn!("receive: failed: no slot to receive into ({e:?}) -- is this board running through its bootloader?");
+                                return;
+                        }
+                };
+                //   the erase is the slow part, seconds rather than milliseconds, and the console is
+                // quiet while it runs -- said first so that the quiet has an explanation
+                info!("receive: erasing the slot for {len} bytes");
+                //   ON APPROVAL, as `update` does: the image arrives whole and is started once, and
+                // keeps itself only when the application has seen it work
+                match Receiver::begin_on_approval(slot, len, crc) {
+                        Ok(rx) => {
+                                info!("receive: next 0 of {len}");
+                                self.receiving = Some(rx);
+                        }
+                        Err(e) => warn!("receive: failed: could not start ({e:?})"),
+                }
+        }
+
+        fn receive_chunk(&mut self, chunk: &Chunk) {
+                let Some(rx) = self.receiving.as_mut() else {
+                        warn!("receive: failed: no image is being received -- `receive <length> <crc32>` first");
+                        return;
+                };
+                let total = rx.progress().1;
+                match rx.take(chunk) {
+                        Ok(next) if next < total => info!("receive: next {next} of {total}"),
+                        Ok(_) => self.receive_finish(),
+                        Err(e) => {
+                                let next = rx.next();
+                                warn!("receive: failed at {next} of {total} ({e:?}); the slot is left unbootable");
+                                self.receiving = None;
+                        }
+                }
+        }
+
+        fn receive_finish(&mut self) {
+                let Some(rx) = self.receiving.take() else { return };
+                let total = rx.progress().1;
+                let staged = match rx.finish() {
+                        Ok(s) => s,
+                        Err(ReceiveError::Checksum { expected, got }) => {
+                                warn!("receive: failed: what arrived has CRC {got:08x}, not the {expected:08x} that was sent; nothing was started");
+                                return;
+                        }
+                        Err(ReceiveError::Update(e)) => {
+                                warn!("receive: failed: what was staged is not usable ({e:?})");
+                                return;
+                        }
+                };
+                info!("receive: {total} bytes staged and read back, CRC matches; starting it");
+                //   the hardware verifies the image before it runs it and comes back to this one if
+                // it does not like what it finds, so the worst outcome is that nothing changes
+                let e = staged.boot();
+                warn!("receive: failed: the hardware would not start it ({e:?})");
         }
 
         fn commit(&mut self) {
@@ -180,7 +278,16 @@ impl Module for UpdateMod {
                 while let Some(ev) = EVENTS.poll(&self.events) {
                         match ev {
                                 AppEvent::Update => {
-                                        self.stage();
+                                        //   one writer to the other slot at a time
+                                        if self.receiving.is_some() {
+                                                warn!("update: an image is being received over the console; `receive cancel` first");
+                                        } else {
+                                                self.stage();
+                                        }
+                                        busy = true;
+                                }
+                                AppEvent::Receive(step) => {
+                                        self.receive(step);
                                         busy = true;
                                 }
                                 AppEvent::Commit => {

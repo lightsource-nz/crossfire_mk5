@@ -729,6 +729,7 @@ dependencies = [
  "light-font",
  "light-midi",
  "light-ui",
+ "light-update",
  "light-wireless",
 ]
 

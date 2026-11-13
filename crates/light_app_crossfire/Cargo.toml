@@ -16,6 +16,9 @@ light-ui = { path = "../../../light_mk5/crates/light-ui" }
 # and not hardware: this crate stays portable, and what a network may be called and what a passphrase
 # may be are the framework's rules rather than this application's
 light-wireless = { path = "../../../light_mk5/crates/light-wireless" }
+#   the wired transport's line format, for the console to read an image off the cable with. The
+# staging it feeds is a board's; what a line of image looks like is the framework's
+light-update = { path = "../../../light_mk5/crates/light-update" }
 
 #   the host tests need a critical-section implementation: on a device the port supplies it,
 # and in this crate's own test binary nothing does. Inside the framework's workspace this

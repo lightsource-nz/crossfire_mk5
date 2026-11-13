@@ -77,6 +77,9 @@ pub enum AppEvent {
         /// Fetch a firmware image over the network and stage it, the way `update` stages a copy
         /// of what is already here.
         Fetch(FetchTarget),
+        /// A firmware image arriving over the console, a line at a time -- the wired route, for a
+        /// board with no radio. Acted on by the same module that stages `update`.
+        Receive(Receive),
         /// Bring up a radio the board may have.
         ///
         /// ASKED FOR RATHER THAN DONE AT STARTUP, because powering a radio and uploading a
@@ -114,6 +117,23 @@ pub enum AppEvent {
 // it.
 pub use light_wireless::Credentials;
 
+/// The wired route's steps, as the console reads them. The sender is the framework's update
+/// script, which waits for each answer before saying the next thing -- see `light_update::wire`
+/// for why it has to.
+#[derive(Clone, Copy, Debug)]
+pub enum Receive {
+        /// An image of this many bytes with this CRC-32 is coming: open a session for it.
+        Begin { len: u32, crc: u32 },
+        /// The next piece of it.
+        Chunk(Chunk),
+        /// Where is the session -- or, with none open, which image is running.
+        Status,
+        /// Give the session up, leaving nothing anything will start.
+        Cancel,
+}
+
+pub use light_update::wire::Chunk;
+
 /// Where an image is to be fetched from: an address, a port, and what to ask for.
 ///
 /// AN ADDRESS AND NOT A NAME. Resolving a name means another service to depend on at exactly the
@@ -145,7 +165,13 @@ impl FetchTarget {
 ///   The bus, public because a board may add a module of its own to it -- see `serve`. Six
 /// subscriber slots: the most any board uses is four, and a slot is the cheapest thing here.
 pub static EVENTS: EventBus<AppEvent, 8, 6> = EventBus::new();
-static CONSOLE_BYTES: Mailbox<u8, 128> = Mailbox::new();
+///   ROOM FOR ONE WHOLE LINE OF IMAGE, with its terminator. The console is not flow-controlled --
+/// what does not fit here is dropped -- so the wired update sends one line and waits for it to be
+/// taken, and that only works if one line fits.
+static CONSOLE_BYTES: Mailbox<u8, 256> = Mailbox::new();
+/// The longest console line: a line of image is the longest thing anyone types here, or has typed
+/// for them.
+const LINE: usize = 160;
 
 /// A console byte from the transport the hardware module owns. Never blocks; a full
 /// mailbox drops the byte, and the line it belonged to will fail to parse and say so.
@@ -596,6 +622,37 @@ fn parse_commit(_w: &mut Words) -> Parsed<AppEvent> {
         Parsed::Event(AppEvent::Commit)
 }
 
+//   `receive <length> <crc32>` opens a session, `receive` alone asks where it is, `receive cancel`
+// gives it up. Typed by the update script rather than a person, but kept readable so that a person
+// watching the console can follow it
+fn parse_receive(w: &mut Words) -> Parsed<AppEvent> {
+        let step = match (w.next(), w.next()) {
+                (None, _) => Receive::Status,
+                (Some("cancel"), None) => Receive::Cancel,
+                (Some(len), Some(crc)) => match (len.parse(), light_update::wire::parse_crc(crc)) {
+                        (Ok(len), Some(crc)) => Receive::Begin { len, crc },
+                        _ => return Parsed::Usage,
+                },
+                _ => return Parsed::Usage,
+        };
+        if w.next().is_some() {
+                return Parsed::Usage;
+        }
+        Parsed::Event(AppEvent::Receive(step))
+}
+
+//   `rx <offset> <base64>`: one piece. A line that lost a byte does not parse, and says so with the
+// usage line; the script then asks where the session is and carries on from there
+fn parse_rx(w: &mut Words) -> Parsed<AppEvent> {
+        match (w.next(), w.next(), w.next()) {
+                (Some(offset), Some(data), None) => match Chunk::parse(offset, data) {
+                        Some(c) => Parsed::Event(AppEvent::Receive(Receive::Chunk(c))),
+                        None => Parsed::Usage,
+                },
+                _ => Parsed::Usage,
+        }
+}
+
 fn parse_radio(_w: &mut Words) -> Parsed<AppEvent> {
         Parsed::Event(AppEvent::Radio)
 }
@@ -682,6 +739,8 @@ static COMMANDS: &[Command<AppEvent>] = &[
         Command { name: "stats", usage: "stats", parse: parse_stats },
         Command { name: "update", usage: "update", parse: parse_update },
         Command { name: "commit", usage: "commit", parse: parse_commit },
+        Command { name: "receive", usage: "receive [<length> <crc32> | cancel]   (take an image over this console: scripts/update.ps1)", parse: parse_receive },
+        Command { name: "rx", usage: "rx <offset> <base64>   (one piece of the image `receive` opened)", parse: parse_rx },
         Command { name: "radio", usage: "radio", parse: parse_radio },
         //   the lengths are IN the usage line, because a refusal here can only report the usage --
         // and "8 to 63" is the whole of what a rejected passphrase needs said about it
@@ -696,7 +755,7 @@ static COMMANDS: &[Command<AppEvent>] = &[
 static CLI: Cli<AppEvent> = Cli::new(COMMANDS);
 
 pub struct ConsoleMod {
-        reader: LineReader<96>,
+        reader: LineReader<LINE>,
 }
 
 impl ConsoleMod {
@@ -865,5 +924,63 @@ impl<const N: usize> Write for StackString<N> {
                 self.buf[self.len..self.len + take].copy_from_slice(&s.as_bytes()[..take]);
                 self.len += take;
                 Ok(())
+        }
+}
+
+#[cfg(test)]
+mod tests {
+        use super::*;
+
+        fn receive(line: &str) -> Option<Receive> {
+                match CLI.dispatch(line) {
+                        Outcome::Event(AppEvent::Receive(r)) => Some(r),
+                        _ => None,
+                }
+        }
+
+        #[test]
+        fn the_wired_update_commands_read_what_the_script_sends() {
+                assert!(matches!(receive("receive 327680 cbf43926"), Some(Receive::Begin { len: 327_680, crc: 0xcbf4_3926 })));
+                assert!(matches!(receive("receive"), Some(Receive::Status)));
+                assert!(matches!(receive("receive cancel"), Some(Receive::Cancel)));
+                match receive("rx 96 AAECAw==") {
+                        Some(Receive::Chunk(c)) => {
+                                assert_eq!(c.offset(), 96);
+                                assert_eq!(c.bytes(), &[0, 1, 2, 3]);
+                        }
+                        other => panic!("not a piece: {other:?}"),
+                }
+        }
+
+        #[test]
+        fn a_malformed_step_publishes_nothing() {
+                for line in ["receive 100", "receive 100 nothex00", "receive cancel now", "rx 0", "rx 0 AAE", "rx zero AAECAw==", "rx 0 AAECAw== extra"] {
+                        assert!(receive(line).is_none(), "{line}");
+                }
+        }
+
+        #[test]
+        fn a_whole_line_of_image_fits_the_console() {
+                //   the longest line the script sends: the largest offset a slot could need and a full
+                // piece, which the reader must deliver whole rather than drop as too long
+                let line = alloc_free_line();
+                let mut reader = LineReader::<LINE>::new();
+                let mut got = None;
+                for b in line.as_bytes().iter().chain(b"\r\n") {
+                        if let Some(l) = reader.push(*b) {
+                                got = Some(l);
+                        }
+                }
+                assert_eq!(got.as_deref(), Some(line.as_str()));
+                assert!(line.as_bytes().len() + 2 <= 256, "and the console's byte mailbox holds it with its terminator");
+        }
+
+        fn alloc_free_line() -> StackString<LINE> {
+                let mut s = StackString::<LINE>::new();
+                let _ = write!(s, "rx 4294967295 ");
+                for _ in 0..light_update::wire::CHUNK / 3 * 4 {
+                        let _ = s.write_char('A');
+                }
+                s
         }
 }

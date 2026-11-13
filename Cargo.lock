@@ -1845,6 +1845,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "light-update"
+version = "0.1.0"
+dependencies = [
+ "light-core",
+]
+
+[[package]]
 name = "light-wireless"
 version = "0.1.0"
 
@@ -1859,6 +1866,7 @@ dependencies = [
  "light-font",
  "light-midi",
  "light-ui",
+ "light-update",
  "light-wireless",
 ]
 
