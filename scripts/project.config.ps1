@@ -78,5 +78,7 @@
                 Ctest  = $true
         }
 
-        DefaultTarget = 'crossfire_pico2'
+        #   the production board: the hardware the firmware is for. The Picos are reached with
+        # `-Target`
+        DefaultTarget = 'crossfire_v01'
 }

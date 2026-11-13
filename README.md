@@ -12,12 +12,15 @@ ports, the asset compilers and the shared script layer. Everything that is cross
 the application, the board modules, the version, the signing key, the flash map -- is here.
 
 ```
-scripts/build.ps1 [-Target crossfire_pico2|crossfire_pico|crossfire_v01]
-scripts/flash.ps1 -Target crossfire_pico2     # over SWD, through a debug probe
+scripts/build.ps1 [-Target crossfire_v01|crossfire_pico2|crossfire_pico]
+scripts/flash.ps1                             # the production board, over its own USB-C port
+scripts/flash.ps1 -Target crossfire_pico2     # a Pico, over SWD through a debug probe
 scripts/debug.ps1 -Target crossfire_pico2
-scripts/console.ps1 -Port <COM>               # the console rides the probe's UART
+scripts/console.ps1 [-Port <COM>]             # a Pico's console rides the probe's UART
 scripts/test.ps1                              # the application's host tests
 ```
+
+With no `-Target`, the scripts build and write `crossfire_v01`, the production board.
 
 ## Running it without a board
 
