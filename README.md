@@ -1,8 +1,48 @@
 # crossfire
 
-USB-MIDI forwarding between every instrument on the host port. Three tangible boards run it: the
-production board (`pcb/`, four instruments through a hub, two indicators), a Pico 2 wearing the
-Pico-OLED-1.3, and the stock RP2040 Pico -- the last two with a small OLED status display.
+USB-MIDI forwarding between every instrument on the host port: notes played on one instrument
+reach all the others, with no computer in between.
+
+crossfire runs on its own board, the **crossfire production board, revision 0.1** -- an RP2350
+hosting four instruments through an on-board hub, powered and reached over one USB-C port, with
+two indicators in place of a display. That is the default target of every script here. The same
+application also runs on two development boards: a Pico 2 wearing the Pico-OLED-1.3, and the
+stock RP2040 Pico, both with a small OLED status display.
+
+## The production board, revision 0.1
+
+Revision 0.1 went to the fabricator, assembled, in October 2026, and is the board the firmware
+here runs on. Its design, and every decision behind it, is in `pcb/` (`pcb/README.md`); the files
+that were submitted and a specification of the board as built are in `pcb/releases/v0.1/`. The
+design files themselves have since moved on to revision 0.2.
+
+The firmware target is `crossfire_v01`: its own pico-sdk board definition in `boards/`, its wiring
+in `crates/light-board-crossfire-v01`, and the application instantiated in `module/crossfire_v01`.
+Its instruments are hosted on a PIO pair to the on-board hub -- the framework's `usb-host-pio`
+role, the same host stack the development boards run on their native controller -- and its USB-C
+port is the device: the console rides it, as well as the debug header's UART, and so does the
+1200-baud route into the bootloader, so the board is written over its own connector with no probe.
+The build fixes the system clock at 240 MHz (`CROSSFIRE_V01_SYS_CLK_KHZ`; 192000 and 120000 are
+the alternatives), because the PIO host wants a multiple of 12 MHz and the SDK's default is not
+one. What it shares with the Pico 2 below the application -- probation, firmware
+self-replacement -- is `crates/crossfire-rp2350`.
+
+With no display, it shows its state on two indicators: green lit while an instrument is mounted
+and interrupted by traffic, red lit while the supply is known to be short of what four ports could
+ask for. It reads that from the receptacle's CC lines twice a second, since a worn cable's CC
+contact can make and break after start-up (`power` on the console reports them on request),
+releases the on-board hub once the host stack is listening and the supply's advertisement has held
+for 100 ms, or after a second without one (`hub on|off` re-enumerates it or holds it), and `stats`
+reports the PIO host's frame engine beside the application's own counters.
+
+What has been shown on the board: the PIO host enumerates the hub and two USB-MIDI instruments
+behind it, and notes played on them reach the board and are forwarded, with the activity indicator
+following. The CC lines read all three advertisements correctly -- the USB default, 1.5 A and
+3 A -- and the default and 3 A on either line, as the cable is turned over. A new image reaches it
+over its console and keeps itself (below). `scripts/read-cc.ps1` reads the CC lines through the
+debug header, which leaves the USB-C port free for the supply under test. Two things are not yet
+shown on hardware: an instrument acting on what is forwarded to it, and the recovery of a hub port
+disabled for a device error, which is tested on the host only.
 
 ## Building
 
@@ -14,13 +54,19 @@ the application, the board modules, the version, the signing key, the flash map 
 ```
 scripts/build.ps1 [-Target crossfire_v01|crossfire_pico2|crossfire_pico]
 scripts/flash.ps1                             # the production board, over its own USB-C port
+scripts/update.ps1                            # the production board, while it runs (below)
+scripts/console.ps1                           # its console, on the same port
 scripts/flash.ps1 -Target crossfire_pico2     # a Pico, over SWD through a debug probe
 scripts/debug.ps1 -Target crossfire_pico2
-scripts/console.ps1 [-Port <COM>]             # a Pico's console rides the probe's UART
+scripts/console.ps1 -Port <COM>               # a Pico's console rides the probe's UART
 scripts/test.ps1                              # the application's host tests
 ```
 
 With no `-Target`, the scripts build and write `crossfire_v01`, the production board.
+
+CI (`.github/workflows/ci.yml`) runs the same scripts through the framework's reusable workflows:
+the host tests, and a firmware build of each board -- the two RP2350 legs with their bootloader --
+whose images are kept as artifacts.
 
 ## Running it without a board
 
@@ -36,41 +82,8 @@ font, the look-and-feel and the interface are compiled at start-up by the same c
 build runs, so the glass shows what the panel shows. Console lines can also be piped in on standard
 input, and the log is echoed to standard output. What it simulates is the application's logic
 against its seams, with a person at the controls; it is not a model of a chip, and the host tests
-remain the place a module's behaviour is pinned down.
-
-`crossfire_v01` is the production board, revision 0.1 (`pcb/`): its own pico-sdk board
-definition in `boards/`, its wiring in `crates/light-board-crossfire-v01`, and the application
-instantiated in `module/crossfire_v01`. Its instruments are hosted on a PIO pair to the on-board
-hub -- the framework's `usb-host-pio` role, the same host stack the other boards run on their
-native controller -- and its USB-C port is the device: the console rides it, as well as the debug
-header's UART, and so does the 1200-baud route into the bootloader. The build fixes the system
-clock at 240 MHz (`CROSSFIRE_V01_SYS_CLK_KHZ`; 192000 and 120000 are the alternatives), because
-the PIO host wants a multiple of 12 MHz and the SDK's default is not one. What the two RP2350
-boards share below the application -- probation, firmware self-replacement -- is
-`crates/crossfire-rp2350`.
-
-The production board has no display, so it brings two indicators instead: green lit while an
-instrument is mounted and interrupted by traffic, red lit while the supply is known to be short
-of what four ports could ask for. It reads that from the receptacle's CC lines twice a second,
-since a worn cable's CC contact can make and break after start-up (`power` on the console
-reports them on request), releases the on-board hub once the host stack is listening and the
-supply's advertisement has held for 100 ms, or after a second without one (`hub on|off`
-re-enumerates it or holds it), and `stats` reports the PIO host's frame
-engine beside the application's own counters.
-
-All of this runs on revision 0.1 hardware. The PIO host enumerates the hub and two USB-MIDI
-instruments behind it, and notes played on them reach the board and are forwarded, with the
-activity indicator following. The CC lines read all three advertisements correctly -- the USB
-default, 1.5 A and 3 A -- and the default and 3 A on either line, as the cable is turned over.
-`scripts/flash.ps1 -Target crossfire_v01` writes the board over its own USB-C port, and
-`scripts/read-cc.ps1` reads the CC lines through the debug header, which leaves that port free for
-the supply under test. Two things are not yet shown on hardware: an instrument acting on what is
-forwarded to it, and the recovery of a hub port disabled for a device error, which is tested on
-the host only.
-
-CI (`.github/workflows/ci.yml`) runs the same scripts through the framework's reusable workflows:
-the host tests, and a firmware build of each board -- the two RP2350 legs with their bootloader --
-whose images are kept as artifacts.
+remain the place a module's behaviour is pinned down. The board it stands in for is a Pico with
+the Pico-OLED-1.3; the production board's two indicators are not simulated yet.
 
 ## Images are signed
 
@@ -82,7 +95,7 @@ verifies, and when, is specified in the framework's `documents/11-secure-boot-an
 
 ## A new image keeps itself only if it works
 
-An update is started on probation: the Pico 2's boot ROM runs it once, and unless it commits itself
+An update is started on probation: the RP2350's boot ROM runs it once, and unless it commits itself
 the previous image boots again -- at the next reset, or when the ROM's probation watchdog runs out
 some seventeen seconds after the boot. crossfire makes that decision on its own
 (`crates/light_app_crossfire/src/probation.rs`). At boot the board asks the ROM whether the running
@@ -91,21 +104,27 @@ loaded and commits once the main loop is turning over, the console core is alive
 has taken a whole frame with no bus timeout. A panic, a stopped loop or a failed check means no
 commit, and so the old firmware comes back; a candidate that has not passed by ten seconds of uptime
 is given up on well inside the ROM's window. The console reports every step as `probation: ...`.
-A board with no display is not asked about one. The RP2040 has no second slot and puts nothing on
-probation, so there every image is already kept.
+The production board has no display and is not asked about one. The RP2040 has no second slot and
+puts nothing on probation, so there every image is already kept.
 
 An image reaches the other slot over the console, so a board that is running needs no BOOTSEL, no
-button and no probe to be given new firmware: `scripts/update.ps1 -Target crossfire_v01` builds the
+button and no probe to be given new firmware: `scripts/update.ps1` builds the production board's
 image, sends it over the board's own USB-C port a line at a time (the console commands `receive`
 and `rx`), and follows the board through its reboot to say whether the new image kept itself and
-which slot it is running. On the production board a 161 KiB image takes about fifteen seconds. The
-board has to be running firmware that has these commands, which `scripts/flash.ps1` puts on once.
+which slot it is running. A 161 KiB image takes about fifteen seconds. The board has to be running
+firmware that has these commands, which `scripts/flash.ps1` puts on once.
 
-## The production board
+## The development boards
 
-`pcb/` holds the hardware for the board this firmware is heading for -- an RP2350 hosting four
-instruments through a hub, powered over USB-C. It is a KiCad project, designed, routed and ordered:
-revision 0.1 went to the fabricator, assembled, in October 2026, and is the board the firmware
-above runs on. The design files are now revision 0.2. `pcb/README.md` carries the design and every
-decision behind it; `pcb/releases/v0.1/` carries the files that were submitted and a specification
-of the board as built.
+Before the production board existed, crossfire was brought up on two Picos, and both are still
+built and tested:
+
+- **`crossfire_pico2`** -- a Pico 2 wearing the Pico-OLED-1.3. The same RP2350 as the production
+  board, with the same bootloader, flash map and probation, but its instruments on the native USB
+  port in its host role and an OLED status display. Flashed and debugged over SWD; its console
+  rides the debug probe's UART.
+- **`crossfire_pico`** -- the stock RP2040 Pico, with the same display. No second slot and no
+  bootloader: its image is its whole flash. Flashed over SWD as well.
+
+Both show their state on the display rather than on two indicators, and both need a debug probe,
+which the production board does not.
