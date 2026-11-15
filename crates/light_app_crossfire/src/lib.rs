@@ -25,7 +25,7 @@ use light_display::sh1107::Sh1107;
 use light_display::{Display, FrameLayer, UpdateError};
 use light_draw::{Flip, Rotation};
 use light_font::Font;
-use light_midi::{Forwarder, Host, MidiEvent};
+use light_midi::{Forwarder, Host, MidiEvent, Packet, Transport};
 use light_ui::{Descent, Fonts, Lui, LuiChild, Style, Theme, Ui};
 
 mod hub;
@@ -93,6 +93,10 @@ pub enum AppEvent {
         Hub(bool),
         /// Read the supply's advertisement again and say what it offers.
         Power,
+        /// Log every packet read from or written to an instrument, or stop.
+        Trace(bool),
+        /// Write one USB-MIDI event packet to the instrument in a slot, as if another had played it.
+        Send { idx: u8, packet: light_midi::Packet },
         /// What the supply offers, as the hub module read it: for the indicators, and for
         /// anything else that wants to know.
         Budget(Budget),
@@ -227,6 +231,31 @@ pub fn vitals(console_ticks: u32) -> Vitals {
         }
 }
 
+/// The transport with every packet logged on its way through: what `trace on` puts between the
+/// engine and the host stack. The question it answers is WHERE a message goes missing -- never
+/// read from the instrument that played it, or read and never written to the one that should
+/// have heard it -- which no counter can say about one particular message.
+struct Traced<'a, T: Transport>(&'a mut T);
+
+impl<T: Transport> Transport for Traced<'_, T> {
+        fn read(&mut self, idx: u8) -> Option<Packet> {
+                let p = self.0.read(idx)?;
+                info!("trace: in  {idx}: {:02x} {:02x} {:02x} {:02x}", p[0], p[1], p[2], p[3]);
+                Some(p)
+        }
+        fn write(&mut self, idx: u8, packet: &Packet) {
+                let p = packet;
+                info!("trace: out {idx}: {:02x} {:02x} {:02x} {:02x}", p[0], p[1], p[2], p[3]);
+                self.0.write(idx, packet);
+        }
+        fn flush(&mut self, idx: u8) {
+                self.0.flush(idx);
+        }
+        fn dropped_packets(&self) -> (u32, u32) {
+                self.0.dropped_packets()
+        }
+}
+
 /// Owns the host stack and the forwarding engine. Every pass: run the stack, apply what it
 /// reported, forward what arrived, and say what changed.
 pub struct UsbMod<H: Host> {
@@ -234,11 +263,12 @@ pub struct UsbMod<H: Host> {
         forwarder: Forwarder<USB_SLOTS>,
         events: Subscription,
         status: Status,
+        trace: bool,
 }
 
 impl<H: Host> UsbMod<H> {
         pub fn new(host: H) -> Self {
-                Self { host, forwarder: Forwarder::new(), events: EVENTS.subscribe().expect("subscriber slot"), status: Status::default() }
+                Self { host, forwarder: Forwarder::new(), events: EVENTS.subscribe().expect("subscriber slot"), status: Status::default(), trace: false }
         }
 
         fn publish_status(&mut self) {
@@ -276,6 +306,20 @@ impl<H: Host> Module for UsbMod<H> {
                                         info!("usb: {} mounted, hub addr {}, {} packets in and {} out", self.forwarder.usb_mounted_count(), self.forwarder.hub_addr(), self.forwarder.received, self.forwarder.forwarded);
                                         info!("usb: lost {} arriving, {} departing, {} to a cable number, {} mount events", lost_in, lost_out, self.forwarder.dropped, self.host.dropped_events());
                                 }
+                                AppEvent::Trace(on) => {
+                                        self.trace = on;
+                                        info!("trace: {}", if on { "on" } else { "off" });
+                                }
+                                AppEvent::Send { idx, packet } => {
+                                        let p = packet;
+                                        if self.forwarder.device(idx).is_some() {
+                                                info!("send: {idx}: {:02x} {:02x} {:02x} {:02x}", p[0], p[1], p[2], p[3]);
+                                                self.host.write(idx, &packet);
+                                                self.host.flush(idx);
+                                        } else {
+                                                warn!("send: nothing is mounted in slot {idx}");
+                                        }
+                                }
                                 _ => {}
                         }
                 }
@@ -305,7 +349,7 @@ impl<H: Host> Module for UsbMod<H> {
                         let _ = EVENTS.publish(AppEvent::Status);
                 }
                 let now_ms = (log::now_us() / 1000) as u32;
-                let activity = self.forwarder.service(&mut self.host, now_ms);
+                let activity = if self.trace { self.forwarder.service(&mut Traced(&mut self.host), now_ms) } else { self.forwarder.service(&mut self.host, now_ms) };
                 if activity.forwarded {
                         busy = true;
                 }
@@ -673,6 +717,32 @@ fn parse_power(_w: &mut Words) -> Parsed<AppEvent> {
         Parsed::Event(AppEvent::Power)
 }
 
+fn parse_trace(w: &mut Words) -> Parsed<AppEvent> {
+        match w.next() {
+                Some("on") => Parsed::Event(AppEvent::Trace(true)),
+                Some("off") => Parsed::Event(AppEvent::Trace(false)),
+                _ => Parsed::Usage,
+        }
+}
+
+//   `send 0 09 90 3c 64`: a slot, then the packet's four bytes in hex
+fn parse_send(w: &mut Words) -> Parsed<AppEvent> {
+        let Some(Ok(idx)) = w.next().map(str::parse::<u8>) else {
+                return Parsed::Usage;
+        };
+        let mut packet = [0u8; 4];
+        for b in packet.iter_mut() {
+                match w.next().map(|s| u8::from_str_radix(s, 16)) {
+                        Some(Ok(v)) => *b = v,
+                        _ => return Parsed::Usage,
+                }
+        }
+        if w.next().is_some() || usize::from(idx) >= USB_SLOTS {
+                return Parsed::Usage;
+        }
+        Parsed::Event(AppEvent::Send { idx, packet })
+}
+
 //   `hub on` releases it, or on a hub already up makes it enumerate afresh; `hub off` holds it
 fn parse_hub(w: &mut Words) -> Parsed<AppEvent> {
         match w.next() {
@@ -751,6 +821,8 @@ static COMMANDS: &[Command<AppEvent>] = &[
         Command { name: "fetch", usage: "fetch <address>[:port] <path>", parse: parse_fetch },
         Command { name: "hub", usage: "hub on|off   (release the on-board hub, or re-enumerate it if it is up; or hold it in reset)", parse: parse_hub },
         Command { name: "power", usage: "power   (read what the supply advertises and what that leaves for the ports)", parse: parse_power },
+        Command { name: "trace", usage: "trace on|off   (log every MIDI packet read from or written to an instrument)", parse: parse_trace },
+        Command { name: "send", usage: "send <slot> <4 hex bytes>   (write one USB-MIDI packet to an instrument: send 0 09 90 3c 64)", parse: parse_send },
 ];
 static CLI: Cli<AppEvent> = Cli::new(COMMANDS);
 
