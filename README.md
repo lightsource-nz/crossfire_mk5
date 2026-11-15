@@ -40,9 +40,12 @@ behind it, and notes played on them reach the board and are forwarded, with the 
 following. The CC lines read all three advertisements correctly -- the USB default, 1.5 A and
 3 A -- and the default and 3 A on either line, as the cable is turned over. A new image reaches it
 over its console and keeps itself (below). `scripts/read-cc.ps1` reads the CC lines through the
-debug header, which leaves the USB-C port free for the supply under test. Two things are not yet
-shown on hardware: an instrument acting on what is forwarded to it, and the recovery of a hub port
-disabled for a device error, which is tested on the host only.
+debug header, which leaves the USB-C port free for the supply under test. Running from a USB-PD
+supply, a keyboard played a synth through the board, notes and chords starting and stopping as
+played, with the synth's controls reaching the keyboard the other way. `trace on` on the console
+logs every message read from and written to each instrument, and `send` writes one to an instrument
+directly. Not yet shown on hardware: the recovery of a hub port disabled for a device error, which
+is tested on the host only.
 
 ## Building
 
