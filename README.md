@@ -44,7 +44,8 @@ debug header, which leaves the USB-C port free for the supply under test. Runnin
 supply, a keyboard played a synth through the board, notes and chords starting and stopping as
 played, with the synth's controls reaching the keyboard the other way. `trace on` on the console
 logs every message read from and written to each instrument, and `send` writes one to an instrument
-directly. Not yet shown on hardware: the recovery of a hub port disabled for a device error, which
+directly. Measured from its ports (below), a message crosses it in 1 to 2 ms and nothing is lost up
+to 8,000 messages a second. Not yet shown on hardware: the recovery of a hub port disabled for a device error, which
 is tested on the host only.
 
 ## Building
@@ -138,6 +139,20 @@ scripts/bench.ps1                                 # another run
 The echo's OUT endpoint takes sixty-four bytes. Hold its GP3 to ground at power-up to give it four
 bytes instead, like an instrument that takes one event at a time. The timer's figures stay in RAM,
 and the script reads them over SWD without halting anything; its log is on the UART at GP0.
+
+What the production board measures, with the sixty-four-byte echo:
+
+| | min | median | 99th percentile | max |
+|---|---|---|---|---|
+| one way | 1.0 ms | 1.5 ms | 2.0 ms | 2.0 ms |
+| round trip | 3.0 ms | 3.5 ms | 4.0 ms | 4.0 ms |
+
+Each spreads evenly over one millisecond, the USB frame: a message waits for the next time the board
+asks for it. Under load it forwards every message up to 8,000 a second in each direction, about
+eight times what a MIDI cable carries, with a round trip of 5 to 9 ms. Beyond that it carries about
+8,000 a second, and what it cannot take is counted as `departing` in `stats`, never lost unseen.
+The bench's first run is what found the PIO host losing every other packet from an instrument that
+sent one each frame.
 
 ## The development boards
 
