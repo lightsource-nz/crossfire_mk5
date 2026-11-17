@@ -1,0 +1,21 @@
+[package]
+workspace = "../../../firmware"
+#   _app suffix: the plain name is the CMake EXECUTABLE (which must match the module
+# directory -- light-flash.ps1 finds module/<target>/<target>.uf2), and CMake target
+# names are one namespace with Corrosion's crate targets
+name = "light_app_crossfire_bench_echo"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "The bench's echo on an RP2040-Zero: a USB-MIDI instrument that sends every message back and toggles a wire as each arrives"
+
+[lib]
+crate-type = ["staticlib"]
+
+[dependencies]
+crossfire-bench = { path = "../../../crates/crossfire-bench" }
+light-core = { path = "../../../../light_mk5/crates/light-core" }
+#   usb-device and not usb-console: the port is a MIDI instrument this crate builds and polls
+# itself, and there is no console at all
+light-rp2 = { path = "../../../../light_mk5/crates/light-rp2", features = ["rp2040", "usb-device"] }
+usb-device = "0.3"

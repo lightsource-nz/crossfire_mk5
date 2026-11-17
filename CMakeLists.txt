@@ -29,7 +29,8 @@ endif()
 # framework is told which board names are RP2350 parts so it resolves the platform from the
 # name. Both before the preinit, which is where the name is first resolved.
 list(APPEND PICO_BOARD_HEADER_DIRS "${CMAKE_CURRENT_LIST_DIR}/boards")
-list(APPEND LIGHT_RP2350_BOARDS crossfire_v01)
+#   the bench's timer is an RP2350-Zero, a board pico-sdk defines and the framework does not list
+list(APPEND LIGHT_RP2350_BOARDS crossfire_v01 waveshare_rp2350_zero)
 include(${LIGHT_PATH}/external/light_preinit.cmake)
 
 #   crossfire's OWN version, which is what its images are stamped with and what the boot ROM
@@ -59,7 +60,7 @@ if(LIGHT_PLATFORM STREQUAL "TARGET")
         # one the executable links is built
         corrosion_import_crate(
                 MANIFEST_PATH ${CMAKE_CURRENT_LIST_DIR}/firmware/Cargo.toml
-                CRATES light_app_crossfire_pico light_app_crossfire_pico2 light_app_crossfire_v01
+                CRATES light_app_crossfire_pico light_app_crossfire_pico2 light_app_crossfire_v01 light_app_crossfire_bench_timer light_app_crossfire_bench_echo
                 NO_STD
         )
         #   crush belongs to the framework and runs on the host inside this cross build: the
@@ -93,6 +94,11 @@ if(LIGHT_PLATFORM STREQUAL "TARGET")
                 # rather than one the platform knows
                 if(PICO_BOARD STREQUAL "crossfire_v01")
                         add_subdirectory(module/crossfire_v01)
+                #   the bench: the two small boards that measure a crossfire from its ports
+                elseif(PICO_BOARD STREQUAL "waveshare_rp2350_zero")
+                        add_subdirectory(module/crossfire_bench_timer)
+                elseif(PICO_BOARD STREQUAL "waveshare_rp2040_zero")
+                        add_subdirectory(module/crossfire_bench_echo)
                 elseif(PICO_PLATFORM MATCHES "^rp2040")
                         add_subdirectory(module/crossfire_pico)
                 else()

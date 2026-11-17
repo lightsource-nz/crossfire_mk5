@@ -747,6 +747,13 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a31eee39dddec8330830986fcd7625edb5a24ec90ea038215273bbc3adb08ac6"
 
 [[package]]
+name = "crossfire-bench"
+version = "0.1.0"
+dependencies = [
+ "usb-device",
+]
+
+[[package]]
 name = "crossfire-sim"
 version = "0.1.0"
 dependencies = [
@@ -3304,6 +3311,16 @@ dependencies = [
  "idna",
  "percent-encoding",
  "serde",
+]
+
+[[package]]
+name = "usb-device"
+version = "0.3.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "98816b1accafbb09085168b90f27e93d790b4bfa19d883466b5e53315b5f06a6"
+dependencies = [
+ "heapless",
+ "portable-atomic",
 ]
 
 [[package]]

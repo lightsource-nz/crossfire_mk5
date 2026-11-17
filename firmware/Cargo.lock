@@ -173,6 +173,13 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "790eea4361631c5e7d22598ecd5723ff611904e3344ce8720784c93e3d83d40b"
 
 [[package]]
+name = "crossfire-bench"
+version = "0.1.0"
+dependencies = [
+ "usb-device",
+]
+
+[[package]]
 name = "crossfire-rp2350"
 version = "0.1.0"
 dependencies = [
@@ -731,6 +738,26 @@ dependencies = [
  "light-ui",
  "light-update",
  "light-wireless",
+]
+
+[[package]]
+name = "light_app_crossfire_bench_echo"
+version = "0.1.0"
+dependencies = [
+ "crossfire-bench",
+ "light-core",
+ "light-rp2",
+ "usb-device",
+]
+
+[[package]]
+name = "light_app_crossfire_bench_timer"
+version = "0.1.0"
+dependencies = [
+ "crossfire-bench",
+ "light-core",
+ "light-rp2",
+ "usb-device",
 ]
 
 [[package]]

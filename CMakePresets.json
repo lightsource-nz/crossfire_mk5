@@ -70,6 +70,36 @@
             }
         },
         {
+            "name": "conf-crossfire-bench-timer-debug",
+            "description": "The bench's timer on an RP2350-Zero: a USB-MIDI instrument on one of crossfire's ports that times messages through the board to the echo and back. Its figures are read over SWD by scripts/bench.ps1; its log is on the UART. Flashed over SWD.",
+            "inherits": [
+                "conf-light-pico-base",
+                "conf-light-debug"
+            ],
+            "binaryDir": "${sourceDir}/build-crossfire-bench-timer",
+            "generator": "Ninja",
+            "cacheVariables": {
+                "LIGHT_PLATFORM": "TARGET",
+                "LIGHT_BOARD": "waveshare_rp2350_zero",
+                "Rust_CARGO_TARGET": "thumbv8m.main-none-eabi"
+            }
+        },
+        {
+            "name": "conf-crossfire-bench-echo-debug",
+            "description": "The bench's echo on an RP2040-Zero: a USB-MIDI instrument on another of crossfire's ports that sends every message back and toggles a wire to the timer. Flashed over its own USB port, in BOOTSEL, before it is moved to crossfire.",
+            "inherits": [
+                "conf-light-pico-base",
+                "conf-light-debug"
+            ],
+            "binaryDir": "${sourceDir}/build-crossfire-bench-echo",
+            "generator": "Ninja",
+            "cacheVariables": {
+                "LIGHT_PLATFORM": "TARGET",
+                "LIGHT_BOARD": "waveshare_rp2040_zero",
+                "Rust_CARGO_TARGET": "thumbv6m-none-eabi"
+            }
+        },
+        {
             "name": "conf-crossfire-host",
             "description": "The host tree: the application's tests, run with cargo through one ctest.",
             "inherits": ["conf-light-host-debug"],

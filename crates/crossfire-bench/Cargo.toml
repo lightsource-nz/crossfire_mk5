@@ -1,0 +1,11 @@
+[package]
+name = "crossfire-bench"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "Measures a crossfire board from the outside: two USB-MIDI devices on its ports, one timing messages through it and one echoing them back. The portable half: the MIDI device class, the schedule, the statistics"
+
+[dependencies]
+#   the device stack's class model, which the MIDI class is written against; no_std and pure, so
+# the crate still builds and tests on the host
+usb-device = "0.3"

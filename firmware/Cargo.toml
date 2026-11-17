@@ -16,6 +16,9 @@ members = [
         #   the production board: its board-support crate, and the instantiation that links it
         "../crates/light-board-crossfire-v01",
         "../module/crossfire_v01/rust",
+        #   the bench: two small boards that measure a crossfire from its ports
+        "../module/crossfire_bench_timer/rust",
+        "../module/crossfire_bench_echo/rust",
 ]
 
 [workspace.package]

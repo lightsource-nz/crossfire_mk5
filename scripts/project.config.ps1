@@ -19,6 +19,8 @@
                 'conf-crossfire-pico2w-debug' = 'build-crossfire-pico2w'
                 'conf-crossfire-pico-debug'  = 'build-crossfire-pico'
                 'conf-crossfire-v01-debug'   = 'build-crossfire-v01'
+                'conf-crossfire-bench-timer-debug' = 'build-crossfire-bench-timer'
+                'conf-crossfire-bench-echo-debug'  = 'build-crossfire-bench-echo'
         }
 
         #   Bootloader names the target whose image carries this board's flash map -- the one
@@ -34,6 +36,11 @@
                 # it, so the 1200-baud reset takes it into BOOTSEL over the product's own
                 # connector and no probe is needed to write it
                 'crossfire_v01'   = @{ Preset = 'conf-crossfire-v01-debug'; Flash = 'uf2'; Bootloader = 'crossfire_bootloader' }
+                #   the bench (scripts/bench.ps1). The timer is written over SWD where it sits, plugged
+                # into crossfire. The echo has no console to reset through, so it is written in
+                # BOOTSEL -- BOOT held as it is plugged into the computer -- and then moved over
+                'crossfire_bench_timer' = @{ Preset = 'conf-crossfire-bench-timer-debug'; Flash = 'swd' }
+                'crossfire_bench_echo'  = @{ Preset = 'conf-crossfire-bench-echo-debug'; Flash = 'uf2' }
         }
 
         #   the OpenOCD configurations belong to the framework, which is where the chip's
@@ -65,6 +72,11 @@
                         Chip   = 'RP2040'
                 }
                 'conf-crossfire-v01-debug' = @{
+                        Config = '../light_mk5/openocd-rp2350.cfg'
+                        Svd    = '../../pico-sdk/src/rp2350/hardware_regs/RP2350.svd'
+                        Chip   = 'RP235x'
+                }
+                'conf-crossfire-bench-timer-debug' = @{
                         Config = '../light_mk5/openocd-rp2350.cfg'
                         Svd    = '../../pico-sdk/src/rp2350/hardware_regs/RP2350.svd'
                         Chip   = 'RP235x'

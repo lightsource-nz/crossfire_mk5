@@ -6,6 +6,8 @@
 resolver = "2"
 members = [
         "crates/light_app_crossfire",
+        #   the bench's portable half: the MIDI device class, the schedule, the statistics
+        "crates/crossfire-bench",
         #   the application on a simulated board, in a window: a host tool, excluded from the
         # test run like the framework's own desktop tools
         "tools/crossfire-sim",

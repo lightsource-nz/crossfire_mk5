@@ -117,6 +117,28 @@ and `rx`), and follows the board through its reboot to say whether the new image
 which slot it is running. A 161 KiB image takes about fifteen seconds. The board has to be running
 firmware that has these commands, which `scripts/flash.ps1` puts on once.
 
+## Measuring a board
+
+Two small boards plugged into crossfire's ports measure it the way an instrument sees it
+(`crates/crossfire-bench`). The **timer**, an RP2350-Zero with a debug probe on its SWD pads, sends
+numbered messages through the board. The **echo**, an RP2040-Zero, sends each one back and toggles a
+wire to the timer as it arrives (GP2 to GP2, with a ground wire beside it). Nothing else should be
+plugged into crossfire during a run. The timer records three things:
+
+- latency one way, from sending a message to the echo's wire changing;
+- the round trip, from sending to the echo arriving back;
+- throughput, at rates from 500 to 24,000 messages a second, with every gap in the echoes counted.
+
+```
+scripts/flash.ps1 -Target crossfire_bench_echo    # once, with BOOT held as it is plugged into the computer
+scripts/bench.ps1 -Flash                          # writes the timer over SWD, runs, prints the figures
+scripts/bench.ps1                                 # another run
+```
+
+The echo's OUT endpoint takes sixty-four bytes. Hold its GP3 to ground at power-up to give it four
+bytes instead, like an instrument that takes one event at a time. The timer's figures stay in RAM,
+and the script reads them over SWD without halting anything; its log is on the UART at GP0.
+
 ## The development boards
 
 Before the production board existed, crossfire was brought up on two Picos, and both are still
