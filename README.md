@@ -44,8 +44,8 @@ debug header, which leaves the USB-C port free for the supply under test. Runnin
 supply, a keyboard played a synth through the board, notes and chords starting and stopping as
 played, with the synth's controls reaching the keyboard the other way. `trace on` on the console
 logs every message read from and written to each instrument, and `send` writes one to an instrument
-directly. Measured from its ports (below), a message crosses it in 1 to 2 ms and nothing is lost up
-to 8,000 messages a second. Not yet shown on hardware: the recovery of a hub port disabled for a device error, which
+directly. Measured from its ports (below), a message crosses it in 0.2 to 1.3 ms and nothing is lost
+up to 16,000 messages a second. Not yet shown on hardware: the recovery of a hub port disabled for a device error, which
 is tested on the host only.
 
 ## Building
@@ -144,15 +144,16 @@ What the production board measures, with the sixty-four-byte echo:
 
 | | min | median | 99th percentile | max |
 |---|---|---|---|---|
-| one way | 1.0 ms | 1.5 ms | 2.0 ms | 2.0 ms |
-| round trip | 3.0 ms | 3.5 ms | 4.0 ms | 4.0 ms |
+| one way | 0.22 ms | 0.74 ms | 1.23 ms | 1.26 ms |
+| round trip | 1.2 ms | 1.7 ms | 2.2 ms | 2.3 ms |
 
-Each spreads evenly over one millisecond, the USB frame: a message waits for the next time the board
-asks for it. Under load it forwards every message up to 8,000 a second in each direction, about
-eight times what a MIDI cable carries, with a round trip of 5 to 9 ms. Beyond that it carries about
-8,000 a second, and what it cannot take is counted as `departing` in `stats`, never lost unseen.
-The bench's first run is what found the PIO host losing every other packet from an instrument that
-sent one each frame.
+Each spreads evenly over one millisecond, the USB frame: a message waits in an instrument until the
+board next asks it for one, and is written to the next instrument as soon as the board has read
+it. Under load it forwards every message up to 16,000 a second in each direction, the most the
+timer can send and some sixteen times what a MIDI cable carries, with a round trip of 2 to 2.7 ms.
+What the board cannot take is counted as `departing` in `stats`, never lost unseen. The bench
+found the PIO host's two largest costs: an instrument sending each frame lost every other packet,
+and every forwarded message waited a frame to be written.
 
 ## The development boards
 
